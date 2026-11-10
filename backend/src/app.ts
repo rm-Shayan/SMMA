@@ -11,6 +11,7 @@ import { inboxRouter } from './modules/inbox/inbox.routes';
 import { analyticsRouter } from './modules/analytics/analytics.routes';
 import { trainingRouter } from './modules/training/training.routes';
 import { toolsRouter } from './modules/tools/external-tools.routes';
+import { approvalsRouter } from './modules/agents/approvals.routes';
 import { metaWebhookRouter } from './modules/webhooks/meta.webhook.routes';
 import { whatsappWebhookRouter } from './modules/webhooks/whatsapp.webhook.routes';
 
@@ -35,6 +36,8 @@ app.use('/api/v1/inbox', inboxRouter);
 app.use('/api/v1/analytics', analyticsRouter);
 app.use('/api/v1/training', trainingRouter);
 app.use('/api/v1/tools', toolsRouter);
+app.use('/api/v1/approvals', approvalsRouter);
+app.use('/api/v1/approvals', approvalsRouter);
 
 // Social Inbound Webhooks
 app.use('/webhooks', metaWebhookRouter);
