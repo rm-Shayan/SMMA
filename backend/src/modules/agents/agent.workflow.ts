@@ -5,11 +5,15 @@ import { inboundDmNode } from './inbound-dm.node';
 import { supportCloserNode } from './support-closer.node';
 import { selfCommentNode, trendPlannerNode, publisherNode } from './content.nodes';
 import { researcherNode, commentReplyNode, analyticsNode, competitorBotNode } from './research.nodes';
+import { internTrainingMentorNode } from './intern-mentor.node';
+import { sheetArchitectNode } from './sheet-architect.node';
+import { executiveOrchestratorNode } from './executive-orchestrator.node';
 import { getTenantIntegrations } from '../tenants/tenant.service';
 
 function buildStateGraph() {
   const workflow = new StateGraph(AgentStateAnnotation)
     .addNode('supervisor', supervisorNode)
+    .addNode('orchestrator', executiveOrchestratorNode)
     .addNode('inbound_dm', inboundDmNode)
     .addNode('support_closer', supportCloserNode)
     .addNode('self_comment', selfCommentNode)
@@ -19,10 +23,18 @@ function buildStateGraph() {
     .addNode('comment_reply', commentReplyNode)
     .addNode('analytics', analyticsNode)
     .addNode('competitor_bot', competitorBotNode)
+    .addNode('intern_mentor', internTrainingMentorNode)
+    .addNode('sheet_architect', sheetArchitectNode)
 
     .addEdge(START, 'supervisor')
     .addConditionalEdges('supervisor', (state: AgentState) => {
       switch (state.targetAgent) {
+        case 'EXECUTIVE_ORCHESTRATOR':
+          return 'orchestrator';
+        case 'SHEET_ARCHITECT':
+          return 'sheet_architect';
+        case 'INTERN_TRAINER':
+          return 'intern_mentor';
         case 'DM_HANDLER':
           return 'inbound_dm';
         case 'INBOX_SUPPORT_MANAGER':
@@ -42,9 +54,10 @@ function buildStateGraph() {
         case 'COMPETITOR_ENGAGEMENT':
           return 'competitor_bot';
         default:
-          return 'support_closer';
+          return 'orchestrator';
       }
     })
+    .addEdge('orchestrator', END)
     .addEdge('inbound_dm', END)
     .addEdge('support_closer', END)
     .addEdge('self_comment', END)
@@ -53,7 +66,9 @@ function buildStateGraph() {
     .addEdge('researcher', END)
     .addEdge('comment_reply', END)
     .addEdge('analytics', END)
-    .addEdge('competitor_bot', END);
+    .addEdge('competitor_bot', END)
+    .addEdge('intern_mentor', END)
+    .addEdge('sheet_architect', END);
 
   return workflow.compile();
 }
@@ -74,7 +89,6 @@ export async function invokeAgentEngine(input: any): Promise<AgentState> {
     } as AgentState;
   }
 
-  // Sliding-Window Memory Optimization: retain last 6 messages & clamp length to prevent token explosion
   const rawHistory = Array.isArray(input.conversationHistory) ? input.conversationHistory : [];
   const boundedHistory = rawHistory.slice(-6).map((msg: any) => ({
     role: msg.role || 'user',
@@ -86,6 +100,7 @@ export async function invokeAgentEngine(input: any): Promise<AgentState> {
     incomingMessage: input.incomingMessage || input.message || '',
     brandVoice: input.brandVoice || integrations?.brandVoice || 'Professional, authoritative, high-conversion',
     channel: input.channel || 'CRM_LIVE_CHAT',
+    contact: input.contact || { name: input.senderId || 'Trainee' },
     bookingCalendarUrl: input.bookingCalendarUrl || integrations?.bookingCalendarUrl || '',
     conversationHistory: boundedHistory,
   };

@@ -12,7 +12,13 @@ export async function getGoogleAccessToken(): Promise<string | null> {
     return cachedToken;
   }
 
-  const credsPath = path.resolve(process.cwd(), 'google-credentials.json');
+  let credsPath = path.resolve(process.cwd(), 'google-credentials.json');
+  if (!fs.existsSync(credsPath)) {
+    credsPath = path.resolve(process.cwd(), 'backend', 'google-credentials.json');
+  }
+  if (!fs.existsSync(credsPath)) {
+    credsPath = path.resolve(__dirname, '../../..', 'google-credentials.json');
+  }
   if (!fs.existsSync(credsPath)) {
     logger.warn('google-credentials.json not found. Google API calls will be skipped.');
     return null;

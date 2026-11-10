@@ -1,198 +1,132 @@
-# Application ka Flow
+# Complete Application Architecture & Execution Flow (`application flow.md`)
 
-SMMA backend mein request, agents, social posts aur schedule kiye gaye jobs ka flow:
+**Document Version:** 13.0 (Enterprise Multi-Tenant Autonomous Operating System)  
+**Last Updated:** Current Session Setup  
+**Backend Directory:** `backend/`
 
-## Diagram (seedha nazar aane wala)
+---
+
+## 1. High-Level System Flow (Bird's Eye View)
 
 ```text
- Clients / Social Platforms
-            |
-            v
-   Express API (src/app.ts) <------------------- Cron (har 60 second)
-            |                                             |
-   Tenant context middleware                              v
-            |                                   Waqt par tay posts dhoondo
-     +------+------+------+                                |
-     |             |      |                                v
-     v             v      v                       Social platform par bhejo
- Agent APIs    Post API  Webhooks                         |
-     |             |      |                                v
-     |             |      +--> Foran 200 OK jawab         PUBLISHED / FAILED mark karo
-     |             |             |                         |
-     |             |             +--> Agent Engine         +--> 60 second baad:
-     |             |                       |                    self-comment agent chalao
-     |             |                       v
-     |             |             Bana hua jawab log hota hai
-     |             |             (customer ko nahi bheja jata)
-     |             |
-     |             +--> POST_DISTRIBUTION agent
-     |                       |
-     |                Har platform ke liye post tayyar karo
-     |                       |
-     |              Kya peak time par schedule karna hai?
-     |                 /           \
-     |               Haan           Nahi
-     |                |              |
-     |         PENDING post save  IMMEDIATE ke taur par jawab
-     |         karo PostgreSQL mein (yahan se bheja nahi jata)
-     |                |
-     |                +-------> Waqt aane par Cron post uthata hai
-     |
-     +--> Chat / Direct agent ki request
-                  |
-                  v
-             Agent Engine
-        Input aur tenant info tayyar karo
-                  |
-             Supervisor agent
-                  |
-       +----------+-----------+----------------------+
-       |          |           |                      |
-       v          v           v                      v
-    DM handler  Support    Content, research    Analytics /
-                / closer  aur comment agents   engagement agents
-       |          |           |                      |
-       +----------+-----------+----------------------+
-                              |
-                              v
-                 Jawab + chalne ke steps ka record
-                    /                  \
-          Caller ko jawab do      Kya contact details mili?
-                                        |
-                                  Lead database mein save karo
-                                  + Google Sheets se sync
-
- GET /api/v1/agents/leads ----------------> Tenant ke leads PostgreSQL se lao
- GET /health ----------------------------> Health status ka jawab
+ ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+ │                         EXTERNAL CHANNELS & PROACTIVE TIME CLOCKS                           │
+ └──────────────┬──────────────────────────────┬──────────────────────────────┬────────────────┘
+                │                              │                              │
+                ▼                              ▼                              ▼
+    Meta / WhatsApp Webhooks        Autonomous 24/7 Clock         Executive Human Commands
+    (Inbound Instagram / DMs)      (Cadence Tick every 5 min)    ("Post this", "Make Sheet")
+                │                              │                              │
+                ▼                              ▼                              ▼
+    HMAC-SHA256 Signature Verify    `runAutonomousCadenceTick()`      Express `/api/v1/agents/chat`
+                │                              │                              │
+                ▼                              ▼                              ▼
+   BullMQ Async Inbound Queue        Autonomous Stage Evaluation        Supervisor Router Node
+   (`smma-webhooks` -> <2ms 200 OK)  (08:00 AM / 10:00 / 14:00 / 23:00) (supervisor.node.ts)
+                │                              │                              │
+                └──────────────────────────────┼──────────────────────────────┘
+                                               │
+                                               ▼
+     ┌──────────────────────────────────────────────────────────────────────────────────┐
+     │                AUTONOMOUS MULTI-AGENT REASONING CORE (12 AGENTS)                 │
+     │      - LangGraph StateGraph            - Tenant-Specific Knowledge Base (RAG)    │
+     │      - Groq Qwen 2.5 Inference         - Sliding Window Token Guard (Last 6 msg) │
+     │      - Quality & Anti-Bot Sanitizer    - Tool Executor Engine                    │
+     └─────────────────────────────────────────┬────────────────────────────────────────┘
+                                               │
+                     ┌─────────────────────────┴─────────────────────────┐
+                     ▼                                                   ▼
+      DOMAIN 1: External / Public Facing                  DOMAIN 2: Internal / Company Operations
+   - Public Channels: Instagram, WhatsApp, Twitter    - Authenticated Workspace & Internal API
+   - Agents: Lead DMs, Sales Closer, Comments         - Agents: Orchestrator, Sheet Architect, Mentor
+   - Context: Public Manuals & Sales Scripts only     - Context: Full Internal SOPs & Onboarding
+   - Firewall: CANNOT trigger internal tools          - Actions: Sheets, Calendars, Trainee Quizzes
 ```
 
-## Tafseeli Mermaid diagram
+---
 
-```mermaid
-flowchart TD
-    Start["src/index.ts<br/>Env load karo aur HTTP server chalao"] --> CronStart["Autonomous cron chalao<br/>Har 60 second"]
-    Start --> App["Express app<br/>JSON / URL-encoded body parho"]
-    App --> Tenant["Tenant context middleware<br/>x-tenant-id UUID ho to validate karo"]
+## 2. End-to-End Execution Lifecycles
 
-    Tenant --> Health{"GET /health request hai?"}
-    Health -- Haan --> HealthResponse["Status, waqt aur uptime wapas karo"]
-    Health -- Nahi --> Routes{"Kaunsa route hai?"}
+### Cycle A: Inbound Reactive Customer Flow (Instagram / WhatsApp DMs)
+1. **Webhook Ingress:**
+   - Meta or WhatsApp sends raw payload to `/webhooks/meta` or `/webhooks/whatsapp`.
+   - `signature.security.ts` verifies HMAC-SHA256 signature using `META_APP_SECRET`.
+   - Webhook route pushes payload to BullMQ Redis Queue (`smma-webhooks`) and replies **`200 EVENT_RECEIVED` in $\le 2\text{ms}$**.
+2. **Background Worker Processing:**
+   - BullMQ Worker picks up the job in `webhook.processor.ts`.
+   - Resolves tenant via mapped platform account ID (`findTenantByPlatformAccount`).
+   - Retrieves conversation history (sliding-window bounded to last 6 messages).
+   - Fetches tenant-isolated RAG Knowledge Base (`company_training_docs`).
+3. **Agent Reasoning & Quality Gate:**
+   - **Agent #6 (Inbound DM Handler)** reasons over customer message with tenant SOP context.
+   - Extracts prospect contact info (Name, Phone, Email) with strict regex validation (`quality.validator.ts`).
+   - Anti-bot filter cleans robotic buzzwords and ensures human marketing voice.
+4. **Autonomous Action Execution:**
+   - Dispatches live reply via `dispatchSocialMessage` using decrypted OAuth token.
+   - Saves lead to PostgreSQL `client_leads`.
+   - Buffers row into `google-sheets.service.ts` (batched append to Google Sheet).
+   - Delivers real-time HTML alert email to agency owner via `smtp-email.service.ts`.
+   - Logs conversation into `tenant_conversations` with RLS isolation.
 
-    Routes --> ChatRoute["POST /api/v1/agents/chat"]
-    Routes --> DirectRoute["POST /api/v1/agents/direct/:agentName"]
-    Routes --> LeadsRoute["GET /api/v1/agents/leads"]
-    Routes --> PublishRoute["POST /api/v1/posts/publish"]
-    Routes --> MetaWebhook["/webhooks/meta"]
-    Routes --> WhatsAppWebhook["/webhooks/whatsapp"]
+---
 
-    ChatRoute --> ChatValidate["Zod se chat payload validate karo"]
-    ChatValidate -->|Ghalat| BadRequest["400: Request durust nahi"]
-    ChatValidate -->|Durust| ChatInvoke["Tenant context chuno<br/>Agent engine chalao"]
+### Cycle B: Proactive 24/7 Autonomous Daily Operating Cadence
+Every tenant with `autonomous_mode_enabled = true` runs on a 24-hour business rhythm managed by `cadence.service.ts`:
 
-    DirectRoute --> DirectValidate["Message ya prompt lazmi hai<br/>Agent alias pehchano"]
-    DirectValidate -->|Message nahi hai| BadRequest
-    DirectValidate --> DirectInvoke["Mangay gaye agent ke saath<br/>agent engine chalao"]
+* **08:00 AM (Morning Intelligence):**
+  - **Agent #2 (Trend Identifier) + Agent #7 (Competitive Researcher)** scan niche trends.
+  - Generates 2 high-converting post hooks for the day.
+  - Inserts posts into `scheduled_posts` table with status `PENDING` (scheduled for 10:00 AM & 06:00 PM).
+* **10:00 AM (Peak Publishing #1):**
+  - Scheduler cron claims due post with row-locking.
+  - **Agent #4 (Publisher)** formats and publishes to connected social channel.
+  - Enqueues BullMQ delayed job (`smma-delayed-comments`) with `{ delay: 60000 }`.
+* **10:01 AM (Algorithmic Boost):**
+  - **Agent #1 (Self-Commenter)** wakes up 60s later and posts first high-value comment.
+* **02:00 PM (Competitor Growth Hijack):**
+  - **Agent #3 (Competitor Engagement)** targets configured `competitor_handles` and generates authoritative value-add comments.
+* **06:00 PM (Peak Publishing #2):**
+  - Evening post auto-published for high-traffic engagement.
+* **11:00 PM (Nightly Performance Audit):**
+  - **Agent #8 (Analytics Auditor)** evaluates leads captured, conversation volume, and calibrates tomorrow's content pillars.
 
-    ChatInvoke --> Normalize
-    DirectInvoke --> Normalize
-    PublishInvoke --> Normalize
-    MetaInvoke --> Normalize
-    WhatsAppInvoke --> Normalize
+---
 
-    subgraph AgentEngine["LangGraph agent engine"]
-        Normalize["Input tayyar karo<br/>Zarurat par tenant calendar integration lao"]
-        Supervisor["Supervisor node<br/>Agent pehle se chuna ho to routing LLM skip"]
-        ChooseAgent{"Munaseb specialized agent chuno"}
-        Dm["DM handler"]
-        Closer["Inbox support / closer"]
-        SelfComment["Self-comment"]
-        Trend["Trend planner"]
-        Publisher["Post formatter"]
-        Research["Competitor research"]
-        CommentReply["Comment ka jawab"]
-        Analytics["Analytics"]
-        Competitor["Competitor engagement"]
-        AgentResult["Aakhri natija do<br/>jawab, lead data, trace aur review flags"]
+### Cycle C: Executive Tool Execution (Natural Language Human Commands)
+When an agency owner or manager commands the AI Assistant via chat:
 
-        Normalize --> Supervisor --> ChooseAgent
-        ChooseAgent --> Dm
-        ChooseAgent --> Closer
-        ChooseAgent --> SelfComment
-        ChooseAgent --> Trend
-        ChooseAgent --> Publisher
-        ChooseAgent --> Research
-        ChooseAgent --> CommentReply
-        ChooseAgent --> Analytics
-        ChooseAgent --> Competitor
-        Dm --> AgentResult
-        Closer --> AgentResult
-        SelfComment --> AgentResult
-        Trend --> AgentResult
-        Publisher --> AgentResult
-        Research --> AgentResult
-        CommentReply --> AgentResult
-        Analytics --> AgentResult
-        Competitor --> AgentResult
-    end
+* **"Instagram par ye post kardo: [Content]"**
+  - `supervisor.node.ts` routes to `EXECUTIVE_ORCHESTRATOR`.
+  - `executive-orchestrator.node.ts` selects tool `PUBLISH_POST`.
+  - `tools.executor.ts` queues post into `scheduled_posts` table.
+* **"Kal subah 11 baje client ke sath strategy call book kardo"**
+  - Selects tool `SCHEDULE_CALENDAR`.
+  - `tools.executor.ts` calls Google Calendar API and generates meeting with Google Meet link.
+* **"Accounts department ke liye payments aur invoices ki sheet bana do"**
+  - Selects tool `CREATE_SHEET`.
+  - `sheet-architect.node.ts` designs role-specific headers (`Date`, `Client Name`, `Invoice #`, `Amount`, `Status`).
+  - `google-sheets-creator.service.ts` calls Google Sheets API v4 to generate live spreadsheet and returns link.
 
-    AgentResult --> CallerOutput{"Natija kis flow ko wapas dena hai?"}
-    CallerOutput --> ChatResult["Chat API: jawab, intent, lead score,<br/>CRM updates, review flag aur execution trace do"]
-    CallerOutput --> DirectResult["Direct API: agent ka jawab aur execution trace do"]
-    CallerOutput --> WebhookLog["Webhook: bana hua jawab log karo<br/>(customer ko wapas nahi bhejta)"]
-    CallerOutput --> FormatPost["Post API: bana hua content istemal karo"]
-    ChatResult --> HasContact{"CRM contact updates mile?"}
-    HasContact -->|Haan| SaveLead["Lead PostgreSQL mein save karo<br/>Phir Google Sheets se async sync"]
-    HasContact -->|Nahi| NoLead["Lead save nahi hoga"]
+---
 
-    LeadsRoute --> FetchLeads["PostgreSQL se tenant ke 50 tak leads lao"]
-    FetchLeads --> LeadsResult["Leads aur unki tadaad wapas karo"]
+### Cycle D: Document-Grounded Intern Training & Mentoring
+* **Company Uploads SOP:**
+  - Owner uploads training manual via `POST /api/v1/training/docs` -> stored in `company_training_docs`.
+* **Intern Q&A / Scenario Testing:**
+  - Trainee asks questions via `POST /api/v1/training/ask`.
+  - **Agent #10 (Intern Trainer & Guardrail Mentor)** answers strictly grounded in the company's uploaded document.
+  - Evaluates trainee with a scenario quiz and logs comprehension score (0-100) into `intern_training_sessions`.
+* **Guardrail & Off-Topic Redirection:**
+  - If a trainee asks weird, off-topic, or jailbreak questions, `intern-mentor.node.ts` flags `isRelevantToWork: false`, firmly refuses off-topic chatter, posts a workplace standard rule, challenges them with an SOP quiz question to bring them back on track, and drops the comprehension score to `25/100`.
 
-    PublishRoute --> PostValidate["Topic, platforms aur options validate karo"]
-    PostValidate -->|Ghalat| BadPost["400: Post payload durust nahi"]
-    PostValidate -->|Durust| EachPlatform["Har chune hue platform ke liye"]
-    EachPlatform --> PublishInvoke["POST_DISTRIBUTION agent chalao"]
-    FormatPost --> AutoSchedule{"autoSchedulePeak on hai?"}
-    AutoSchedule -->|Haan| PickSlot["Platform ka agla peak slot chuno"]
-    PickSlot --> InsertPost["PENDING post PostgreSQL mein save karo"]
-    InsertPost --> ScheduledResult["Content, schedule ka waqt aur job ID shamil karo"]
-    AutoSchedule -->|Nahi| ImmediateResult["Formatted content IMMEDIATE ke taur par do<br/>(is route se post nahi bheji jati)"]
-    ScheduledResult --> PostResponse["Tamam platforms ka natija wapas karo"]
-    ImmediateResult --> PostResponse
+---
 
-    CronStart --> CronTick["Har 60 second mein due PENDING posts dhoondo"]
-    CronTick --> DuePosts{"Koi post publish ke liye tayyar hai?"}
-    DuePosts -->|Nahi| WaitTick["Agli tick ka intezar karo"]
-    WaitTick --> CronTick
-    DuePosts -->|Haan| Dispatch["Platform ke mutabiq bhejo<br/>Meta, WhatsApp, LinkedIn ya X"]
-    Dispatch --> DispatchOk{"Post bheji gayi?"}
-    DispatchOk -->|Haan| MarkPublished["Post ko PUBLISHED mark karo"]
-    DispatchOk -->|Nahi| MarkFailed["Post ko FAILED mark karo"]
-    MarkPublished --> Delay["60 second intezar karo"]
-    Delay --> CommentAgent["SELF_COMMENTER agent chalao"]
-    CommentAgent --> CommentNote["Bana hua comment log hota hai<br/>(comment post karna abhi wired nahi hai)"]
-    MarkFailed --> WaitTick
-    CommentNote --> WaitTick
+## 3. External Platform Integration & MCP (Model Context Protocol) Flow
 
-    MetaWebhook --> MetaVerify{"GET verification request?"}
-    MetaVerify -->|Haan, token durust hai| VerifyOk["Challenge wapas karo"]
-    MetaVerify -->|Nahi / token ghalat hai| Forbidden["403: Ijazat nahi"]
-    MetaVerify -->|POST event| MetaAck["Foran 200 OK jawab do"]
-    MetaAck --> MetaFilter["Instagram ya Facebook ke text messages lo<br/>Echo aur khali messages nazarandaz karo"]
-    MetaFilter -->|Durust message| MetaInvoke["Social channel ke saath agent engine chalao"]
+1. **Third-Party LMS / External App Embedding:**
+   - External platforms connect to `POST /api/v1/training/ask` using their scoped Company Token (`x-api-key` / `Bearer <jwt>`).
+   - `tenant.middleware.ts` enforces PostgreSQL tenant isolation (`WHERE tenant_id = $1`), preventing any cross-company knowledge leakage.
+2. **Future MCP Server Integration:**
+   - Universal JSON-RPC MCP tools (`query_training_kb`, `submit_intern_quiz`, `publish_social_post`, `create_lead_sheet`).
+   - Role-Based Access Control (RBAC): Trainee tokens can ONLY invoke training tools; Manager tokens unlock executive publishing and sheet generation tools.
 
-    WhatsAppWebhook --> WhatsAppVerify{"GET verification request?"}
-    WhatsAppVerify -->|Haan, token durust hai| VerifyOk
-    WhatsAppVerify -->|Nahi / token ghalat hai| Forbidden
-    WhatsAppVerify -->|POST event| WhatsAppAck["Foran 200 OK jawab do"]
-    WhatsAppAck --> WhatsAppFilter["Aane wale text messages lo"]
-    WhatsAppFilter -->|Durust message| WhatsAppInvoke["WhatsApp channel ke saath agent engine chalao"]
-```
-
-## Aham hisson ki wazahat
-
-- **Agent ka jawab:** Khaas nodes Qwen/Groq JSON client ko call karte hain. Support/closer node tenant ke knowledge base se bhi maloomat leta hai.
-- **Tenant ka data:** PostgreSQL mein leads aur schedule ki hui posts save hoti hain. Lead data Google Sheets se bhi sync ho sakta hai.
-- **Social posts bhejna:** Schedule ki hui posts, platform credentials ke zariye social dispatcher bhejta hai.
-- **Webhook ke jawab:** Meta aur WhatsApp webhooks agent ka jawab banate hain, lekin filhal sirf record karte hain; customer ko DM bhejna in handlers mein wired nahi hai.
-- **Band karna:** `SIGTERM` ya `SIGINT` par cron timer rukta hai aur HTTP server araam se band hota hai.
-- **Ghalatiyan:** Ghalat payload par `400`, route fail hone par `500` milta hai; Express error handler baqi ghalatiyan record karta hai.

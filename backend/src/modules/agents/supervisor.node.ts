@@ -4,13 +4,16 @@ import { z } from 'zod';
 
 const SupervisorDecisionSchema = z.object({
   targetAgent: z.enum([
-    'SELF_COMMENTER', 'COMPETITIVE_RESEARCHER', 'COMMENT_REPLY', 'ANALYTICS',
-    'TREND_IDENTIFIER', 'DM_HANDLER', 'COMPETITOR_ENGAGEMENT', 'POST_DISTRIBUTION',
-    'INBOX_SUPPORT_MANAGER'
+    'EXECUTIVE_ORCHESTRATOR', 'SELF_COMMENTER', 'COMPETITIVE_RESEARCHER',
+    'COMMENT_REPLY', 'ANALYTICS', 'TREND_IDENTIFIER', 'DM_HANDLER',
+    'COMPETITOR_ENGAGEMENT', 'POST_DISTRIBUTION', 'INBOX_SUPPORT_MANAGER',
+    'INTERN_TRAINER', 'SHEET_ARCHITECT'
   ]),
   reasoning: z.string().max(300),
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
 });
+
+const EXTERNAL_CHANNELS = ['INSTAGRAM', 'WHATSAPP', 'TWITTER', 'LINKEDIN', 'META'];
 
 export async function supervisorNode(state: AgentState): Promise<Partial<AgentState>> {
   if (state.targetAgent) {
@@ -19,17 +22,24 @@ export async function supervisorNode(state: AgentState): Promise<Partial<AgentSt
     };
   }
 
-  const prompt = `You are Agent #10: System Supervisor & Event Router.
-Analyze the incoming message and route it to the single best specialized agent:
-- DM_HANDLER: Quick lead qualification or intro chat.
-- INBOX_SUPPORT_MANAGER: Complex questions, objections, pricing, booking.
-- COMMENT_REPLY: Public social comment engagement.
-- TREND_IDENTIFIER: Content topic/hook generation.
-- POST_DISTRIBUTION: Formatting/scheduling post.
-- COMPETITIVE_RESEARCHER: Market research or competitor analysis.
+  const isExternal = EXTERNAL_CHANNELS.includes((state.channel || '').toUpperCase());
 
+  const prompt = isExternal
+    ? `You are System Supervisor for EXTERNAL PUBLIC CHANNELS (${state.channel}).
+Route external customer/lead interactions ONLY to public-facing agents:
+- DM_HANDLER: Lead qualification, initial friendly greeting, general inquiries.
+- INBOX_SUPPORT_MANAGER: Complex questions, objections, packages, booking requests.
+- COMMENT_REPLY: Public comment replies.
+NEVER route external channels to internal tools or executive orchestrator.
 Incoming: "${state.incomingMessage}"
-Channel: ${state.channel}
+Output JSON matching schema.`
+    : `You are System Supervisor for INTERNAL OPERATIONS (${state.channel}).
+Route incoming operational requests to internal agents:
+- EXECUTIVE_ORCHESTRATOR: Direct operational commands ("post kardo", "booking schedule karo", "email bhej do").
+- SHEET_ARCHITECT: User asks to create/generate a Google Sheet.
+- INTERN_TRAINER: Training, onboarding, intern questions, company SOP learning.
+- DM_HANDLER / INBOX_SUPPORT_MANAGER: Support and CRM queries.
+Incoming: "${state.incomingMessage}"
 Output JSON matching schema.`;
 
   try {
@@ -39,17 +49,23 @@ Output JSON matching schema.`;
     ], { temperature: 0.1 });
 
     const parsed = SupervisorDecisionSchema.safeParse(rawDecision);
-    const target = parsed.success ? parsed.data.targetAgent : 'INBOX_SUPPORT_MANAGER';
+    let target = parsed.success ? parsed.data.targetAgent : (isExternal ? 'DM_HANDLER' : 'EXECUTIVE_ORCHESTRATOR');
+
+    if (isExternal && ['EXECUTIVE_ORCHESTRATOR', 'SHEET_ARCHITECT', 'INTERN_TRAINER'].includes(target)) {
+      target = 'INBOX_SUPPORT_MANAGER';
+    }
 
     return {
       targetAgent: target,
-      executionTrace: [`Supervisor routed to ${target}`],
+      executionTrace: [
+        `Supervisor routed to ${target} (Channel: ${state.channel}, Scope: ${isExternal ? 'EXTERNAL' : 'INTERNAL'})`
+      ],
     };
   } catch {
+    const fallback = isExternal ? 'DM_HANDLER' : 'EXECUTIVE_ORCHESTRATOR';
     return {
-      targetAgent: 'INBOX_SUPPORT_MANAGER',
-      executionTrace: ['Supervisor fallback to INBOX_SUPPORT_MANAGER'],
+      targetAgent: fallback,
+      executionTrace: [`Supervisor fallback routing to ${fallback}`],
     };
   }
 }
-

@@ -9,6 +9,7 @@ import { schedulerRouter } from './modules/scheduler/scheduler.routes';
 import { credentialsRouter } from './modules/credentials/credentials.routes';
 import { inboxRouter } from './modules/inbox/inbox.routes';
 import { analyticsRouter } from './modules/analytics/analytics.routes';
+import { trainingRouter } from './modules/training/training.routes';
 import { metaWebhookRouter } from './modules/webhooks/meta.webhook.routes';
 import { whatsappWebhookRouter } from './modules/webhooks/whatsapp.webhook.routes';
 
@@ -31,6 +32,7 @@ app.use('/api/v1/posts', schedulerRouter);
 app.use('/api/v1/credentials', credentialsRouter);
 app.use('/api/v1/inbox', inboxRouter);
 app.use('/api/v1/analytics', analyticsRouter);
+app.use('/api/v1/training', trainingRouter);
 
 // Social Inbound Webhooks
 app.use('/webhooks', metaWebhookRouter);

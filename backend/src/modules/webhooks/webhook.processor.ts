@@ -83,11 +83,19 @@ export async function processWhatsAppWebhookJob(data: WhatsAppWebhookJobData): P
   const { tenantId, senderPhone, senderName, messageText, phoneNumberId } = data;
   const platform = 'WHATSAPP';
   try {
+    const escalated = await isConversationEscalated(tenantId, platform, senderPhone);
+    if (escalated) {
+      await logConversation({ tenantId, platform, senderId: senderPhone, incomingText: messageText, agentResponse: null, isEscalated: true });
+      return;
+    }
+
+    const conversationHistory = await getRecentConversationHistory(tenantId, platform, senderPhone);
     const aiResult = await invokeAgentEngine({
       tenantId,
       channel: platform,
       incomingMessage: messageText,
       senderId: senderPhone,
+      conversationHistory,
       targetAgent: 'DM_HANDLER',
     });
 

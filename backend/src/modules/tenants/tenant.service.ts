@@ -5,6 +5,9 @@ import { logger } from '../../core/config/logger.config';
 export interface TenantIntegrations {
   tenantId: string;
   brandVoice: string;
+  niche?: string;
+  targetAudience?: string;
+  competitorHandles?: string[];
   isActive: boolean;
   googleSheetId: string;
   bookingCalendarUrl: string;
@@ -21,7 +24,7 @@ export async function getTenantIntegrations(tenantId: string): Promise<TenantInt
 
   try {
     const res = await pool.query(
-      `SELECT brand_voice, is_active, google_sheet_id, booking_calendar_url, calendar_id, notification_email FROM tenants WHERE id = $1 LIMIT 1`,
+      `SELECT brand_voice, niche, target_audience, competitor_handles, is_active, google_sheet_id, booking_calendar_url, calendar_id, notification_email FROM tenants WHERE id = $1 LIMIT 1`,
       [tenantId]
     );
 
@@ -35,6 +38,9 @@ export async function getTenantIntegrations(tenantId: string): Promise<TenantInt
     return {
       tenantId,
       brandVoice: row?.brand_voice || 'Professional, authoritative, high-conversion',
+      niche: row?.niche || 'General Marketing & Sales Automation',
+      targetAudience: row?.target_audience || 'Business owners and prospective clients',
+      competitorHandles: row?.competitor_handles || [],
       isActive: row ? row.is_active !== false : true,
       googleSheetId: sheetId,
       bookingCalendarUrl: bookingUrl,
@@ -47,6 +53,9 @@ export async function getTenantIntegrations(tenantId: string): Promise<TenantInt
     return {
       tenantId,
       brandVoice: 'Professional, authoritative, high-conversion',
+      niche: 'General Marketing & Sales Automation',
+      targetAudience: 'Business owners and prospective clients',
+      competitorHandles: [],
       isActive: true,
       googleSheetId: fallbackSheet,
       bookingCalendarUrl: fallbackBooking,
@@ -56,4 +65,3 @@ export async function getTenantIntegrations(tenantId: string): Promise<TenantInt
     };
   }
 }
-

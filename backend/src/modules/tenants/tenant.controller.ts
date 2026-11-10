@@ -7,6 +7,10 @@ const RegisterTenantSchema = z.object({
   companyName: z.string().min(2),
   email: z.string().email(),
   brandVoice: z.string().default('Professional, authoritative, high-conversion'),
+  niche: z.string().default('General Marketing & Sales Automation'),
+  targetAudience: z.string().default('Business owners and prospective clients'),
+  competitorHandles: z.array(z.string()).default([]),
+  autonomousModeEnabled: z.boolean().default(true),
   googleSheetId: z.string().optional(),
   bookingCalendarUrl: z.string().url().optional(),
 });
@@ -17,17 +21,17 @@ export async function handleRegisterTenant(req: Request, res: Response): Promise
     res.status(400).json({ error: 'Validation Error', details: parsed.error.format() });
     return;
   }
-  const { companyName, email, brandVoice, googleSheetId, bookingCalendarUrl } = parsed.data;
+  const { companyName, email, brandVoice, niche, targetAudience, competitorHandles, autonomousModeEnabled, googleSheetId, bookingCalendarUrl } = parsed.data;
   const sql = `
     INSERT INTO tenants 
-    (company_name, brand_voice, is_internal, current_plan, notification_email, google_sheet_id, booking_calendar_url)
-    VALUES ($1, $2, false, 'FREE_STARTER', $3, $4, $5)
-    RETURNING id, company_name, notification_email, google_sheet_id, booking_calendar_url, is_active, created_at;
+    (company_name, brand_voice, is_internal, current_plan, notification_email, niche, target_audience, competitor_handles, autonomous_mode_enabled, google_sheet_id, booking_calendar_url)
+    VALUES ($1, $2, false, 'FREE_STARTER', $3, $4, $5, $6, $7, $8, $9)
+    RETURNING id, company_name, notification_email, niche, target_audience, competitor_handles, autonomous_mode_enabled, google_sheet_id, is_active, created_at;
   `;
   try {
-    const dbRes = await pool.query(sql, [companyName, brandVoice, email, googleSheetId || null, bookingCalendarUrl || null]);
+    const dbRes = await pool.query(sql, [companyName, brandVoice, email, niche, targetAudience, JSON.stringify(competitorHandles), autonomousModeEnabled, googleSheetId || null, bookingCalendarUrl || null]);
     const tenant = dbRes.rows[0];
-    logger.info({ tenantId: tenant.id, companyName }, '🏢 New Company registered');
+    logger.info({ tenantId: tenant.id, companyName }, '🏢 New Company registered with Autonomous Engine');
     res.status(201).json({ success: true, tenant });
   } catch (err: any) {
     logger.error({ err: err.message }, 'Failed to register tenant');
@@ -38,8 +42,8 @@ export async function handleRegisterTenant(req: Request, res: Response): Promise
 export async function handleListTenants(req: Request, res: Response): Promise<void> {
   const isSuper = req.user?.role === 'SUPERADMIN';
   const sql = isSuper
-    ? `SELECT id, company_name, brand_voice, current_plan, notification_email, google_sheet_id, booking_calendar_url, is_active, created_at FROM tenants ORDER BY created_at DESC;`
-    : `SELECT id, company_name, brand_voice, current_plan, notification_email, google_sheet_id, booking_calendar_url, is_active, created_at FROM tenants WHERE id = $1;`;
+    ? `SELECT id, company_name, niche, target_audience, competitor_handles, autonomous_mode_enabled, is_active, created_at FROM tenants ORDER BY created_at DESC;`
+    : `SELECT id, company_name, niche, target_audience, competitor_handles, autonomous_mode_enabled, is_active, created_at FROM tenants WHERE id = $1;`;
   const params = isSuper ? [] : [req.tenantId];
 
   try {
@@ -58,7 +62,7 @@ export async function handleGetTenantById(req: Request, res: Response): Promise<
     res.status(403).json({ error: 'Forbidden', message: 'Tenant context required' });
     return;
   }
-  const sql = `SELECT id, company_name, brand_voice, current_plan, notification_email, google_sheet_id, booking_calendar_url, is_active, created_at FROM tenants WHERE id = $1;`;
+  const sql = `SELECT id, company_name, brand_voice, niche, target_audience, competitor_handles, autonomous_mode_enabled, google_sheet_id, booking_calendar_url, is_active, created_at FROM tenants WHERE id = $1;`;
   try {
     const dbRes = await pool.query(sql, [targetId]);
     if (!dbRes.rows[0]) {
@@ -79,24 +83,27 @@ export async function handleUpdateTenant(req: Request, res: Response): Promise<v
     res.status(403).json({ error: 'Forbidden', message: 'Tenant context required' });
     return;
   }
-  const { companyName, brandVoice, googleSheetId, bookingCalendarUrl, notificationEmail, isActive } = req.body;
+  const { companyName, brandVoice, niche, targetAudience, competitorHandles, autonomousModeEnabled, googleSheetId, bookingCalendarUrl, notificationEmail, isActive } = req.body;
   const sql = `
     UPDATE tenants
     SET company_name = COALESCE($2, company_name),
         brand_voice = COALESCE($3, brand_voice),
-        google_sheet_id = COALESCE($4, google_sheet_id),
-        booking_calendar_url = COALESCE($5, booking_calendar_url),
-        notification_email = COALESCE($6, notification_email),
-        is_active = COALESCE($7, is_active)
+        niche = COALESCE($4, niche),
+        target_audience = COALESCE($5, target_audience),
+        competitor_handles = COALESCE($6, competitor_handles),
+        autonomous_mode_enabled = COALESCE($7, autonomous_mode_enabled),
+        google_sheet_id = COALESCE($8, google_sheet_id),
+        booking_calendar_url = COALESCE($9, booking_calendar_url),
+        notification_email = COALESCE($10, notification_email),
+        is_active = COALESCE($11, is_active)
     WHERE id = $1
-    RETURNING id, company_name, brand_voice, notification_email, google_sheet_id, booking_calendar_url, is_active;
+    RETURNING id, company_name, niche, target_audience, competitor_handles, autonomous_mode_enabled, is_active;
   `;
   try {
-    const dbRes = await pool.query(sql, [targetId, companyName, brandVoice, googleSheetId, bookingCalendarUrl, notificationEmail, isActive]);
+    const dbRes = await pool.query(sql, [targetId, companyName, brandVoice, niche, targetAudience, competitorHandles ? JSON.stringify(competitorHandles) : null, autonomousModeEnabled, googleSheetId, bookingCalendarUrl, notificationEmail, isActive]);
     res.status(200).json({ success: true, tenant: dbRes.rows[0] });
   } catch (err: any) {
     logger.error({ err: err.message }, 'Failed to update tenant');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
-

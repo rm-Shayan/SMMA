@@ -1,46 +1,65 @@
 import { AgentState } from './agent.state';
 import { callQwenJson } from '../../core/ai/qwen.client';
+import { sanitizeAndScoreText } from '../../core/ai/quality.validator';
 
 export async function selfCommentNode(state: AgentState): Promise<Partial<AgentState>> {
-  const prompt = `You are Agent #1: Self-Comment Agent.
-Generate a high-value, authentic first comment on the following post to boost algorithmic engagement.
+  const prompt = `You are Agent #1: Algorithmic Reach Booster.
+Your job: Write a compelling first comment on our brand's post that sparks debate, adds immediate value, or directs to a free resource.
 Brand Voice: ${state.brandVoice}
-Post Context: "${state.incomingMessage}"
+Post Content: "${state.incomingMessage}"
+
+Strict Rules:
+- Never say "Great post!", "Check this out!", or generic bot spam.
+- Write 1-2 punchy sentences that invite replies from the audience.
 Output JSON: { "commentText": "...", "delaySeconds": 60 }`;
 
   const res = await callQwenJson<any>([{ role: 'system', content: prompt }], { temperature: 0.3 });
+  const rawComment = res?.commentText || 'Curious to hear how other agency owners are tackling this issue in their workflow!';
+  const qResult = sanitizeAndScoreText(rawComment, state.channel);
+
   return {
-    generatedResponse: res.commentText || 'Check out our link in bio for the full walkthrough!',
-    executionTrace: ['Agent #1 (Self-Comment) generated engagement comment'],
+    generatedResponse: qResult.cleanedText,
+    executionTrace: [`Agent #1 (Self-Comment) quality score: ${qResult.score}/100`],
   };
 }
 
 export async function trendPlannerNode(state: AgentState): Promise<Partial<AgentState>> {
-  const prompt = `You are Agent #5: Daily Trend & Need Identifier.
-Identify a high-converting post idea across 4 pillars (Educational, Promotional, Social Proof, Interactive).
+  const prompt = `You are Agent #2: Viral Trend & Market Need Architect.
+Analyze the target industry niche and craft 1 viral hook idea that directly targets business owners' biggest pain point.
 Brand Voice: ${state.brandVoice}
-Industry Niche: "${state.incomingMessage}"
-Output JSON: { "coreTopic": "...", "suggestedHook": "...", "pillar": "EDUCATIONAL" }`;
+Industry Niche Context: "${state.incomingMessage}"
 
-  const res = await callQwenJson<any>([{ role: 'system', content: prompt }], { temperature: 0.4 });
+Strict Rules:
+- Avoid buzzwords like "game-changer", "revolutionary", "delve".
+- Make the hook polarizing or insight-driven.
+Output JSON: { "coreTopic": "...", "suggestedHook": "...", "pillar": "EDUCATIONAL" | "SOCIAL_PROOF" | "PROMOTIONAL" }`;
+
+  const res = await callQwenJson<any>([{ role: 'system', content: prompt }], { temperature: 0.35 });
   return {
     generatedResponse: JSON.stringify(res),
-    executionTrace: ['Agent #5 (Trend Planner) created daily content concept'],
+    executionTrace: ['Agent #2 (Trend Planner) created validated content concept'],
   };
 }
 
 export async function publisherNode(state: AgentState): Promise<Partial<AgentState>> {
-  const prompt = `You are Agent #8: Post Publisher & Formatter.
-Format the following draft for ${state.channel} with appropriate line breaks and 3-5 targeted hashtags.
+  const channel = state.channel.toUpperCase();
+  const prompt = `You are Agent #4: Omnichannel Content Distribution Specialist.
+Adapt this raw draft for ${channel}.
 Brand Voice: ${state.brandVoice}
-Draft: "${state.incomingMessage}"
-Output JSON: { "formattedCaption": "...", "hashtags": ["#marketing", "#ai"] }`;
+Raw Draft: "${state.incomingMessage}"
+
+Platform Specific Constraints:
+- TWITTER/X: Strictly under 270 characters, 1-2 hashtags max.
+- LINKEDIN: Professional storytelling spacing, bold takeaway, 3 niche hashtags.
+- INSTAGRAM: Strong first line hook before fold, spacing, 5 targeted hashtags.
+Output JSON: { "formattedCaption": "...", "hashtags": ["#tag1", "#tag2"] }`;
 
   const res = await callQwenJson<any>([{ role: 'system', content: prompt }], { temperature: 0.3 });
-  const caption = res?.formattedCaption || res?.caption || res?.content || state.incomingMessage;
+  const rawCaption = res?.formattedCaption || res?.caption || res?.content || state.incomingMessage;
+  const qResult = sanitizeAndScoreText(rawCaption, channel);
+
   return {
-    generatedResponse: caption,
-    executionTrace: [`Agent #8 (Publisher) formatted post for ${state.channel}`],
+    generatedResponse: qResult.cleanedText,
+    executionTrace: [`Agent #4 (Publisher) formatted for ${channel}. Quality: ${qResult.score}/100`],
   };
 }
-

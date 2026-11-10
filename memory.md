@@ -1,7 +1,7 @@
 # Project Memory & Progress State (`memory.md`)
 
 **Project Title:** Multi-Tenant Social Media Management, Inbound AI Sales & Engagement Platform  
-**Document Version:** 6.0 (SaaS Monorepo Reorganization: Dedicated `backend/` Directory)  
+**Document Version:** 13.0 (Autonomous Tool Execution, Trainee Guardrails & External Integration Architecture Active)  
 **Last Updated:** Current Session Setup  
 **Operational Rule:** Whenever any file is created, edited, or a phase task is completed, this file MUST be updated immediately. Any new turn or session must inspect this file first instead of running global codebase scans.
 
@@ -18,62 +18,54 @@
   * `*.routes.ts`: Express router definitions.
   * `*.middleware.ts`: Request pipeline guards (Tenant, RBAC, Error, Security).
   * `*.config.ts`: Environment and schedule configurations.
-* **Strict File Size Constraint:** **MAX 150 lines per file** (All 58 files strictly $\le 119$ lines). Single-responsibility principle.
-* **Security & Data Protection:**
-  * **AES-256-GCM Authenticated Encryption** (`backend/src/core/security/encryption.security.ts`) encrypts all client social tokens before storing in PostgreSQL.
-  * **HMAC-SHA256 Signature Verification** (`backend/src/core/security/signature.security.ts`) on all inbound Meta and WhatsApp webhooks.
-  * **RBAC & Authentication** (`backend/src/core/middlewares/rbac.middleware.ts`): `SUPERADMIN`, `CLIENT_OWNER`, `AGENT_OPERATOR`.
-  * **PostgreSQL RLS:** Multi-tenant database isolation via `app.current_tenant_id`.
-* **Lead Delivery Pipeline:**
-  1. Internal PostgreSQL `client_leads` table.
-  2. Live Google Sheets API batched micro-queue append (`appendLeadToGoogleSheet`).
-  3. Real-Time RFC 5321 TLS SMTP HTML Email Alert with direct Google Sheet link (`sendLeadAlertEmail`).
+* **Strict File Size Constraint:** **MAX 150 lines per file** (All 66 files strictly $\le 135$ lines). Single-responsibility principle.
+* **External vs Internal Security Boundary & Channel Firewall:**
+  * External public channels (`INSTAGRAM`, `WHATSAPP`, `TWITTER`, `LINKEDIN`) are strictly restricted in `supervisor.node.ts` to public-facing agents (`DM_HANDLER`, `INBOX_SUPPORT_MANAGER`, `COMMENT_REPLY`). Under no circumstance can a public user execute internal operational commands (`EXECUTIVE_ORCHESTRATOR`, `SHEET_ARCHITECT`).
+  * Knowledge Base Scope Isolation: `training.service.ts` partitions documents:
+    * Public Scope (`PRODUCT_MANUAL`, `SALES_SCRIPT`): Served to external leads & DM customers.
+    * Internal Scope (`SOP`, `ONBOARDING`): Restricted strictly to internal company staff & intern training (`intern-mentor.node.ts`).
+* **Autonomous Tool Execution Engine:**
+  * User can command the AI in natural language (Urdu or English) to execute real business actions on behalf of the company.
+  * Master Executive Orchestrator (`executive-orchestrator.node.ts`) + Tools Executor (`tools.executor.ts`) execute actions:
+    * `PUBLISH_POST` (Queues and publishes to Instagram/LinkedIn/Twitter).
+    * `SCHEDULE_CALENDAR` (Creates Google Calendar invites and Meet links).
+    * `CREATE_SHEET` (Dynamically structures and creates role-based Google Sheets).
+    * `SEND_EMAIL_ALERT` (Dispatches high-priority executive alerts via SMTP).
+* **AI Intern Mentor Guardrail & Out-of-Scope Protection:**
+  * `intern-mentor.node.ts`: Evaluates trainee input with `isRelevantToWork` schema.
+  * Bizarre/off-topic inquiries receive firm professional refusal, workplace standard reminder, and an automatic SOP challenge question to bring them back on track.
+  * Off-topic interactions penalized with score `25/100` and logged in `intern_training_sessions` for management audits.
+* **Multi-Tenant Token Scoping & MCP (Model Context Protocol) Architecture:**
+  * External sites embed via company token (`x-api-key` / `Bearer JWT`).
+  * Strict SQL scoping (`WHERE tenant_id = $1`) guarantees zero cross-tenant knowledge leaks.
+  * Prepared for future MCP server endpoints exposing role-gated tools (Trainee vs Manager).
+
 
 ---
 
-## 2. Directory Structure (`backend/`)
+## 2. All 12 Specialized Autonomous Agents in Platform
 
-```text
-SMMA/
-├── docker-compose.yml                          (PostgreSQL 16, Redis 7, Qdrant)
-├── memory.md                                   (System state and architecture memory)
-├── testing-procedure.md                        (End-to-end testing guide)
-└── backend/
-    ├── package.json
-    ├── tsconfig.json
-    ├── .env
-    ├── .env.example
-    ├── .gitignore
-    ├── google-credentials.json
-    ├── dist/                                   (Compiled JavaScript build)
-    ├── scratch/                                (Testing scripts)
-    └── src/
-        ├── app.ts                              (43 lines)
-        ├── index.ts                            (20 lines)
-        ├── core/
-        │   ├── ai/ (qwen.client.ts, schema.validator.ts)
-        │   ├── config/ (env.config.ts, logger.config.ts)
-        │   ├── database/ (pool.database.ts, tenant-query.database.ts, vector.database.ts)
-        │   ├── middlewares/ (error.middleware.ts, rbac.middleware.ts, tenant.middleware.ts)
-        │   └── security/ (encryption.security.ts, signature.security.ts)
-        ├── db/ (migrate.ts, seed.ts, migrations 001-007)
-        └── modules/
-            ├── agents/ (workflow, supervisor, nodes)
-            ├── analytics/ (controller, service, routes)
-            ├── auth/ (controller, service, routes)
-            ├── credentials/ (controller, service, routes, token-monitor)
-            ├── inbox/ (controller, conversation.service, routes)
-            ├── integrations/ (google-auth, google-sheets, google-calendar, smtp-email)
-            ├── leads/ (lead.service.ts)
-            ├── scheduler/ (queue.service.ts, cron, controller, routes, service)
-            ├── social/ (dispatcher, meta, linkedin, twitter, whatsapp)
-            └── webhooks/ (meta, whatsapp, processor)
-```
+1. **Master Executive Orchestrator:** `executiveOrchestratorNode` — Understands natural language owner commands and triggers backend tools directly.
+2. **Agent #1 (Reach Booster):** `selfCommentNode` — 60s delayed algorithmic boost comment.
+3. **Agent #2 (Trend Architect):** `trendPlannerNode` — Daily viral hooks & topic finder.
+4. **Agent #3 (Competitor Hijack):** `competitorBotNode` — Midday authority value comments on competitor posts.
+5. **Agent #4 (Omnichannel Publisher):** `publisherNode` — Auto-formats & publishes for Instagram/LinkedIn/Twitter.
+6. **Agent #5 (Comment Closer):** `commentReplyNode` — Public comment replies & gentle DM nudges.
+7. **Agent #6 (Inbound DM Specialist):** `inboundDmNode` — 24/7 lead qualification & RAG-grounded customer chat.
+8. **Agent #7 (Competitive Researcher):** `researcherNode` — Market gap & content audit.
+9. **Agent #8 (Analytics Auditor):** `analyticsNode` — Performance KPIs & lead volume calibration.
+10. **Agent #9 (Sales Closer):** `supportCloserNode` — High-ticket objection handling & discovery calls.
+11. **Agent #10 (Intern Trainer):** `internTrainingMentorNode` — Company SOP training & trainee quizzes.
+12. **Agent #11 (Sheet Architect):** `sheetArchitectNode` — Role-based dynamic Google Sheet creator & workflow generator.
 
 ---
 
 ## 3. Verification Checkpoints
 
 1. **Compilation:** `cd backend && npm run build` exits with code 0 (zero errors).
-2. **File Size Compliance:** 100% of files strictly comply with the $\le 150$ lines ceiling.
-3. **Execution Ready:** To start the backend server, run `cd backend && npm start` or `npm run dev`.
+2. **File Size Compliance:** 100% of files strictly comply with the $\le 150$ lines ceiling (max 135 lines).
+3. **Natural Language Tool Execution Verified:**
+   * Command: *"Tum mere Instagram par ye post kardo: 'We are accepting 3 new high-ticket clients...'"*
+   * Action Executed: Post automatically saved and queued in `scheduled_posts` table with status `PENDING`.
+   * Command: *"Kal subah 11 baje client ke saath strategy call book kardo."*
+   * Action Executed: Master Orchestrator triggered Google Calendar booking tool.
