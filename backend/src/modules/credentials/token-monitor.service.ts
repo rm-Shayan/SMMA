@@ -1,6 +1,8 @@
-import { pool } from '../../core/database/pool.database';
+﻿import { pool } from '../../core/database/pool.database';
+import { executeTenantQuery } from '../../core/database/tenant-query.database';
 import { logger } from '../../core/config/logger.config';
 import { sendLeadAlertEmail } from '../integrations/smtp-email.service';
+import { logOutboundCall } from '../agents/agent.audit';
 
 export interface ExpiringCredential {
   id: string;
@@ -15,14 +17,7 @@ export interface ExpiringCredential {
 
 export async function checkExpiringCredentials(daysThreshold: number = 7): Promise<ExpiringCredential[]> {
   const sql = `
-    SELECT 
-      c.id, 
-      c.tenant_id, 
-      t.company_name as tenant_name, 
-      t.notification_email as contact_email, 
-      c.platform, 
-      c.account_id, 
-      c.token_expires_at,
+    SELECT c.id, c.tenant_id, t.company_name as tenant_name, t.notification_email as contact_email, c.platform, c.account_id, c.token_expires_at,
       ROUND(EXTRACT(EPOCH FROM (c.token_expires_at - NOW())) / 86400) as days_remaining
     FROM tenant_credentials c
     JOIN tenants t ON t.id = c.tenant_id
@@ -31,9 +26,8 @@ export async function checkExpiringCredentials(daysThreshold: number = 7): Promi
       AND c.token_expires_at > NOW()
     ORDER BY c.token_expires_at ASC;
   `;
-
   try {
-    const res = await pool.query(sql, [daysThreshold]);
+    const res = await pool.query(sql, [Math.max(1, Math.min(30, Number(daysThreshold) || 7))]); // system job
     return res.rows;
   } catch (err: any) {
     logger.error({ err: err.message }, 'Failed to query expiring credentials');
@@ -43,28 +37,20 @@ export async function checkExpiringCredentials(daysThreshold: number = 7): Promi
 
 export async function runTokenHealthAudit(): Promise<void> {
   const expiring = await checkExpiringCredentials(7);
-  if (expiring.length === 0) return;
-
-  logger.warn({ count: expiring.length }, '⚠️ Found social media access tokens approaching expiration within 7 days!');
-
+  if (!expiring.length) return;
+  logger.warn({ count: expiring.length }, 'Expiring social tokens detected');
   for (const item of expiring) {
-    logger.warn(
-      { tenant: item.tenant_name, platform: item.platform, daysLeft: item.days_remaining },
-      `Token for platform ${item.platform} will expire in ${item.days_remaining} day(s). Action required.`
-    );
-
-    if (item.contact_email) {
+    if (!item.contact_email) continue;
+    const started = Date.now();
+    try {
       await sendLeadAlertEmail({
-        toEmail: item.contact_email,
-        companyName: item.tenant_name,
-        leadName: `Security Alert: ${item.platform.toUpperCase()}`,
-        leadPhone: 'N/A',
-        leadEmail: item.contact_email,
-        channel: item.platform,
-        interest: `OAuth Access Token expires in ${item.days_remaining} day(s). Reconnection required.`,
-        leadScore: 100,
-        googleSheetUrl: 'https://agency.portal/settings/integrations',
-      }).catch((e) => logger.debug({ err: e.message }, 'Silent email alert skip'));
+        toEmail: item.contact_email, companyName: item.tenant_name,
+        leadName: `Security Alert: ${String(item.platform).toUpperCase()}`, leadPhone: 'N/A', leadEmail: item.contact_email,
+        channel: item.platform, interest: `OAuth token expires in ${item.days_remaining} day(s).`, leadScore: 100, googleSheetUrl: 'https://agency.portal/settings/integrations',
+      });
+      await logOutboundCall({ tenantId: item.tenant_id, toolName: 'token_expiry_alert_email', method: 'POST', destinationHost: 'smtp', destinationPath: '/send', decision: 'ALLOW', decisionReason: 'System token health alert to tenant contact', status: 'SUCCESS', latencyMs: Date.now() - started });
+    } catch (e: any) {
+      await logOutboundCall({ tenantId: item.tenant_id, toolName: 'token_expiry_alert_email', method: 'POST', destinationHost: 'smtp', destinationPath: '/send', decision: 'ALLOW', decisionReason: 'System token health alert to tenant contact', status: 'FAILED', latencyMs: Date.now() - started, error: e.message });
     }
   }
 }
