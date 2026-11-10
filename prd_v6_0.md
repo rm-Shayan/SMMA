@@ -1,7 +1,7 @@
-# Enterprise Product Requirement Document (PRD v13.0)
+# Enterprise Product Requirement Document (PRD v14.0)
 
 ## Project Title: Multi-Tenant Autonomous AI Agent Engine & Social / CRM / Operations Platform
-**Document Version:** 13.0 (Enterprise Multi-Tenant Autonomous Operating System)  
+**Document Version:** 14.0 (Enterprise Multi-Tenant Autonomous Operating System)  
 **Target Architecture:** Multi-Tenant Autonomous Agent Brain as a Service (Full Execution Engine)  
 **Backend Runtime:** **Node.js (v20+ LTS)** with **Express.js (Feature-First Modular Architecture)**  
 **Backend Root:** `backend/`  
@@ -117,7 +117,22 @@ To support distributed deployment across heterogeneous third-party environments,
 
 ---
 
-## 8. Verification & Strict File Constraints
+## 8. External Application Integration & OpenAPI / Swagger Tool Engine
+
+To allow companies with existing applications (HCM, ERP, CRM) to empower our AI Agent with custom actions without writing AI bots:
+1. **OpenAPI / Swagger Spec Importer (`POST /api/v1/tools/openapi`):**
+   * Automatically parses any standard `swagger.json` or OpenAPI spec URL.
+   * Discovers paths, HTTP methods (GET, POST, PUT, DELETE), schemas, and summaries.
+   * Auto-registers them as executable AI tools in `tenant_external_tools`.
+2. **Manual Webhook Tool Registration (`POST /api/v1/tools/manual`):**
+   * Provides a zero-code fallback for non-Swagger systems to register single webhook actions with secret auth headers.
+3. **Autonomous Dynamic Tool Execution (`executeExternalTool`):**
+   * Injected directly into `executiveOrchestratorNode`.
+   * When instructed, Qwen formulates parameters, dispatches HTTP requests to the client's live endpoint, updates their private DB, and returns confirmation.
+
+---
+
+## 9. Verification & Strict File Constraints
 
 * **Maximum Line Ceiling:** No `.ts` file exceeds **150 lines** (strictly modular, single-responsibility services).
 * **Build Integrity:** Clean compile with `tsc` (0 errors).

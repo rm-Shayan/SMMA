@@ -1,5 +1,6 @@
-import { pool } from '../../core/database/pool.database';
+﻿import { pool } from '../../core/database/pool.database';
 import { logger } from '../../core/config/logger.config';
+import { executeTenantQuery } from '../../core/database/tenant-query.database';
 import { appendLeadToGoogleSheet } from '../integrations/google-sheets.service';
 import { getTenantIntegrations } from '../tenants/tenant.service';
 import { sendLeadAlertEmail } from '../integrations/smtp-email.service';
@@ -16,23 +17,25 @@ export interface CapturedLeadData {
 }
 
 export async function saveCapturedLead(data: CapturedLeadData): Promise<string | null> {
+  if (!data.tenantId) return null;
   if (!data.name && !data.phone && !data.email) {
     return null;
   }
 
-  const name = data.name || 'Anonymous Prospect';
-  const phone = data.phone || null;
-  const email = data.email || null;
-  const leadScore = data.leadScore || 60;
-  const crmStage = data.crmStage || 'NEW_LEAD';
-  const interest = data.inquiryInterest || 'General Inquiry';
+  const name = (data.name || 'Anonymous Prospect').slice(0, 200);
+  const phone = data.phone ? String(data.phone).slice(0, 50) : null;
+  const email = data.email ? String(data.email).slice(0, 320) : null;
+  const leadScore = Math.max(0, Math.min(100, Number(data.leadScore) || 60));
+  const crmStage = (data.crmStage || 'NEW_LEAD').slice(0, 50);
+  const interest = (data.inquiryInterest || 'General Inquiry').slice(0, 1000);
 
   try {
     let leadId: string | null = null;
     let isNewLead = true;
 
     if (phone || email) {
-      const existing = await pool.query(
+      const existing = await executeTenantQuery(
+        data.tenantId,
         `SELECT id FROM client_leads
          WHERE tenant_id = $1
            AND (($2::text IS NOT NULL AND phone = $2) OR ($3::text IS NOT NULL AND email = $3))
@@ -42,7 +45,8 @@ export async function saveCapturedLead(data: CapturedLeadData): Promise<string |
 
       const existingId = existing.rows[0]?.id;
       if (existingId) {
-        const updated = await pool.query(
+        const updated = await executeTenantQuery(
+          data.tenantId,
           `UPDATE client_leads
            SET name = COALESCE($2, name),
                phone = COALESCE($3, phone),
@@ -57,23 +61,24 @@ export async function saveCapturedLead(data: CapturedLeadData): Promise<string |
         );
         leadId = updated.rows[0]?.id || existingId;
         isNewLead = false;
-        logger.info({ leadId, phone, email }, 'Existing lead updated (deduplicated)');
+        logger.info({ leadId }, 'Existing lead updated (deduplicated)');
       }
     }
 
     if (!leadId) {
-      const res = await pool.query(
+      const res = await executeTenantQuery(
+        data.tenantId,
         `INSERT INTO client_leads
          (tenant_id, name, phone, email, channel, inquiry_interest, lead_score, crm_stage)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING id;`,
         [data.tenantId, name, phone, email, data.channel, interest, leadScore, crmStage]
       );
-      leadId = res.rows[0]?.id;
-      logger.info({ leadId, name, phone }, 'New lead captured in database');
+      leadId = res.rows[0]?.id || null;
+      logger.info({ leadId }, 'New lead captured in database');
     }
 
-    if (!isNewLead) {
+    if (!isNewLead || !leadId) {
       return leadId;
     }
 
@@ -107,6 +112,7 @@ export async function saveCapturedLead(data: CapturedLeadData): Promise<string |
 }
 
 export async function getTenantLeads(tenantId: string, limit = 50): Promise<any[]> {
+  const safeLimit = Math.max(1, Math.min(200, Number(limit) || 50));
   const sql = `
     SELECT id, name, phone, email, channel, inquiry_interest, lead_score, crm_stage, created_at
     FROM client_leads
@@ -115,11 +121,10 @@ export async function getTenantLeads(tenantId: string, limit = 50): Promise<any[
     LIMIT $2;
   `;
   try {
-    const res = await pool.query(sql, [tenantId, limit]);
+    const res = await executeTenantQuery(tenantId, sql, [tenantId, safeLimit]);
     return res.rows;
   } catch (err: any) {
     logger.error({ err: err.message }, 'Failed to fetch tenant leads');
     return [];
   }
 }
-

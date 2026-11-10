@@ -1,7 +1,7 @@
 import { logger } from '../../core/config/logger.config';
 import { invokeAgentEngine } from '../agents/agent.workflow';
 import { saveCapturedLead } from '../leads/lead.service';
-import { findTenantByPlatformAccount, getDecryptedTenantCredential } from '../credentials/credentials.service';
+import { getDecryptedTenantCredential } from '../credentials/credentials.service';
 import { dispatchSocialMessage } from '../social/dispatcher.service';
 import { logConversation, getRecentConversationHistory, isConversationEscalated } from '../inbox/conversation.service';
 
@@ -22,118 +22,85 @@ export interface WhatsAppWebhookJobData {
   messageId?: string;
 }
 
+const seenMessageIds = new Map<string, number>();
+function isDuplicateMessage(tenantId: string, messageId?: string): boolean {
+  if (!messageId) return false;
+  const key = `${tenantId}:${messageId}`;
+  const now = Date.now();
+  if (seenMessageIds.has(key) && now - (seenMessageIds.get(key) || 0) < 86400000) return true;
+  seenMessageIds.set(key, now);
+  return false;
+}
+
+async function finalizeInbound(opts: {
+  tenantId: string; platform: any; senderId: string; senderName?: string;
+  messageText: string; aiResult: any; accountId?: string;
+}) {
+  const { tenantId, platform, senderId, senderName, messageText, aiResult, accountId } = opts;
+  await logConversation({
+    tenantId, platform, senderId, incomingText: messageText,
+    intentCategory: aiResult.intent, agentResponse: aiResult.generatedResponse,
+    isEscalated: aiResult.requiresHumanReview,
+  });
+  if (aiResult.generatedResponse) {
+    const creds = await getDecryptedTenantCredential(tenantId, platform.toLowerCase());
+    if (creds?.accessToken) {
+      await dispatchSocialMessage({
+        channel: platform, recipientId: senderId, text: aiResult.generatedResponse,
+        credentials: { accessToken: creds.accessToken, accountId: creds.accountId || accountId },
+      });
+    }
+  }
+  if (aiResult.crmContactUpdates?.phone || aiResult.crmContactUpdates?.email || (platform === 'WHATSAPP' && senderId)) {
+    await saveCapturedLead({
+      tenantId, channel: platform,
+      name: aiResult.crmContactUpdates?.name || senderName,
+      phone: aiResult.crmContactUpdates?.phone || (platform === 'WHATSAPP' ? senderId : undefined),
+      email: aiResult.crmContactUpdates?.email, inquiryInterest: messageText,
+      leadScore: aiResult.leadScore,
+    });
+  }
+}
+
 export async function processMetaWebhookJob(data: MetaWebhookJobData): Promise<void> {
-  const { tenantId, platform, senderId, messageText } = data;
+  const { tenantId, platform, senderId, messageText, messageId } = data;
+  if (isDuplicateMessage(tenantId, messageId)) {
+    logger.info({ tenantId, messageId }, 'Duplicate Meta webhook dropped');
+    return;
+  }
   try {
-    const escalated = await isConversationEscalated(tenantId, platform, senderId);
-    if (escalated) {
+    if (await isConversationEscalated(tenantId, platform, senderId)) {
       await logConversation({ tenantId, platform, senderId, incomingText: messageText, agentResponse: null, isEscalated: true });
       return;
     }
-
     const conversationHistory = await getRecentConversationHistory(tenantId, platform, senderId);
     const aiResult = await invokeAgentEngine({
-      tenantId,
-      channel: platform,
-      incomingMessage: messageText,
-      senderId,
-      conversationHistory,
-      targetAgent: 'DM_HANDLER',
+      tenantId, channel: platform, incomingMessage: messageText, senderId, conversationHistory, targetAgent: 'DM_HANDLER',
     });
-
-    await logConversation({
-      tenantId,
-      platform,
-      senderId,
-      incomingText: messageText,
-      intentCategory: aiResult.intent,
-      agentResponse: aiResult.generatedResponse,
-      isEscalated: aiResult.requiresHumanReview,
-    });
-
-    if (aiResult.generatedResponse) {
-      const creds = await getDecryptedTenantCredential(tenantId, platform.toLowerCase());
-      if (creds?.accessToken) {
-        await dispatchSocialMessage({
-          channel: platform,
-          recipientId: senderId,
-          text: aiResult.generatedResponse,
-          credentials: { accessToken: creds.accessToken, accountId: creds.accountId },
-        });
-      }
-    }
-
-    if (aiResult.crmContactUpdates?.phone || aiResult.crmContactUpdates?.email) {
-      await saveCapturedLead({
-        tenantId,
-        channel: platform,
-        name: aiResult.crmContactUpdates.name,
-        phone: aiResult.crmContactUpdates.phone,
-        email: aiResult.crmContactUpdates.email,
-        inquiryInterest: messageText,
-        leadScore: aiResult.leadScore,
-      });
-    }
+    await finalizeInbound({ tenantId, platform, senderId, messageText, aiResult });
   } catch (err: any) {
-    logger.error({ err: err.message, tenantId, platform }, 'Error processing Meta webhook job');
+    logger.error({ err: err.message, tenantId, platform }, 'Error processing Meta webhook');
   }
 }
 
 export async function processWhatsAppWebhookJob(data: WhatsAppWebhookJobData): Promise<void> {
-  const { tenantId, senderPhone, senderName, messageText, phoneNumberId } = data;
+  const { tenantId, senderPhone, senderName, messageText, phoneNumberId, messageId } = data;
+  if (isDuplicateMessage(tenantId, messageId)) {
+    logger.info({ tenantId, messageId }, 'Duplicate WhatsApp webhook dropped');
+    return;
+  }
   const platform = 'WHATSAPP';
   try {
-    const escalated = await isConversationEscalated(tenantId, platform, senderPhone);
-    if (escalated) {
+    if (await isConversationEscalated(tenantId, platform, senderPhone)) {
       await logConversation({ tenantId, platform, senderId: senderPhone, incomingText: messageText, agentResponse: null, isEscalated: true });
       return;
     }
-
     const conversationHistory = await getRecentConversationHistory(tenantId, platform, senderPhone);
     const aiResult = await invokeAgentEngine({
-      tenantId,
-      channel: platform,
-      incomingMessage: messageText,
-      senderId: senderPhone,
-      conversationHistory,
-      targetAgent: 'DM_HANDLER',
+      tenantId, channel: platform, incomingMessage: messageText, senderId: senderPhone, conversationHistory, targetAgent: 'DM_HANDLER',
     });
-
-    await logConversation({
-      tenantId,
-      platform,
-      senderId: senderPhone,
-      incomingText: messageText,
-      intentCategory: aiResult.intent,
-      agentResponse: aiResult.generatedResponse,
-      isEscalated: aiResult.requiresHumanReview,
-    });
-
-    if (aiResult.generatedResponse) {
-      const creds = await getDecryptedTenantCredential(tenantId, 'whatsapp');
-      if (creds?.accessToken) {
-        await dispatchSocialMessage({
-          channel: platform,
-          recipientId: senderPhone,
-          text: aiResult.generatedResponse,
-          credentials: { accessToken: creds.accessToken, accountId: creds.accountId || phoneNumberId },
-        });
-      }
-    }
-
-    if (aiResult.crmContactUpdates?.phone || aiResult.crmContactUpdates?.email || senderPhone) {
-      await saveCapturedLead({
-        tenantId,
-        channel: platform,
-        name: aiResult.crmContactUpdates?.name || senderName,
-        phone: aiResult.crmContactUpdates?.phone || senderPhone,
-        email: aiResult.crmContactUpdates?.email,
-        inquiryInterest: messageText,
-        leadScore: aiResult.leadScore,
-      });
-    }
+    await finalizeInbound({ tenantId, platform, senderId: senderPhone, senderName, messageText, aiResult, accountId: phoneNumberId });
   } catch (err: any) {
-    logger.error({ err: err.message, tenantId }, 'Error processing WhatsApp webhook job');
+    logger.error({ err: err.message, tenantId }, 'Error processing WhatsApp webhook');
   }
 }
-

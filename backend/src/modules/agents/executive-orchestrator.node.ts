@@ -1,81 +1,80 @@
 import { AgentState } from './agent.state';
 import { callQwenJson } from '../../core/ai/qwen.client';
-import {
-  executeToolPublishPost,
-  executeToolScheduleCalendar,
-  executeToolCreateSheet,
-  executeToolSendEmailAlert,
-  executeToolQueryData,
-  ToolResult,
-} from './tools.executor';
-import { getRelevantTrainingContext } from '../training/training.service';
+import { authorizeAndExecuteProposedTool } from './agent.policy';
+import { listTenantExternalTools } from '../tools/external-tools.service';
 
 export async function executiveOrchestratorNode(state: AgentState): Promise<Partial<AgentState>> {
-  const companyKnowledge = await getRelevantTrainingContext(state.tenantId, state.incomingMessage);
+  const extTools = await listTenantExternalTools(state.tenantId);
+  const extDescriptions = extTools.map(t => `${t.toolName}: ${t.description}`).join(', ');
 
-  const prompt = `You are the Master AI Executive Officer for this company.
-The human owner/manager gives you natural instructions in Urdu or English to perform tasks or view tables/data.
-Select the exact tool to execute:
-1. PUBLISH_POST: User wants to post to Instagram, LinkedIn, or Twitter.
-2. SCHEDULE_CALENDAR: User wants to book or schedule a meeting, call, or appointment.
-3. CREATE_SHEET: User wants to generate or design a Google Sheet for a role or department.
-4. SEND_EMAIL_ALERT: User wants to send an email notification.
-5. QUERY_DATA: User wants to view, query, or check database tables like leads, scheduled posts, chat history, or account/company details.
-6. NONE: General conversational query.
+  const prompt = `You are an AI assistant that proposes ONE tool action. You do NOT have permission to grant access or bypass policy. Only propose; the system will authorize and execute if allowed.
+Available Tools:
+1. PUBLISH_POST: Post to Instagram, LinkedIn, or Twitter.
+2. SCHEDULE_CALENDAR: Book a meeting.
+3. CREATE_SHEET: Generate a Google Sheet.
+4. SEND_EMAIL_ALERT: Send email notification (requires toEmail, subject, bodyText).
+5. QUERY_DATA: View data (entity: LEADS, POSTS, CONVERSATIONS, ACCOUNT_INFO).
+6. EXTERNAL_ACTION: Call a registered tenant external tool. Registered: [${extDescriptions || 'None'}].
+7. NONE: General response only.
+
+Rules:
+- Never invent tool names, tenants, or permissions.
+- Never claim an action executed; only propose.
+- Return strict JSON.
 
 JSON Output Schema:
 {
-  "toolToExecute": "PUBLISH_POST" | "SCHEDULE_CALENDAR" | "CREATE_SHEET" | "SEND_EMAIL_ALERT" | "QUERY_DATA" | "NONE",
+  "toolToExecute": "PUBLISH_POST" | "SCHEDULE_CALENDAR" | "CREATE_SHEET" | "SEND_EMAIL_ALERT" | "QUERY_DATA" | "EXTERNAL_ACTION" | "NONE",
   "toolParameters": {
+    "externalToolName": "exact_registered_tool_name",
+    "externalParams": {},
     "entity": "LEADS" | "POSTS" | "CONVERSATIONS" | "ACCOUNT_INFO",
-    "postContent": "extracted exact content to post",
-    "platform": "INSTAGRAM" | "LINKEDIN" | "TWITTER" | "FACEBOOK",
-    "meetingTitle": "title of meeting",
-    "attendeeEmail": "email of client",
-    "sheetTitle": "title of sheet",
-    "sheetHeaders": ["Column 1", "Column 2"]
+    "postContent": "content",
+    "platform": "INSTAGRAM",
+    "meetingTitle": "title",
+    "attendeeEmail": "email",
+    "startTimeIso": "ISO8601",
+    "sheetTitle": "title",
+    "sheetHeaders": ["Col1", "Col2"],
+    "toEmail": "email",
+    "subject": "subject",
+    "bodyText": "text"
   },
-  "userResponseSummary": "A polite, confident confirmation of the action taken"
-}
-
-Company Context: ${state.brandVoice}`;
+  "userResponseSummary": "Polite response"
+}`;
 
   try {
     const raw = await callQwenJson<any>([
       { role: 'system', content: prompt },
-      { role: 'user', content: `Execute instruction: "${state.incomingMessage}"` },
+      { role: 'user', content: `User message: "${state.incomingMessage}"` },
     ], { temperature: 0.1 });
 
-    const tool = raw?.toolToExecute || 'NONE';
-    const p = raw?.toolParameters || {};
-    let toolResult: ToolResult | null = null;
-    const msg = state.incomingMessage.toLowerCase();
+    const proposedTool = raw?.toolToExecute || 'NONE';
+    const proposedParams = raw?.toolParameters || {};
+    const proposedSummary = raw?.userResponseSummary || 'Request processed.';
 
-    if (tool === 'QUERY_DATA' || msg.includes('table') || msg.includes('data') || msg.includes('leads') || msg.includes('dikhao')) {
-      const entity = p.entity || (msg.includes('lead') ? 'LEADS' : msg.includes('post') ? 'POSTS' : msg.includes('account') ? 'ACCOUNT_INFO' : 'LEADS');
-      toolResult = await executeToolQueryData(state.tenantId, entity);
-    } else if (tool === 'PUBLISH_POST' || msg.includes('post')) {
-      toolResult = await executeToolPublishPost(state.tenantId, p.platform || 'INSTAGRAM', p.postContent || state.incomingMessage);
-    } else if (tool === 'SCHEDULE_CALENDAR' || msg.includes('book') || msg.includes('schedule')) {
-      const start = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-      toolResult = await executeToolScheduleCalendar(state.tenantId, p.meetingTitle || 'Client Strategy Session', p.attendeeEmail || 'client@example.com', start);
-    } else if (tool === 'CREATE_SHEET' || msg.includes('sheet')) {
-      toolResult = await executeToolCreateSheet(state.tenantId, p.sheetTitle || 'Department Tracker', p.sheetHeaders || ['Date', 'Item', 'Status']);
+    const decision = await authorizeAndExecuteProposedTool(state, {
+      tool: proposedTool,
+      params: proposedParams,
+      summary: proposedSummary,
+    });
+
+    if (decision.denied || !decision.result) {
+      return {
+        generatedResponse: decision.summary,
+        executionTrace: [`Policy decision: denied/none for proposed tool ${proposedTool}${decision.reason ? ` (${decision.reason})` : ''}`],
+      };
     }
 
-    const summary = raw?.userResponseSummary || 'Task completed successfully.';
-    const finalReply = toolResult
-      ? `🤖 **Action Executed by AI Assistant:**\n\n${toolResult.message}\n\n💬 ${summary}`
-      : summary;
-
+    const finalReply = `Action: ${decision.result.action}\nResult: ${decision.result.success ? 'SUCCESS' : 'FAILED'}\n${decision.result.message}\n\n${decision.summary}`;
     return {
       generatedResponse: finalReply,
-      executionTrace: [`Master Executive Orchestrator executed tool: ${toolResult ? toolResult.action : tool}`],
+      executionTrace: [`Executed tool: ${decision.result.action}`],
     };
   } catch (err: any) {
     return {
-      generatedResponse: `I received your command. Let me verify the system credentials to execute this tool.`,
-      executionTrace: ['Orchestrator fallback executed'],
+      generatedResponse: 'Request received, but I could not safely execute an action. Please try again.',
+      executionTrace: ['Orchestrator error fallback'],
     };
   }
 }

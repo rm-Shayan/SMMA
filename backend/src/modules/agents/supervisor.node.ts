@@ -14,15 +14,25 @@ const SupervisorDecisionSchema = z.object({
 });
 
 const EXTERNAL_CHANNELS = ['INSTAGRAM', 'WHATSAPP', 'TWITTER', 'LINKEDIN', 'META'];
+const INTERNAL_ONLY_AGENTS = ['EXECUTIVE_ORCHESTRATOR', 'SHEET_ARCHITECT', 'INTERN_TRAINER'];
 
 export async function supervisorNode(state: AgentState): Promise<Partial<AgentState>> {
+  const isExternal = EXTERNAL_CHANNELS.includes((state.channel || '').toUpperCase());
+
   if (state.targetAgent) {
+    if (isExternal && INTERNAL_ONLY_AGENTS.includes(state.targetAgent)) {
+      return {
+        targetAgent: 'INBOX_SUPPORT_MANAGER',
+        executionTrace: [
+          `FIREWALL BLOCKED: External channel ${state.channel} attempted internal agent ${state.targetAgent}. Forced to INBOX_SUPPORT_MANAGER`
+        ],
+      };
+    }
     return {
-      executionTrace: [`Direct invocation: ${state.targetAgent} (Supervisor auto-bypass)`],
+      targetAgent: state.targetAgent,
+      executionTrace: [`Direct invocation: ${state.targetAgent} (Supervisor validated)`],
     };
   }
-
-  const isExternal = EXTERNAL_CHANNELS.includes((state.channel || '').toUpperCase());
 
   const prompt = isExternal
     ? `You are System Supervisor for EXTERNAL PUBLIC CHANNELS (${state.channel}).

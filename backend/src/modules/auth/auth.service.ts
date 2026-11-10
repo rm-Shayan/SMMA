@@ -6,7 +6,7 @@ import { logger } from '../../core/config/logger.config';
 export interface TokenPayload {
   userId: string;
   email: string;
-  role: 'SUPERADMIN' | 'CLIENT_OWNER' | 'AGENT_OPERATOR';
+  role: 'SUPERADMIN' | 'CLIENT_OWNER' | 'AGENT_OPERATOR' | 'TRAINEE';
   tenantId: string | null;
 }
 

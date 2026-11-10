@@ -33,7 +33,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
   next();
 }
 
-export function requireRole(allowedRoles: Array<'SUPERADMIN' | 'CLIENT_OWNER' | 'AGENT_OPERATOR'>) {
+export function requireRole(allowedRoles: Array<'SUPERADMIN' | 'CLIENT_OWNER' | 'AGENT_OPERATOR' | 'TRAINEE'>) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user || !allowedRoles.includes(req.user.role)) {
       res.status(403).json({ error: 'Forbidden', message: 'Insufficient role permissions' });

@@ -121,6 +121,23 @@ When an agency owner or manager commands the AI Assistant via chat:
 
 ---
 
+### Cycle E: External Client System Integration & OpenAPI / Swagger Tool Execution
+When an external client integrates our AI Agent API without having their own AI bot:
+
+1. **Client Registers OpenAPI Specification:**
+   - Client provides their API docs URL: `POST /api/v1/tools/openapi` (`{ specUrl: "https://client.com/swagger.json", authHeaderValue: "Bearer secret" }`).
+   - `external-tools.service.ts` parses the JSON, auto-discovers endpoints (e.g. `cancel_order`, `update_inventory`, `create_lead`), and persists them into `tenant_external_tools`.
+   - Alternatively, clients with simple systems register single endpoints via `POST /api/v1/tools/manual`.
+2. **Autonomous Tool Selection & Execution:**
+   - User instructs agent: *"Ali ka pending leave request approve kardo aur inventory stock sheet bana do"*.
+   - `executive-orchestrator.node.ts` dynamically injects tenant's registered external tools into Qwen's schema.
+   - Qwen selects `EXTERNAL_ACTION` with `externalToolName: "approve_leave"`, while also scheduling `CREATE_SHEET`.
+   - `executeExternalTool()` executes the HTTP request directly against the client company's backend.
+   - Client backend modifies its private DB and returns `200 OK`.
+   - AI agent presents confirmation and Google Sheet link to the user.
+
+---
+
 ## 3. External Platform Integration & MCP (Model Context Protocol) Flow
 
 1. **Third-Party LMS / External App Embedding:**

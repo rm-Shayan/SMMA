@@ -1,8 +1,9 @@
-import { Request, Response } from 'express';
+﻿import { Request, Response } from 'express';
 import { z } from 'zod';
 import { schedulePost } from './scheduler.service';
 import { invokeAgentEngine } from '../agents/agent.workflow';
 import { logger } from '../../core/config/logger.config';
+import { logAiOperation } from '../agents/agent.audit';
 
 const PublishPostSchema = z.object({
   platform: z.enum(['linkedin', 'instagram', 'twitter', 'facebook']),
@@ -12,10 +13,15 @@ const PublishPostSchema = z.object({
   exactTime: z.string().datetime().optional(),
 });
 
+function resolveTenant(req: Request): string | null {
+  if (req.user?.role === 'SUPERADMIN') return (req.body?.tenantId || req.tenantId || req.user.tenantId || null) as string | null;
+  return (req.user?.tenantId || req.tenantId || null) as string | null;
+}
+
 export async function handleSchedulePost(req: Request, res: Response): Promise<void> {
-  const tenantId = req.tenantId;
-  if (!tenantId) {
-    res.status(400).json({ error: 'Tenant context required' });
+  const tenantId = resolveTenant(req);
+  if (!tenantId || !req.user) {
+    res.status(403).json({ error: 'Forbidden', message: 'Tenant context required' });
     return;
   }
 
@@ -33,6 +39,7 @@ export async function handleSchedulePost(req: Request, res: Response): Promise<v
       channel: platform.toUpperCase() as any,
       incomingMessage: draftContent,
       targetAgent: 'POST_DISTRIBUTION',
+      actor: { userId: req.user.userId, role: req.user.role, tenantId },
     });
 
     const finalContent = formatted.generatedResponse || draftContent;
@@ -46,15 +53,24 @@ export async function handleSchedulePost(req: Request, res: Response): Promise<v
       exactTime: autoScheduleOptimal ? undefined : scheduledTime,
     });
 
-    res.status(201).json({
-      success: true,
-      message: 'Post successfully scheduled by Agent #8',
-      postId: scheduledPostId,
-      formattedContent: finalContent,
+    await logAiOperation({
+      tenantId,
+      actorUserId: req.user.userId,
+      actorRole: req.user.role,
+      channel: platform.toUpperCase(),
+      intent: 'schedule_post',
+      proposedTool: 'PUBLISH_POST',
+      proposedParams: { platform, autoScheduleOptimal, hasExactTime: !!exactTime },
+      decision: 'ALLOW',
+      decisionReason: 'Authorized schedule request',
+      executedTool: 'schedule_post',
+      resultStatus: scheduledPostId ? 'SUCCESS' : 'FAILED',
+      resultMessage: scheduledPostId ? `Scheduled ${scheduledPostId}` : 'Scheduling failed',
     });
+
+    res.status(201).json({ success: !!scheduledPostId, postId: scheduledPostId, formattedContent: finalContent });
   } catch (err: any) {
     logger.error({ err: err.message }, 'Failed to schedule post');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
-

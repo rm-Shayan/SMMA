@@ -1,5 +1,6 @@
 import { pool } from '../../core/database/pool.database';
 import { logger } from '../../core/config/logger.config';
+import { executeTenantQuery } from '../../core/database/tenant-query.database';
 
 export interface CompanyTrainingDoc {
   id?: string;
@@ -17,14 +18,14 @@ export async function saveCompanyTrainingDoc(doc: CompanyTrainingDoc): Promise<a
     RETURNING id, title, category, created_at;
   `;
   try {
-    const res = await pool.query(sql, [
+    const res = await executeTenantQuery(doc.tenantId, sql, [
       doc.tenantId,
       doc.title,
       doc.category,
       doc.documentContent,
       JSON.stringify(doc.keyTakeaways || []),
     ]);
-    logger.info({ tenantId: doc.tenantId, title: doc.title }, '📚 New company training document uploaded');
+    logger.info({ tenantId: doc.tenantId, title: doc.title }, 'New company training document uploaded');
     return res.rows[0];
   } catch (err: any) {
     logger.error({ err: err.message }, 'Failed to save training doc');
@@ -34,7 +35,7 @@ export async function saveCompanyTrainingDoc(doc: CompanyTrainingDoc): Promise<a
 
 export async function getRelevantTrainingContext(
   tenantId: string,
-  query: string,
+  _query: string,
   scope: 'PUBLIC' | 'INTERNAL' = 'INTERNAL'
 ): Promise<string> {
   const isPublic = scope === 'PUBLIC';
@@ -54,7 +55,7 @@ export async function getRelevantTrainingContext(
       LIMIT 3;
     `;
   try {
-    const res = await pool.query(sql, [tenantId]);
+    const res = await executeTenantQuery(tenantId, sql, [tenantId]);
     if (res.rows.length === 0) {
       return isPublic
         ? 'Rely on official company public pricing and public service offerings.'
@@ -82,7 +83,7 @@ export async function logInternTrainingSession(data: {
     VALUES ($1, $2, $3, $4, $5, $6, $7);
   `;
   try {
-    await pool.query(sql, [
+    await executeTenantQuery(data.tenantId, sql, [
       data.tenantId,
       data.internName,
       data.internEmail || null,

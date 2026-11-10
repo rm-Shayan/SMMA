@@ -1,3 +1,4 @@
+﻿import { executeTenantQuery } from '../../core/database/tenant-query.database';
 import { pool } from '../../core/database/pool.database';
 import { getNextOptimalSlot, SocialPlatform } from './scheduler.config';
 import { logger } from '../../core/config/logger.config';
@@ -15,26 +16,24 @@ export async function schedulePost(input: SchedulePostInput): Promise<string | n
   const targetTime = exactTime || getNextOptimalSlot(platform);
 
   const sql = `
-    INSERT INTO scheduled_posts 
+    INSERT INTO scheduled_posts
     (tenant_id, platform, content, image_url, scheduled_at, status)
     VALUES ($1, $2, $3, $4, $5, 'PENDING')
     RETURNING id, scheduled_at;
   `;
 
   try {
-    const res = await pool.query(sql, [tenantId, platform, content, imageUrl || null, targetTime]);
+    const res = await executeTenantQuery(tenantId, sql, [tenantId, platform, content, imageUrl || null, targetTime]);
     const post = res.rows[0];
-    logger.info({ id: post.id, platform, time: post.scheduled_at }, '📅 Post scheduled for peak hour');
+    logger.info({ id: post.id, platform, time: post.scheduled_at }, 'Post scheduled');
     return post.id;
   } catch (err: any) {
-    logger.error({ err: err.message }, 'Failed to schedule post');
+    logger.error({ err: err.message, tenantId }, 'Failed to schedule post');
     return null;
   }
 }
 
-/**
- * Atomically claims due posts so multiple app instances never publish the same post twice.
- */
+/** System-level: atomically claims due posts across tenants. */
 export async function claimDuePosts(): Promise<any[]> {
   const sql = `
     WITH due AS (
@@ -60,16 +59,9 @@ export async function claimDuePosts(): Promise<any[]> {
 }
 
 export async function markPostPublished(postId: string): Promise<void> {
-  await pool.query(
-    `UPDATE scheduled_posts SET status = 'PUBLISHED', published_at = NOW(), error_log = NULL WHERE id = $1;`,
-    [postId]
-  );
+  await pool.query(`UPDATE scheduled_posts SET status = 'PUBLISHED', published_at = NOW(), error_log = NULL WHERE id = $1;`, [postId]);
 }
 
 export async function markPostFailed(postId: string, reason: string): Promise<void> {
-  await pool.query(
-    `UPDATE scheduled_posts SET status = 'FAILED', error_log = $2 WHERE id = $1;`,
-    [postId, reason.slice(0, 2000)]
-  );
+  await pool.query(`UPDATE scheduled_posts SET status = 'FAILED', error_log = $2 WHERE id = $1;`, [postId, String(reason || '').slice(0, 2000)]);
 }
-

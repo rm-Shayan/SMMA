@@ -71,3 +71,23 @@ export function validateEmail(email?: string | null): string | null {
   return clean;
 }
 
+const INJECTION_PATTERNS = [
+  /ignore\s+(all\s+)?(previous|prior)\s+instructions/i,
+  /system\s+prompt/i,
+  /developer\s+mode/i,
+  /jailbreak/i,
+  /output\s+(verbatim|raw)\s+(instructions|prompt)/i,
+  /repeat\s+everything\s+above/i,
+  /you\s+are\s+now\s+unrestricted/i,
+  /override\s+system\s+rules/i,
+  /<system>|<\/system>|<script>|<\/script>/i,
+];
+
+export function detectPromptInjection(text: string): { isInjected: boolean; reason?: string } {
+  const t = String(text || '');
+  for (const p of INJECTION_PATTERNS) {
+    if (p.test(t)) return { isInjected: true, reason: `Flagged prompt injection pattern: ${p.source}` };
+  }
+  return { isInjected: false };
+}
+

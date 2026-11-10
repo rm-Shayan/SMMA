@@ -1,8 +1,7 @@
-import { AgentState } from './agent.state';
+﻿import { AgentState } from './agent.state';
 import { callQwenJson } from '../../core/ai/qwen.client';
-import { createGoogleSpreadsheet, DynamicSpreadsheetResult } from '../integrations/google-sheets-creator.service';
-import { pool } from '../../core/database/pool.database';
 import { z } from 'zod';
+import { authorizeAndExecuteProposedTool } from './agent.policy';
 
 const SheetArchitectSchema = z.object({
   isSheetCreationRequest: z.boolean(),
@@ -15,16 +14,10 @@ const SheetArchitectSchema = z.object({
 
 export async function sheetArchitectNode(state: AgentState): Promise<Partial<AgentState>> {
   const prompt = `You are Agent #11: Autonomous Sheet & Workflow Operations Architect.
-Your job: When a user, manager, or company says "create a sheet for [role/accounts/sales/hiring]", design the exact professional spreadsheet structure needed.
-
+Design a spreadsheet structure. You may propose creation; the system will authorize it.
 User Request: "${state.incomingMessage}"
 Brand / Context: ${state.brandVoice}
-
-Rules:
-1. Identify the exact role (e.g. Accounts, Sales Reps, Intern Tracking, Influencer CRM, Expense Ledger).
-2. Choose 5-8 highly relevant, structured column headers for that specific role.
-3. Provide 2 realistic sample seed data rows.
-4. Output valid JSON matching schema.`;
+Return valid JSON with spreadsheetTitle, targetRole, columnHeaders (5-8), sampleSeedRows, summaryExplanation, isSheetCreationRequest.`;
 
   try {
     const raw = await callQwenJson<any>([
@@ -39,32 +32,31 @@ Rules:
       targetRole: 'Operations',
       columnHeaders: ['Date', 'Item Description', 'Department', 'Assigned To', 'Status', 'Notes'],
       sampleSeedRows: [[new Date().toISOString().split('T')[0], 'Initial Setup', 'General', 'Operations Lead', 'ACTIVE', 'Initialized by AI']],
-      summaryExplanation: 'I have structured your custom operations sheet with necessary column tracking.',
+      summaryExplanation: 'Structured operations tracking sheet.',
     };
 
-    let sheetRes: DynamicSpreadsheetResult | null = null;
-    try {
-      sheetRes = await createGoogleSpreadsheet(design.spreadsheetTitle, design.columnHeaders, design.sampleSeedRows);
-    } catch {
-      sheetRes = null;
+    const decision = await authorizeAndExecuteProposedTool(state, {
+      tool: 'CREATE_SHEET',
+      params: { sheetTitle: design.spreadsheetTitle, sheetHeaders: design.columnHeaders },
+      summary: design.summaryExplanation,
+    });
+
+    if (decision.denied || !decision.result) {
+      return {
+        generatedResponse: `Sheet action denied by policy: ${decision.reason || decision.summary}`,
+        executionTrace: [`Agent #11 policy denied: ${decision.reason || 'denied'}`],
+      };
     }
 
-    const liveUrl = sheetRes?.spreadsheetUrl || 'https://docs.google.com/spreadsheets/d/mock-preview';
-    const textOutput = `✅ **${design.spreadsheetTitle}** has been autonomously generated!\n\n` +
-      `📋 **Designed For:** ${design.targetRole}\n` +
-      `📊 **Columns Created:** ${design.columnHeaders.join(' | ')}\n` +
-      `🔗 **Live Google Sheet Link:** [Open Spreadsheet](${liveUrl})\n\n` +
-      `💬 ${design.summaryExplanation}`;
-
+    const url = (decision.result.data as any)?.spreadsheetUrl || 'N/A';
     return {
-      generatedResponse: textOutput,
-      executionTrace: [`Agent #11 (Sheet Architect) created custom sheet for ${design.targetRole}.`],
+      generatedResponse: `Sheet created (policy-approved).\nTitle: ${design.spreadsheetTitle}\nRole: ${design.targetRole}\nColumns: ${design.columnHeaders.join(' | ')}\nURL: ${url}\n\n${design.summaryExplanation}`,
+      executionTrace: [`Agent #11 created sheet via policy gate for ${design.targetRole}.`],
     };
   } catch {
     return {
-      generatedResponse: `I have designed your tracking structure. Please ensure Google API credentials are authenticated.`,
-      executionTrace: ['Agent #11 fallback response'],
+      generatedResponse: 'Sheet request could not be completed safely.',
+      executionTrace: ['Agent #11 fallback'],
     };
   }
 }
-

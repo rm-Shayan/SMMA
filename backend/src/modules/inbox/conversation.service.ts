@@ -1,5 +1,5 @@
-import { pool } from '../../core/database/pool.database';
-import { logger } from '../../core/config/logger.config';
+﻿import { logger } from '../../core/config/logger.config';
+import { executeTenantQuery } from '../../core/database/tenant-query.database';
 
 export interface ConversationLogInput {
   tenantId: string;
@@ -23,16 +23,16 @@ export async function getRecentConversationHistory(
   limit = 8
 ): Promise<HistoryMessage[]> {
   try {
-    const res = await pool.query(
+    const res = await executeTenantQuery(tenantId,
       `SELECT incoming_text, agent_response FROM tenant_conversations
        WHERE tenant_id = $1 AND platform = $2 AND sender_id = $3
        ORDER BY created_at DESC LIMIT $4;`,
-      [tenantId, platform, senderId, limit]
+      [tenantId, platform, senderId, Math.max(1, Math.min(20, Number(limit) || 8))]
     );
     const history: HistoryMessage[] = [];
     for (const row of res.rows.reverse()) {
-      if (row.incoming_text) history.push({ role: 'user', content: row.incoming_text });
-      if (row.agent_response) history.push({ role: 'assistant', content: row.agent_response });
+      if (row.incoming_text) history.push({ role: 'user', content: String(row.incoming_text).slice(0, 1000) });
+      if (row.agent_response) history.push({ role: 'assistant', content: String(row.agent_response).slice(0, 1000) });
     }
     return history;
   } catch (err: any) {
@@ -47,7 +47,7 @@ export async function isConversationEscalated(
   senderId: string
 ): Promise<boolean> {
   try {
-    const res = await pool.query(
+    const res = await executeTenantQuery(tenantId,
       `SELECT is_escalated FROM tenant_conversations
        WHERE tenant_id = $1 AND platform = $2 AND sender_id = $3
        ORDER BY created_at DESC LIMIT 1;`,
@@ -67,14 +67,14 @@ export async function logConversation(input: ConversationLogInput): Promise<void
     VALUES ($1, $2, $3, $4, $5, $6, $7);
   `;
   try {
-    await pool.query(sql, [
+    await executeTenantQuery(input.tenantId, sql, [
       input.tenantId,
-      input.platform,
-      input.senderId,
-      input.incomingText,
-      input.intentCategory || null,
-      input.agentResponse || null,
-      input.isEscalated || false,
+      String(input.platform || '').slice(0, 50),
+      String(input.senderId || '').slice(0, 200),
+      String(input.incomingText || '').slice(0, 8000),
+      input.intentCategory ? String(input.intentCategory).slice(0, 100) : null,
+      input.agentResponse ? String(input.agentResponse).slice(0, 8000) : null,
+      !!input.isEscalated,
     ]);
   } catch (err: any) {
     logger.error({ err: err.message, tenantId: input.tenantId }, 'Failed to log conversation');

@@ -1,4 +1,5 @@
-import { pool } from '../../core/database/pool.database';
+﻿import { pool } from '../../core/database/pool.database';
+import { executeTenantQuery } from '../../core/database/tenant-query.database';
 import { env } from '../../core/config/env.config';
 import { logger } from '../../core/config/logger.config';
 
@@ -23,18 +24,11 @@ export async function getTenantIntegrations(tenantId: string): Promise<TenantInt
   const fallbackEmail = env.SMTP_MAIL || '';
 
   try {
-    const res = await pool.query(
+    const res = await executeTenantQuery(tenantId,
       `SELECT brand_voice, niche, target_audience, competitor_handles, is_active, google_sheet_id, booking_calendar_url, calendar_id, notification_email FROM tenants WHERE id = $1 LIMIT 1`,
       [tenantId]
     );
-
     const row = res.rows[0];
-    const sheetId = row?.google_sheet_id || fallbackSheet;
-    const bookingUrl = row?.booking_calendar_url || fallbackBooking;
-    const calendarId = row?.calendar_id || fallbackCalendarId;
-    const notificationEmail = row?.notification_email || fallbackEmail;
-    const isUsingFallback = !row?.google_sheet_id || !row?.booking_calendar_url;
-
     return {
       tenantId,
       brandVoice: row?.brand_voice || 'Professional, authoritative, high-conversion',
@@ -42,26 +36,14 @@ export async function getTenantIntegrations(tenantId: string): Promise<TenantInt
       targetAudience: row?.target_audience || 'Business owners and prospective clients',
       competitorHandles: row?.competitor_handles || [],
       isActive: row ? row.is_active !== false : true,
-      googleSheetId: sheetId,
-      bookingCalendarUrl: bookingUrl,
-      calendarId,
-      notificationEmail,
-      isUsingFallback,
+      googleSheetId: row?.google_sheet_id || fallbackSheet,
+      bookingCalendarUrl: row?.booking_calendar_url || fallbackBooking,
+      calendarId: row?.calendar_id || fallbackCalendarId,
+      notificationEmail: row?.notification_email || fallbackEmail,
+      isUsingFallback: !row?.google_sheet_id || !row?.booking_calendar_url,
     };
   } catch (err: any) {
     logger.warn({ err: err.message, tenantId }, 'Tenant integrations lookup failed, using fallback');
-    return {
-      tenantId,
-      brandVoice: 'Professional, authoritative, high-conversion',
-      niche: 'General Marketing & Sales Automation',
-      targetAudience: 'Business owners and prospective clients',
-      competitorHandles: [],
-      isActive: true,
-      googleSheetId: fallbackSheet,
-      bookingCalendarUrl: fallbackBooking,
-      calendarId: fallbackCalendarId,
-      notificationEmail: fallbackEmail,
-      isUsingFallback: true,
-    };
+    return { tenantId, brandVoice: 'Professional, authoritative, high-conversion', niche: 'General Marketing & Sales Automation', targetAudience: 'Business owners and prospective clients', competitorHandles: [], isActive: true, googleSheetId: fallbackSheet, bookingCalendarUrl: fallbackBooking, calendarId: fallbackCalendarId, notificationEmail: fallbackEmail, isUsingFallback: true };
   }
 }

@@ -13,7 +13,17 @@ export interface AgentHistoryMessage {
   content: string;
 }
 
+export interface AgentActor {
+  userId?: string;
+  role: 'SUPERADMIN' | 'CLIENT_OWNER' | 'AGENT_OPERATOR';
+  tenantId: string;
+}
+
 export const AgentStateAnnotation = Annotation.Root({
+  actor: Annotation<AgentActor | null>({
+    reducer: (_curr, update) => update,
+    default: () => null,
+  }),
   tenantId: Annotation<string>(),
   brandVoice: Annotation<string>(),
   channel: Annotation<string>(),

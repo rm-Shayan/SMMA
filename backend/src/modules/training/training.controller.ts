@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
+﻿import { Request, Response } from 'express';
 import { z } from 'zod';
 import { saveCompanyTrainingDoc } from './training.service';
 import { invokeAgentEngine } from '../agents/agent.workflow';
 import { logger } from '../../core/config/logger.config';
-import { pool } from '../../core/database/pool.database';
+import { executeTenantQuery } from '../../core/database/tenant-query.database';
 
 const UploadDocSchema = z.object({
   title: z.string().min(2),
@@ -12,10 +12,15 @@ const UploadDocSchema = z.object({
   keyTakeaways: z.array(z.string()).optional(),
 });
 
+function resolveTrainingTenant(req: Request): string | null {
+  if (req.user?.role === 'SUPERADMIN') return (req.body?.tenantId || req.tenantId || req.user.tenantId || null) as string | null;
+  return (req.user?.tenantId || req.tenantId || null) as string | null;
+}
+
 export async function handleUploadDoc(req: Request, res: Response): Promise<void> {
-  const tenantId = req.tenantId;
-  if (!tenantId) {
-    res.status(400).json({ error: 'Tenant context required' });
+  const tenantId = resolveTrainingTenant(req);
+  if (!tenantId || !req.user) {
+    res.status(403).json({ error: 'Tenant context required' });
     return;
   }
   const parsed = UploadDocSchema.safeParse(req.body);
@@ -32,9 +37,9 @@ export async function handleUploadDoc(req: Request, res: Response): Promise<void
 }
 
 export async function handleTrainIntern(req: Request, res: Response): Promise<void> {
-  const tenantId = req.tenantId;
-  if (!tenantId) {
-    res.status(400).json({ error: 'Tenant context required' });
+  const tenantId = resolveTrainingTenant(req);
+  if (!tenantId || !req.user) {
+    res.status(403).json({ error: 'Tenant context required' });
     return;
   }
   const { question, internName, internEmail } = req.body;
@@ -49,6 +54,7 @@ export async function handleTrainIntern(req: Request, res: Response): Promise<vo
       incomingMessage: question,
       senderId: internName || 'Trainee',
       targetAgent: 'INTERN_TRAINER',
+      actor: { userId: req.user.userId, role: req.user.role, tenantId },
     });
     res.status(200).json({
       success: true,
@@ -63,13 +69,15 @@ export async function handleTrainIntern(req: Request, res: Response): Promise<vo
 }
 
 export async function handleListSessions(req: Request, res: Response): Promise<void> {
-  const tenantId = req.tenantId;
-  const sql = `SELECT * FROM intern_training_sessions WHERE tenant_id = $1 ORDER BY created_at DESC LIMIT 20;`;
+  const tenantId = req.user?.role === 'SUPERADMIN' ? (typeof req.query.tenantId === 'string' ? req.query.tenantId : req.tenantId || req.user.tenantId) : (req.user?.tenantId || req.tenantId);
+  if (!tenantId || !req.user) {
+    res.status(403).json({ error: 'Tenant context required' });
+    return;
+  }
   try {
-    const rows = await pool.query(sql, [tenantId]);
+    const rows = await executeTenantQuery(tenantId, `SELECT * FROM intern_training_sessions WHERE tenant_id = $1 ORDER BY created_at DESC LIMIT 20;`, [tenantId]);
     res.status(200).json({ success: true, count: rows.rows.length, sessions: rows.rows });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 }
-

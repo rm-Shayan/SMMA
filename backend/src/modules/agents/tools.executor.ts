@@ -1,10 +1,9 @@
-import { pool } from '../../core/database/pool.database';
+import { executeTenantQuery } from '../../core/database/tenant-query.database';
 import { logger } from '../../core/config/logger.config';
-import { createGoogleCalendarEvent, BookingRequest } from '../integrations/google-calendar.service';
+import { createGoogleCalendarEvent } from '../integrations/google-calendar.service';
 import { createGoogleSpreadsheet } from '../integrations/google-sheets-creator.service';
-import { appendLeadToGoogleSheet } from '../integrations/google-sheets.service';
 import { sendLeadAlertEmail } from '../integrations/smtp-email.service';
-import { saveCompanyTrainingDoc } from '../training/training.service';
+import { executeExternalTool } from '../tools/external-tools.service';
 
 export interface ToolResult {
   success: boolean;
@@ -21,13 +20,13 @@ export async function executeToolPublishPost(tenantId: string, platform: string,
     RETURNING id, platform, scheduled_at, status;
   `;
   try {
-    const res = await pool.query(sql, [tenantId, platform.toUpperCase(), content, scheduledAt]);
-    logger.info({ tenantId, platform, postId: res.rows[0].id }, '🛠️ Tool: Post queued for publishing');
+    const res = await executeTenantQuery(tenantId, sql, [tenantId, platform.toUpperCase(), content, scheduledAt]);
+    logger.info({ tenantId, platform, postId: res.rows[0].id }, 'Tool: Post queued for publishing');
     return {
       success: true,
       action: 'publish_post',
       data: res.rows[0],
-      message: `Post successfully queued to publish on ${platform.toUpperCase()} at ${scheduledAt.toLocaleTimeString()}.`,
+      message: `Post successfully queued to publish on ${platform.toUpperCase()} at ${scheduledAt.toISOString()}.`,
     };
   } catch (err: any) {
     return { success: false, action: 'publish_post', message: err.message };
@@ -103,18 +102,18 @@ export async function executeToolQueryData(tenantId: string, entity: string, lim
       tableName = 'Customer Inquiries & Conversations';
       sql = `SELECT platform, sender_id, is_escalated, LEFT(incoming_text, 30) AS message, created_at FROM tenant_conversations WHERE tenant_id = $1 ORDER BY created_at DESC LIMIT $2`;
     } else if (e.includes('ACCOUNT') || e.includes('COMPANY') || e.includes('PLAN')) {
-      const res = await pool.query(`SELECT company_name, current_plan, is_active, autonomous_mode_enabled FROM tenants WHERE id = $1`, [tenantId]);
+      const res = await executeTenantQuery(tenantId, `SELECT company_name, current_plan, is_active, autonomous_mode_enabled FROM tenants WHERE id = $1`, [tenantId]);
       return {
         success: true,
         action: 'query_account',
         data: res.rows[0],
-        message: `### 🏢 Company Account Info\n- **Company:** ${res.rows[0]?.company_name}\n- **Plan:** ${res.rows[0]?.current_plan}\n- **Autonomous AI Mode:** ${res.rows[0]?.autonomous_mode_enabled ? '🟢 Active 24/7' : '🟡 Paused'}\n- **Status:** ${res.rows[0]?.is_active ? 'Active' : 'Suspended'}`,
+        message: `Company: ${res.rows[0]?.company_name}\nPlan: ${res.rows[0]?.current_plan}\nAutonomous AI: ${res.rows[0]?.autonomous_mode_enabled ? 'Active' : 'Paused'}\nStatus: ${res.rows[0]?.is_active ? 'Active' : 'Suspended'}`,
       };
     }
 
-    const res = await pool.query(sql, [tenantId, limit]);
+    const res = await executeTenantQuery(tenantId, sql, [tenantId, limit]);
     if (!res.rows.length) {
-      return { success: true, action: 'query_data', data: [], message: `No data found in **${tableName}** for this company.` };
+      return { success: true, action: 'query_data', data: [], message: `No data found in ${tableName} for this company.` };
     }
 
     const headers = Object.keys(res.rows[0]);
@@ -125,10 +124,24 @@ export async function executeToolQueryData(tenantId: string, entity: string, lim
       success: true,
       action: 'query_data',
       data: res.rows,
-      message: `### 📊 ${tableName} (Latest ${res.rows.length} rows)\n${headerRow}\n${dividerRow}\n${dataRows}`,
+      message: `### ${tableName} (Latest ${res.rows.length} rows)\n${headerRow}\n${dividerRow}\n${dataRows}`,
     };
   } catch (err: any) {
     return { success: false, action: 'query_data', message: err.message };
+  }
+}
+
+export async function executeToolExternalAction(tenantId: string, toolName: string, params: Record<string, any> = {}, actor?: { userId?: string; role?: string }): Promise<ToolResult> {
+  try {
+    const data = await executeExternalTool(tenantId, toolName, params, actor);
+    return {
+      success: true,
+      action: toolName,
+      data,
+      message: `External tool "${toolName}" executed successfully.`,
+    };
+  } catch (err: any) {
+    return { success: false, action: toolName, message: err.message };
   }
 }
 

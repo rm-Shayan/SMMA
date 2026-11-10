@@ -97,6 +97,7 @@ export async function invokeAgentEngine(input: any): Promise<AgentState> {
 
   const normalizedInput = {
     ...input,
+    actor: input.actor || null,
     incomingMessage: input.incomingMessage || input.message || '',
     brandVoice: input.brandVoice || integrations?.brandVoice || 'Professional, authoritative, high-conversion',
     channel: input.channel || 'CRM_LIVE_CHAT',
