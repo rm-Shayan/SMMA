@@ -48,3 +48,8 @@ app.get('/health', (_req: Request, res: Response) => {
 // Global Error & 404 Handlers
 app.use(notFoundHandler);
 app.use(errorHandler);
+
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server is running on port ${process.env.PORT || 3000}`);
+});
