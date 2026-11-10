@@ -1,0 +1,109 @@
+import { Request, Response } from 'express';
+import { z } from 'zod';
+import { invokeAgentEngine } from './agent.workflow';
+import { saveCapturedLead, getTenantLeads } from '../leads/lead.service';
+import { logger } from '../../core/config/logger.config';
+
+const UniversalChatRequestSchema = z.object({
+  tenantId: z.string().uuid(),
+  channel: z.enum(['CRM_LIVE_CHAT', 'CRM_INBOX', 'INSTAGRAM', 'FACEBOOK', 'WHATSAPP', 'LINKEDIN', 'TWITTER', 'EMAIL']),
+  message: z.string().min(1),
+  senderId: z.string().min(1),
+  senderName: z.string().optional(),
+  targetAgent: z.string().optional(),
+});
+
+export async function handleAgentChat(req: Request, res: Response): Promise<void> {
+  const parsed = UniversalChatRequestSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: 'Invalid Request', details: parsed.error.format() });
+    return;
+  }
+
+  const { tenantId, channel, message, senderId, senderName, targetAgent } = parsed.data;
+
+  try {
+    const finalState = await invokeAgentEngine({
+      tenantId,
+      channel,
+      incomingMessage: message,
+      senderId,
+      senderName,
+      targetAgent,
+    });
+
+    if (finalState.crmContactUpdates?.phone || finalState.crmContactUpdates?.email) {
+      await saveCapturedLead({
+        tenantId,
+        channel,
+        name: finalState.crmContactUpdates.name || senderName,
+        phone: finalState.crmContactUpdates.phone,
+        email: finalState.crmContactUpdates.email,
+        inquiryInterest: message,
+        leadScore: finalState.leadScore,
+        crmStage: finalState.suggestedPipelineStage,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      agentAssigned: finalState.targetAgent,
+      response: finalState.generatedResponse,
+      leadScore: finalState.leadScore,
+      suggestedStage: finalState.suggestedPipelineStage,
+      requiresHumanReview: finalState.requiresHumanReview,
+      executionTrace: finalState.executionTrace,
+    });
+  } catch (err: any) {
+    logger.error({ err: err.message }, 'Agent chat error');
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+export async function handleDirectAgent(req: Request, res: Response): Promise<void> {
+  const rawAgent = req.params.agentName;
+  const agentName = String(Array.isArray(rawAgent) ? rawAgent[0] : rawAgent || '').toLowerCase();
+  const { tenantId, message, channel } = req.body;
+
+  const agentMapping: Record<string, string> = {
+    self_comment: 'SELF_COMMENTER',
+    researcher: 'COMPETITIVE_RESEARCHER',
+    comment_reply: 'COMMENT_REPLY',
+    analytics: 'ANALYTICS',
+    trend_planner: 'TREND_IDENTIFIER',
+    dm_handler: 'DM_HANDLER',
+    publisher: 'POST_DISTRIBUTION',
+    support_closer: 'INBOX_SUPPORT_MANAGER',
+  };
+
+  const targetAgent = agentMapping[agentName] || 'INBOX_SUPPORT_MANAGER';
+
+  try {
+    const finalState = await invokeAgentEngine({
+      tenantId: tenantId || req.tenantId || 'master-tenant',
+      channel: channel || 'CRM_LIVE_CHAT',
+      incomingMessage: message || 'Proceed with task',
+      targetAgent,
+    });
+
+    res.status(200).json({
+      success: true,
+      agent: targetAgent,
+      output: finalState.generatedResponse,
+      trace: finalState.executionTrace,
+    });
+  } catch (err: any) {
+    logger.error({ err: err.message }, 'Direct agent invocation error');
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+export async function handleListLeads(req: Request, res: Response): Promise<void> {
+  const tenantId = req.tenantId || (req.query.tenantId as string);
+  if (!tenantId) {
+    res.status(400).json({ error: 'Tenant ID required' });
+    return;
+  }
+  const leads = await getTenantLeads(tenantId);
+  res.status(200).json({ success: true, count: leads.length, leads });
+}

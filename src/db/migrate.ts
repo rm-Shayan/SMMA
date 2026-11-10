@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { pool } from './pool';
-import { logger } from '../config/logger';
+import { pool } from '../core/database/pool.database';
+import { logger } from '../core/config/logger.config';
 
 export async function runMigrations(): Promise<void> {
   const migrationsDir = path.join(__dirname, 'migrations');

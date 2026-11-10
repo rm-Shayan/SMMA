@@ -1,5 +1,6 @@
-import { pool } from './pool';
-import { logger } from '../config/logger';
+import { pool } from '../core/database/pool.database';
+import { logger } from '../core/config/logger.config';
+import { hashPassword } from '../modules/auth/auth.service';
 
 export async function runSeed(): Promise<void> {
   const client = await pool.connect();
@@ -29,6 +30,16 @@ export async function runSeed(): Promise<void> {
     `;
     await client.query(masterTenantSql);
     logger.info('✅ Master Agency Tenant seeded (is_internal: true).');
+
+    // 3. Seed Default SuperAdmin User
+    const adminSql = `
+      INSERT INTO platform_users 
+      (email, password_hash, role, full_name)
+      VALUES ('admin@agency.com', $1, 'SUPERADMIN', 'Platform Owner')
+      ON CONFLICT (email) DO NOTHING;
+    `;
+    await client.query(adminSql, [hashPassword('admin123456')]);
+    logger.info('✅ Platform SuperAdmin seeded (admin@agency.com).');
 
     await client.query('COMMIT');
   } catch (error) {

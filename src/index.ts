@@ -1,10 +1,10 @@
 import { app } from './app';
-import { env } from './config/env';
-import { logger } from './config/logger';
-import { startAutonomousCron, stopAutonomousCron } from './services/scheduler/cronEngine';
+import { env } from './core/config/env.config';
+import { logger } from './core/config/logger.config';
+import { startAutonomousCron, stopAutonomousCron } from './modules/scheduler/scheduler.cron';
 
 const server = app.listen(env.PORT, () => {
-  logger.info(`🚀 SMMA Platform Backend listening on port ${env.PORT} (${env.NODE_ENV})`);
+  logger.info(`🚀 SMMA Enterprise Platform Backend listening on port ${env.PORT} (${env.NODE_ENV})`);
   // Start the 24/7 Autonomous Peak-Hour Scheduling Clock
   startAutonomousCron();
 });
@@ -20,4 +20,3 @@ const gracefulShutdown = (signal: string) => {
 
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-
