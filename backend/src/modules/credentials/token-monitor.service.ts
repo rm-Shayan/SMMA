@@ -18,8 +18,8 @@ export async function checkExpiringCredentials(daysThreshold: number = 7): Promi
     SELECT 
       c.id, 
       c.tenant_id, 
-      t.name as tenant_name, 
-      t.contact_email, 
+      t.company_name as tenant_name, 
+      t.notification_email as contact_email, 
       c.platform, 
       c.account_id, 
       c.token_expires_at,
