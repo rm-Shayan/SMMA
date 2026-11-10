@@ -14,7 +14,12 @@ import { whatsappWebhookRouter } from './modules/webhooks/whatsapp.webhook.route
 
 export const app = express();
 
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({
+  limit: '10mb',
+  verify: (req: Request & { rawBody?: Buffer }, _res, buf) => {
+    req.rawBody = buf;
+  },
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(tenantMiddleware);
 

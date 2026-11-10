@@ -7,3 +7,4 @@ export const analyticsRouter = Router();
 analyticsRouter.use(requireAuth);
 analyticsRouter.get('/', handleGetAnalytics);
 analyticsRouter.get('/:tenantId', handleGetAnalytics);
+

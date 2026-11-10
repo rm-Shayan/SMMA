@@ -12,6 +12,9 @@ const envSchema = z.object({
   QDRANT_API_KEY: z.string().optional(),
   GROQ_API_KEY: z.string().default(''),
   GROQ_MODEL: z.string().default('qwen/qwen3.8-27b'),
+  META_APP_SECRET: z.string().default(''),
+  META_VERIFY_TOKEN: z.string().default(''),
+  WHATSAPP_VERIFY_TOKEN: z.string().default(''),
   ENCRYPTION_KEY: z.string().default('12345678901234567890123456789012'), // 32-byte key for AES-256
   JWT_SECRET: z.string().default('smma_platform_super_secret_signing_key_2026'),
   GOOGLE_SPREADSHEET_ID: z.string().default(''),
@@ -34,3 +37,4 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data;
+

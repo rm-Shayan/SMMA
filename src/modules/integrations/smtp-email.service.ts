@@ -112,3 +112,4 @@ export async function sendLeadAlertEmail(payload: LeadEmailPayload): Promise<boo
     });
   });
 }
+

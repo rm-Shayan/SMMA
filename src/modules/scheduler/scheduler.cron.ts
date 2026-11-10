@@ -1,64 +1,99 @@
-import { getDuePosts, markPostPublished } from './scheduler.service';
+import { claimDuePosts, markPostPublished, markPostFailed } from './scheduler.service';
 import { logger } from '../../core/config/logger.config';
 import { publishLinkedInPost } from '../social/linkedin.service';
 import { publishTweet } from '../social/twitter.service';
 import { publishMetaPost } from '../social/meta.service';
-import { invokeAgentEngine } from '../agents/agent.workflow';
+import { getDecryptedTenantCredential } from '../credentials/credentials.service';
+import { enqueueDelayedSelfComment } from './queue.service';
+import { runTokenHealthAudit } from '../credentials/token-monitor.service';
 
 let cronInterval: NodeJS.Timeout | null = null;
+let isTickRunning = false;
+let tickCount = 0;
 
 export async function processDuePostsTick(): Promise<void> {
-  const duePosts = await getDuePosts();
-  if (duePosts.length === 0) return;
+  if (isTickRunning) return;
+  isTickRunning = true;
+  tickCount++;
 
-  logger.info({ count: duePosts.length }, '⏰ Processing due scheduled posts');
-
-  for (const post of duePosts) {
-    try {
-      let published = false;
-      const token = post.access_token || 'mock_token';
-
-      switch (post.platform) {
-        case 'linkedin':
-          const liRes = await publishLinkedInPost({ accessToken: token, authorUrn: post.account_id || 'me', text: post.content });
-          published = liRes.success;
-          break;
-        case 'twitter':
-          const twRes = await publishTweet({ bearerTokenOrOAuth: token, text: post.content });
-          published = twRes.success;
-          break;
-        case 'instagram':
-        case 'facebook':
-          const fbRes = await publishMetaPost({ pageAccessToken: token, targetId: post.account_id || 'me', caption: post.content, platform: post.platform.toUpperCase() as any });
-          published = fbRes.success;
-          break;
-      }
-
-      await markPostPublished(post.id);
-
-      // Trigger Agent #1 (Self-Comment Agent) 60s post-publication
-      setTimeout(async () => {
-        try {
-          await invokeAgentEngine({
-            tenantId: post.tenant_id,
-            channel: post.platform.toUpperCase() as any,
-            incomingMessage: post.content,
-            targetAgent: 'SELF_COMMENTER',
-          });
-          logger.info({ postId: post.id }, '💬 Agent #1 boosted reach with delayed first comment');
-        } catch (e: any) {
-          logger.error({ err: e.message }, 'Failed to execute delayed self-comment');
-        }
-      }, 60000);
-    } catch (err: any) {
-      logger.error({ err: err.message, postId: post.id }, 'Error publishing post');
+  try {
+    if (tickCount % 60 === 1) {
+      await runTokenHealthAudit().catch((e) => logger.debug({ err: e.message }, 'Token audit error'));
     }
+
+    const duePosts = await claimDuePosts();
+    if (duePosts.length === 0) return;
+
+    logger.info({ count: duePosts.length }, 'Processing due scheduled posts');
+
+    for (const post of duePosts) {
+      try {
+        const creds = await getDecryptedTenantCredential(post.tenant_id, String(post.platform).toLowerCase());
+        if (!creds?.accessToken) {
+          await markPostFailed(post.id, 'No valid credentials configured for platform');
+          logger.warn({ postId: post.id, platform: post.platform }, 'Skipping post: missing credentials');
+          continue;
+        }
+
+        const token = creds.accessToken;
+        const accountId = creds.accountId;
+        let published = false;
+        let failureReason = `Unsupported platform: ${post.platform}`;
+
+        switch (String(post.platform).toLowerCase()) {
+          case 'linkedin': {
+            const res = await publishLinkedInPost({ accessToken: token, authorUrn: accountId || 'me', text: post.content });
+            published = res.success;
+            failureReason = 'LinkedIn publish failed';
+            break;
+          }
+          case 'twitter': {
+            const res = await publishTweet({ bearerTokenOrOAuth: token, text: post.content });
+            published = res.success;
+            failureReason = 'X/Twitter publish failed';
+            break;
+          }
+          case 'instagram':
+          case 'facebook': {
+            const res = await publishMetaPost({
+              pageAccessToken: token,
+              targetId: accountId || 'me',
+              caption: post.content,
+              platform: String(post.platform).toUpperCase() as 'INSTAGRAM' | 'FACEBOOK',
+            });
+            published = res.success;
+            failureReason = `${post.platform} publish failed`;
+            break;
+          }
+        }
+
+        if (!published) {
+          await markPostFailed(post.id, failureReason);
+          logger.error({ postId: post.id, platform: post.platform }, 'Post publishing failed');
+          continue;
+        }
+
+        await markPostPublished(post.id);
+
+        await enqueueDelayedSelfComment({
+          tenantId: post.tenant_id,
+          channel: String(post.platform).toUpperCase(),
+          content: post.content,
+          postId: post.id,
+        });
+      } catch (err: any) {
+        await markPostFailed(post.id, err.message || 'Unexpected publishing error');
+        logger.error({ err: err.message, postId: post.id }, 'Error publishing post');
+      }
+    }
+  } finally {
+    isTickRunning = false;
   }
 }
 
 export function startAutonomousCron(): void {
   if (cronInterval) return;
-  logger.info('🚀 Starting Autonomous Scheduler Clock (60-second tick)');
+  logger.info('Starting Autonomous Scheduler Clock (60-second tick)');
   cronInterval = setInterval(processDuePostsTick, 60000);
 }
 
@@ -66,6 +101,6 @@ export function stopAutonomousCron(): void {
   if (cronInterval) {
     clearInterval(cronInterval);
     cronInterval = null;
-    logger.info('🛑 Autonomous Scheduler Clock stopped');
+    logger.info('Autonomous Scheduler Clock stopped');
   }
 }

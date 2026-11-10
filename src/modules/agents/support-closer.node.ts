@@ -9,6 +9,11 @@ const CloserSchema = z.object({
   suggestedPipelineStage: z.enum([
     'NEW_LEAD', 'QUALIFIED_HOT', 'DEMO_REQUESTED', 'CUSTOMER_SUPPORT', 'ESCALATED'
   ]),
+  extractedContact: z.object({
+    name: z.string().nullable(),
+    phone: z.string().nullable(),
+    email: z.string().nullable(),
+  }),
   crmTags: z.array(z.string()),
   bookingLinkProvided: z.boolean(),
   escalateToHuman: z.boolean(),
@@ -26,6 +31,7 @@ Strict Rules:
 2. If the user is an active buyer, assign leadScore > 75 and suggestedPipelineStage = "QUALIFIED_HOT".
 3. If they ask about disputes, refunds, or lawsuits, set escalateToHuman = true.
 4. If they inquire about consultations, calls, or pricing, offer the booking link: ${bookingLink}
+5. Extract any name, phone number, or email the customer shared into extractedContact (null if absent).
 Output valid JSON matching schema.`;
 
   const userPrompt = `Customer inquiry: "${state.incomingMessage}". Conversation History: ${JSON.stringify(state.conversationHistory.slice(-4))}`;
@@ -41,6 +47,7 @@ Output valid JSON matching schema.`;
       responseText: `Thank you for your message. Would you like to schedule a 15-minute intro call to discuss custom solutions?`,
       leadScore: 60,
       suggestedPipelineStage: 'NEW_LEAD' as const,
+      extractedContact: { name: null, phone: null, email: null },
       crmTags: ['inbound_inquiry'],
       bookingLinkProvided: false,
       escalateToHuman: false,
@@ -51,7 +58,14 @@ Output valid JSON matching schema.`;
       generatedResponse: data.responseText,
       leadScore: data.leadScore,
       suggestedPipelineStage: data.suggestedPipelineStage,
-      crmContactUpdates: { tags: data.crmTags, score: data.leadScore, stage: data.suggestedPipelineStage },
+      crmContactUpdates: {
+        name: data.extractedContact.name,
+        phone: data.extractedContact.phone,
+        email: data.extractedContact.email,
+        tags: data.crmTags,
+        score: data.leadScore,
+        stage: data.suggestedPipelineStage,
+      },
       requiresHumanReview: data.escalateToHuman,
       confidenceScore: data.confidenceScore,
       executionTrace: [`Agent #9 (Closer) stage: ${data.suggestedPipelineStage}, score: ${data.leadScore}`],
@@ -67,3 +81,4 @@ Output valid JSON matching schema.`;
     };
   }
 }
+

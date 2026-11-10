@@ -42,3 +42,4 @@ export function requireRole(allowedRoles: Array<'SUPERADMIN' | 'CLIENT_OWNER' | 
     next();
   };
 }
+

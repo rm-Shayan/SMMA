@@ -30,6 +30,10 @@ export async function handleManualReply(req: Request, res: Response): Promise<vo
   const { id } = req.params;
   const { replyText } = req.body;
 
+  if (!tenantId) {
+    res.status(403).json({ error: 'Forbidden', message: 'Tenant context required' });
+    return;
+  }
   if (!replyText) {
     res.status(400).json({ error: 'replyText is required' });
     return;
@@ -46,17 +50,25 @@ export async function handleManualReply(req: Request, res: Response): Promise<vo
       return;
     }
 
-    const creds = await getDecryptedTenantCredential(tenantId!, conv.platform.toLowerCase());
+    const creds = await getDecryptedTenantCredential(tenantId, conv.platform.toLowerCase());
+    if (!creds?.accessToken) {
+      res.status(503).json({ error: 'Channel Not Connected', message: `No credentials configured for ${conv.platform}` });
+      return;
+    }
 
-    await dispatchSocialMessage({
+    const sent = await dispatchSocialMessage({
       channel: conv.platform.toUpperCase() as any,
       recipientId: conv.sender_id,
       text: replyText,
       credentials: {
-        accessToken: creds?.accessToken || 'mock_token',
-        accountId: creds?.accountId,
+        accessToken: creds.accessToken,
+        accountId: creds.accountId,
       },
     });
+    if (!sent) {
+      res.status(502).json({ error: 'Dispatch Failed', message: 'Platform rejected the message' });
+      return;
+    }
 
     await pool.query(
       `UPDATE tenant_conversations SET agent_response = $1, is_escalated = false WHERE id = $2;`,
@@ -86,3 +98,4 @@ export async function handleToggleEscalation(req: Request, res: Response): Promi
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+

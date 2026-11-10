@@ -5,13 +5,18 @@ import { saveCapturedLead, getTenantLeads } from '../leads/lead.service';
 import { logger } from '../../core/config/logger.config';
 
 const UniversalChatRequestSchema = z.object({
-  tenantId: z.string().uuid(),
+  tenantId: z.string().uuid().optional(),
   channel: z.enum(['CRM_LIVE_CHAT', 'CRM_INBOX', 'INSTAGRAM', 'FACEBOOK', 'WHATSAPP', 'LINKEDIN', 'TWITTER', 'EMAIL']),
   message: z.string().min(1),
   senderId: z.string().min(1),
   senderName: z.string().optional(),
   targetAgent: z.string().optional(),
 });
+
+function resolveTenantId(req: Request, bodyTenantId?: string): string | null {
+  if (req.user?.role === 'SUPERADMIN' && bodyTenantId) return bodyTenantId;
+  return req.tenantId || null;
+}
 
 export async function handleAgentChat(req: Request, res: Response): Promise<void> {
   const parsed = UniversalChatRequestSchema.safeParse(req.body);
@@ -20,7 +25,12 @@ export async function handleAgentChat(req: Request, res: Response): Promise<void
     return;
   }
 
-  const { tenantId, channel, message, senderId, senderName, targetAgent } = parsed.data;
+  const { channel, message, senderId, senderName, targetAgent } = parsed.data;
+  const tenantId = resolveTenantId(req, parsed.data.tenantId);
+  if (!tenantId) {
+    res.status(403).json({ error: 'Forbidden', message: 'Tenant context required' });
+    return;
+  }
 
   try {
     const finalState = await invokeAgentEngine({
@@ -77,10 +87,15 @@ export async function handleDirectAgent(req: Request, res: Response): Promise<vo
   };
 
   const targetAgent = agentMapping[agentName] || 'INBOX_SUPPORT_MANAGER';
+  const resolvedTenantId = resolveTenantId(req, tenantId);
+  if (!resolvedTenantId) {
+    res.status(403).json({ error: 'Forbidden', message: 'Tenant context required' });
+    return;
+  }
 
   try {
     const finalState = await invokeAgentEngine({
-      tenantId: tenantId || req.tenantId || 'master-tenant',
+      tenantId: resolvedTenantId,
       channel: channel || 'CRM_LIVE_CHAT',
       incomingMessage: message || 'Proceed with task',
       targetAgent,
@@ -99,11 +114,13 @@ export async function handleDirectAgent(req: Request, res: Response): Promise<vo
 }
 
 export async function handleListLeads(req: Request, res: Response): Promise<void> {
-  const tenantId = req.tenantId || (req.query.tenantId as string);
+  const queryTenantId = typeof req.query.tenantId === 'string' ? req.query.tenantId : undefined;
+  const tenantId = resolveTenantId(req, queryTenantId);
   if (!tenantId) {
-    res.status(400).json({ error: 'Tenant ID required' });
+    res.status(403).json({ error: 'Forbidden', message: 'Tenant context required' });
     return;
   }
   const leads = await getTenantLeads(tenantId);
   res.status(200).json({ success: true, count: leads.length, leads });
 }
+

@@ -7,3 +7,4 @@ export const authRouter = Router();
 authRouter.post('/login', handleLogin);
 authRouter.post('/create-user', requireAuth, requireRole(['SUPERADMIN', 'CLIENT_OWNER']), handleCreateUser);
 authRouter.get('/me', requireAuth, handleGetMe);
+

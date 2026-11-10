@@ -4,6 +4,8 @@ import { logger } from '../../core/config/logger.config';
 
 export interface TenantIntegrations {
   tenantId: string;
+  brandVoice: string;
+  isActive: boolean;
   googleSheetId: string;
   bookingCalendarUrl: string;
   calendarId: string;
@@ -19,7 +21,7 @@ export async function getTenantIntegrations(tenantId: string): Promise<TenantInt
 
   try {
     const res = await pool.query(
-      `SELECT google_sheet_id, booking_calendar_url, calendar_id, notification_email FROM tenants WHERE id = $1 LIMIT 1`,
+      `SELECT brand_voice, is_active, google_sheet_id, booking_calendar_url, calendar_id, notification_email FROM tenants WHERE id = $1 LIMIT 1`,
       [tenantId]
     );
 
@@ -32,6 +34,8 @@ export async function getTenantIntegrations(tenantId: string): Promise<TenantInt
 
     return {
       tenantId,
+      brandVoice: row?.brand_voice || 'Professional, authoritative, high-conversion',
+      isActive: row ? row.is_active !== false : true,
       googleSheetId: sheetId,
       bookingCalendarUrl: bookingUrl,
       calendarId,
@@ -42,6 +46,8 @@ export async function getTenantIntegrations(tenantId: string): Promise<TenantInt
     logger.warn({ err: err.message, tenantId }, 'Tenant integrations lookup failed, using fallback');
     return {
       tenantId,
+      brandVoice: 'Professional, authoritative, high-conversion',
+      isActive: true,
       googleSheetId: fallbackSheet,
       bookingCalendarUrl: fallbackBooking,
       calendarId: fallbackCalendarId,
@@ -50,3 +56,4 @@ export async function getTenantIntegrations(tenantId: string): Promise<TenantInt
     };
   }
 }
+

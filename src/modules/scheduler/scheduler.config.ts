@@ -34,3 +34,4 @@ export function getNextOptimalSlot(platform: SocialPlatform, fromDate: Date = ne
   target.setHours(target.getHours() + 2); // Default to 2 hours in the future
   return target;
 }
+

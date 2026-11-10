@@ -43,3 +43,4 @@ Output JSON: { "formattedCaption": "...", "hashtags": ["#marketing", "#ai"] }`;
     executionTrace: [`Agent #8 (Publisher) formatted post for ${state.channel}`],
   };
 }
+

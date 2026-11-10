@@ -42,3 +42,4 @@ export async function sendWhatsAppMessage(options: SendWhatsAppOptions): Promise
     return false;
   }
 }
+

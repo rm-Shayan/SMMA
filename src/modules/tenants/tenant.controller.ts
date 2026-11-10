@@ -52,7 +52,12 @@ export async function handleListTenants(req: Request, res: Response): Promise<vo
 }
 
 export async function handleGetTenantById(req: Request, res: Response): Promise<void> {
-  const targetId = req.params.id || req.tenantId;
+  const isSuper = req.user?.role === 'SUPERADMIN';
+  const targetId = isSuper ? (req.params.id || req.tenantId) : req.tenantId;
+  if (!targetId) {
+    res.status(403).json({ error: 'Forbidden', message: 'Tenant context required' });
+    return;
+  }
   const sql = `SELECT id, company_name, brand_voice, current_plan, notification_email, google_sheet_id, booking_calendar_url, is_active, created_at FROM tenants WHERE id = $1;`;
   try {
     const dbRes = await pool.query(sql, [targetId]);
@@ -68,7 +73,12 @@ export async function handleGetTenantById(req: Request, res: Response): Promise<
 }
 
 export async function handleUpdateTenant(req: Request, res: Response): Promise<void> {
-  const targetId = req.params.id || req.tenantId;
+  const isSuper = req.user?.role === 'SUPERADMIN';
+  const targetId = isSuper ? (req.params.id || req.tenantId) : req.tenantId;
+  if (!targetId) {
+    res.status(403).json({ error: 'Forbidden', message: 'Tenant context required' });
+    return;
+  }
   const { companyName, brandVoice, googleSheetId, bookingCalendarUrl, notificationEmail, isActive } = req.body;
   const sql = `
     UPDATE tenants
@@ -89,3 +99,4 @@ export async function handleUpdateTenant(req: Request, res: Response): Promise<v
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+

@@ -16,3 +16,4 @@ export function notFoundHandler(req: Request, res: Response): void {
     message: `Cannot ${req.method} ${req.originalUrl}`,
   });
 }
+

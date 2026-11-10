@@ -39,7 +39,18 @@ export async function handleCreateUser(req: Request, res: Response): Promise<voi
   }
 
   const { email, password, fullName, role, tenantId } = parsed.data;
-  const assignedTenantId = req.user?.role === 'SUPERADMIN' ? (tenantId || null) : req.tenantId;
+  const isSuper = req.user?.role === 'SUPERADMIN';
+
+  if (!isSuper && role === 'SUPERADMIN') {
+    res.status(403).json({ error: 'Forbidden', message: 'Only SUPERADMIN can create SUPERADMIN users' });
+    return;
+  }
+
+  const assignedTenantId = isSuper ? (tenantId || null) : req.tenantId;
+  if (role !== 'SUPERADMIN' && !assignedTenantId) {
+    res.status(400).json({ error: 'Validation Error', message: 'tenantId is required for tenant users' });
+    return;
+  }
 
   const sql = `
     INSERT INTO platform_users (tenant_id, email, password_hash, role, full_name)
@@ -70,3 +81,4 @@ export async function handleGetMe(req: Request, res: Response): Promise<void> {
   }
   res.status(200).json({ success: true, user: req.user });
 }
+

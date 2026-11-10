@@ -61,18 +61,33 @@ function buildStateGraph() {
 export const agentRunner = buildStateGraph();
 
 export async function invokeAgentEngine(input: any): Promise<AgentState> {
-  let bookingCalendarUrl = input.bookingCalendarUrl;
-  if (!bookingCalendarUrl && input.tenantId) {
-    const integrations = await getTenantIntegrations(input.tenantId);
-    bookingCalendarUrl = integrations.bookingCalendarUrl;
+  const integrations = input.tenantId ? await getTenantIntegrations(input.tenantId) : null;
+
+  if (integrations && !integrations.isActive) {
+    return {
+      tenantId: input.tenantId,
+      channel: input.channel || 'CRM_LIVE_CHAT',
+      targetAgent: input.targetAgent || '',
+      generatedResponse: '',
+      requiresHumanReview: true,
+      executionTrace: ['Tenant is inactive. AI execution blocked.'],
+    } as AgentState;
   }
+
+  // Sliding-Window Memory Optimization: retain last 6 messages & clamp length to prevent token explosion
+  const rawHistory = Array.isArray(input.conversationHistory) ? input.conversationHistory : [];
+  const boundedHistory = rawHistory.slice(-6).map((msg: any) => ({
+    role: msg.role || 'user',
+    content: typeof msg.content === 'string' ? msg.content.slice(0, 400) : String(msg.content || ''),
+  }));
 
   const normalizedInput = {
     ...input,
     incomingMessage: input.incomingMessage || input.message || '',
-    brandVoice: input.brandVoice || 'Professional, authoritative, high-conversion',
+    brandVoice: input.brandVoice || integrations?.brandVoice || 'Professional, authoritative, high-conversion',
     channel: input.channel || 'CRM_LIVE_CHAT',
-    bookingCalendarUrl: bookingCalendarUrl || '',
+    bookingCalendarUrl: input.bookingCalendarUrl || integrations?.bookingCalendarUrl || '',
+    conversationHistory: boundedHistory,
   };
   const finalState = await agentRunner.invoke(normalizedInput as any);
   return finalState;

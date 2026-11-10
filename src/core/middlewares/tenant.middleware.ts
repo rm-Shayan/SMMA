@@ -30,3 +30,4 @@ export function tenantMiddleware(req: Request, res: Response, next: NextFunction
   req.tenantId = result.data;
   next();
 }
+

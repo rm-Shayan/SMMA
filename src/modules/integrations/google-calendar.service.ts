@@ -60,3 +60,4 @@ export async function createGoogleCalendarEvent(req: BookingRequest): Promise<{ 
     return null;
   }
 }
+

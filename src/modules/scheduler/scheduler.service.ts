@@ -32,29 +32,44 @@ export async function schedulePost(input: SchedulePostInput): Promise<string | n
   }
 }
 
-export async function getDuePosts(): Promise<any[]> {
+/**
+ * Atomically claims due posts so multiple app instances never publish the same post twice.
+ */
+export async function claimDuePosts(): Promise<any[]> {
   const sql = `
-    SELECT sp.id, sp.tenant_id, sp.platform, sp.content, sp.image_url, sp.scheduled_at,
-           tc.access_token, tc.account_id
-    FROM scheduled_posts sp
-    LEFT JOIN tenant_credentials tc 
-      ON sp.tenant_id = tc.tenant_id AND sp.platform = tc.platform
-    WHERE sp.status = 'PENDING' AND sp.scheduled_at <= NOW()
-    ORDER BY sp.scheduled_at ASC
-    LIMIT 20;
+    WITH due AS (
+      SELECT id FROM scheduled_posts
+      WHERE status = 'PENDING' AND scheduled_at <= NOW()
+      ORDER BY scheduled_at ASC
+      LIMIT 20
+      FOR UPDATE SKIP LOCKED
+    )
+    UPDATE scheduled_posts sp
+    SET status = 'PROCESSING'
+    FROM due
+    WHERE sp.id = due.id
+    RETURNING sp.id, sp.tenant_id, sp.platform, sp.content, sp.image_url, sp.scheduled_at;
   `;
   try {
     const res = await pool.query(sql);
     return res.rows;
   } catch (err: any) {
-    logger.error({ err: err.message }, 'Failed to query due posts');
+    logger.error({ err: err.message }, 'Failed to claim due posts');
     return [];
   }
 }
 
 export async function markPostPublished(postId: string): Promise<void> {
   await pool.query(
-    `UPDATE scheduled_posts SET status = 'PUBLISHED', published_at = NOW() WHERE id = $1;`,
+    `UPDATE scheduled_posts SET status = 'PUBLISHED', published_at = NOW(), error_log = NULL WHERE id = $1;`,
     [postId]
   );
 }
+
+export async function markPostFailed(postId: string, reason: string): Promise<void> {
+  await pool.query(
+    `UPDATE scheduled_posts SET status = 'FAILED', error_log = $2 WHERE id = $1;`,
+    [postId, reason.slice(0, 2000)]
+  );
+}
+

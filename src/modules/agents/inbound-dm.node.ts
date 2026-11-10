@@ -4,14 +4,14 @@ import { env } from '../../core/config/env.config';
 import { z } from 'zod';
 
 const DMResponseSchema = z.object({
-  intent: z.enum(['SALES_LEAD', 'SUPPORT', 'PRICING', 'BOOKING', 'SPAM']),
-  immediateReply: z.string().max(500),
+  intent: z.enum(['SALES_LEAD', 'SUPPORT', 'PRICING', 'BOOKING', 'SPAM']).or(z.string()),
+  immediateReply: z.string().max(3000),
   extractedContact: z.object({
-    name: z.string().nullable(),
-    phone: z.string().nullable(),
-    email: z.string().nullable(),
-  }),
-  routeToDeepCloser: z.boolean(),
+    name: z.string().nullable().optional(),
+    phone: z.string().nullable().optional(),
+    email: z.string().nullable().optional(),
+  }).optional(),
+  routeToDeepCloser: z.boolean().optional(),
 });
 
 export async function inboundDmNode(state: AgentState): Promise<Partial<AgentState>> {
@@ -31,23 +31,23 @@ Output valid JSON.`;
   const userPrompt = `Customer said: "${state.incomingMessage}". Known Contact Info: ${JSON.stringify(state.contact)}`;
 
   try {
-    const raw = await callQwenJson<z.infer<typeof DMResponseSchema>>([
+    const raw = await callQwenJson<any>([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt },
     ], { temperature: 0.3 });
 
     const parsed = DMResponseSchema.safeParse(raw);
     const data = parsed.success ? parsed.data : {
-      intent: 'SALES_LEAD' as const,
-      immediateReply: `Thanks for reaching out! How can our team assist you today?`,
-      extractedContact: { name: null, phone: null, email: null },
+      intent: 'SALES_LEAD',
+      immediateReply: raw?.immediateReply || `Thanks for reaching out! How can our team assist you today?`,
+      extractedContact: raw?.extractedContact || { name: null, phone: null, email: null },
       routeToDeepCloser: false,
     };
 
     return {
-      intent: data.intent,
+      intent: (data.intent as any) || 'SALES_LEAD',
       generatedResponse: data.immediateReply,
-      crmContactUpdates: data.extractedContact,
+      crmContactUpdates: data.extractedContact as any,
       executionTrace: [`Agent #6 (DM Handler) generated reply. Intent: ${data.intent}`],
     };
   } catch {

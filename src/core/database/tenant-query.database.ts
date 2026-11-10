@@ -25,3 +25,4 @@ export async function executeTenantQuery<T extends QueryResultRow = any>(
     client.release();
   }
 }
+

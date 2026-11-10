@@ -38,6 +38,42 @@ export async function sendMetaDm(options: SendMetaDmOptions): Promise<boolean> {
   }
 }
 
+export interface ReplyToCommentOptions {
+  accessToken: string;
+  commentId: string;
+  text: string;
+  platform: 'INSTAGRAM' | 'FACEBOOK';
+}
+
+export async function replyToComment(options: ReplyToCommentOptions): Promise<boolean> {
+  const { accessToken, commentId, text, platform } = options;
+  const edge = platform === 'INSTAGRAM' ? 'replies' : 'comments';
+  const url = `https://graph.facebook.com/v19.0/${encodeURIComponent(commentId)}/${edge}`;
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message: text }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      logger.error({ status: res.status, err, platform }, 'Failed to reply to comment');
+      return false;
+    }
+
+    logger.info({ commentId, platform }, 'Comment reply dispatched successfully');
+    return true;
+  } catch (err: any) {
+    logger.error({ err: err.message, platform }, 'Exception replying to comment');
+    return false;
+  }
+}
+
 export interface PublishMetaPostOptions {
   pageAccessToken: string;
   targetId: string;
@@ -71,3 +107,4 @@ export async function publishMetaPost(options: PublishMetaPostOptions): Promise<
     return { success: false };
   }
 }
+

@@ -13,3 +13,4 @@ tenantRouter.post('/register', handleRegisterTenant);
 tenantRouter.get('/', requireAuth, handleListTenants);
 tenantRouter.get('/:id', requireAuth, handleGetTenantById);
 tenantRouter.patch('/:id', requireAuth, handleUpdateTenant);
+
