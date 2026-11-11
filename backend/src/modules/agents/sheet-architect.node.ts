@@ -1,4 +1,4 @@
-﻿import { AgentState } from './agent.state';
+import { AgentState } from './agent.state';
 import { callQwenJson } from '../../core/ai/qwen.client';
 import { z } from 'zod';
 import { authorizeAndExecuteProposedTool } from './agent.policy';
