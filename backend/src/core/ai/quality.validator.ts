@@ -6,6 +6,7 @@ export interface ValidationResult {
 }
 
 const BANNED_PATTERNS = [
+  // Original patterns
   /\bas an ai\b/i,
   /\bas a language model\b/i,
   /\bi don't have feelings\b/i,
@@ -15,6 +16,23 @@ const BANNED_PATTERNS = [
   /\bdelve\b/i,
   /\btapestry\b/i,
   /\bgame-changer\b/i,
+
+  // New AI & Corporate Clichés
+  /\bas an artificial intelligence\b/i,
+  /\bmy knowledge cutoff\b/i,
+  /\bimportant to note that\b/i,
+  /\bleverage\b/i,
+  /\bsynergy\b/i,
+  /\bparadigm shift\b/i,
+  /\bholistic approach\b/i,
+  /\brevolutionize\b/i,
+  /\bdeep dive\b/i,
+  /\bcutting-edge\b/i,
+  /\bseamlessly\b/i,
+  /\bit is worth noting that\b/i,
+  /\bnavigating the complexities\b/i,
+  /\bbeacon of\b/i,
+  /\btestament to\b/i,
 ];
 
 export function sanitizeAndScoreText(text: string, platform = 'INSTAGRAM'): ValidationResult {
@@ -72,22 +90,37 @@ export function validateEmail(email?: string | null): string | null {
 }
 
 const INJECTION_PATTERNS = [
-  /ignore\s+(all\s+)?(previous|prior)\s+instructions/i,
+  /ignore\s+(all\s+)?(previous|prior|above)\s+instructions/i,
   /system\s+prompt/i,
   /developer\s+mode/i,
   /jailbreak/i,
   /output\s+(verbatim|raw)\s+(instructions|prompt)/i,
-  /repeat\s+everything\s+above/i,
-  /you\s+are\s+now\s+unrestricted/i,
-  /override\s+system\s+rules/i,
+  /repeat\s+(everything|the\s+above|all\s+text)/i,
+  /you\s+are\s+now\s+(unrestricted|dan|in\s+developer)/i,
+  /override\s+(system|safety|security)\s+rules/i,
+  /reveal\s+(your|the)\s+(system\s+prompt|instructions|directives)/i,
+  /pretend\s+you\s+have\s+no\s+(rules|limits|guidelines)/i,
   /<system>|<\/system>|<script>|<\/script>/i,
 ];
 
+export function normalizeForSecurityCheck(text: string): string {
+  let cleaned = String(text || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+  cleaned = cleaned.replace(/[\u200B-\u200D\uFEFF\u200E\u200F\u202A-\u202E\u0000-\u001F]/g, '');
+  const leetMap: Record<string, string> = {
+    '0': 'o', '1': 'i', '!': 'i', '|': 'i', '3': 'e', '4': 'a', '@': 'a',
+    '5': 's', '$': 's', '7': 't', '+': 't', '8': 'b', '9': 'g',
+  };
+  cleaned = cleaned.toLowerCase().replace(/[01!|34@5$7+89]/g, (ch) => leetMap[ch] || ch);
+  cleaned = cleaned.replace(/\b([a-z])\s+([a-z])\s+([a-z])\s+([a-z])\b/g, '$1$2$3$4');
+  return cleaned.replace(/\s+/g, ' ').trim();
+}
+
 export function detectPromptInjection(text: string): { isInjected: boolean; reason?: string } {
-  const t = String(text || '');
+  const raw = String(text || '');
+  const normalized = normalizeForSecurityCheck(raw);
   for (const p of INJECTION_PATTERNS) {
-    if (p.test(t)) return { isInjected: true, reason: `Flagged prompt injection pattern: ${p.source}` };
+    if (p.test(raw)) return { isInjected: true, reason: `Matched pattern on raw text: ${p.source}` };
+    if (p.test(normalized)) return { isInjected: true, reason: `Matched pattern on de-obfuscated text: ${p.source}` };
   }
   return { isInjected: false };
 }
-
