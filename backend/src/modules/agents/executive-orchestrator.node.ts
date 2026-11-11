@@ -28,7 +28,7 @@ JSON Output Schema:
   "toolParameters": {
     "externalToolName": "exact_registered_tool_name",
     "externalParams": {},
-    "entity": "LEADS" | "POSTS" | "CONVERSATIONS" | "ACCOUNT_INFO",
+    "entity": "LEADS" | "POSTS" | "CONVERSATIONS" | "ACCOUNT_INFO" | "HEALTH",
     "postContent": "content",
     "platform": "INSTAGRAM",
     "meetingTitle": "title",

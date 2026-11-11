@@ -1,7 +1,7 @@
 # Project Memory & Progress State (`memory.md`)
 
 **Project Title:** Multi-Tenant Social Media Management, Inbound AI Sales & Engagement Platform  
-**Document Version:** 15.0 (Full 7-Point Security Access Control Hardening Active - 100% Zero-Gap Enforcement)  
+**Document Version:** 16.0 (Autonomous External System Health Watchdog & Real-Time Monitoring Engine Active)  
 **Last Updated:** Current Session Setup  
 **Operational Rule:** Whenever any file is created, edited, or a phase task is completed, this file MUST be updated immediately. Any new turn or session must inspect this file first instead of running global codebase scans.
 
@@ -83,3 +83,8 @@
    * **Patch 6 (Rate Limiting & DoW Defense):** `rate-limit.middleware.ts` enforces 60 req/min on AI chat and 30 req/min on training with `429 Too Many Requests`.
    * **Patch 7 (Webhook Idempotency & Deduplication):** `webhook.processor.ts` tracks 24-hr message IDs, dropping duplicate Meta/WhatsApp webhook retries.
    * **Strict Line Ceiling:** 100% of files in `backend/src/` strictly $\le 118$ lines (well below the $\le 150$ lines constraint). Clean compile with 0 errors.
+6. **Autonomous External System Health Watchdog & Real-Time Monitoring Engine (100% Active):**
+   * Module: `backend/src/modules/tools/external-watchdog.service.ts`
+   * **Proactive 15-Minute Watchdog:** `runExternalSystemHealthAudit()` pings active tenant external tools every 15 minutes in `scheduler.cron.ts`. If an endpoint returns 5xx or network timeout, logs latency and automatically triggers an urgent email alert to the company's notification email.
+   * **On-Demand Health Table Querying:** `executeToolQueryData(tenantId, 'HEALTH')` aggregates 24-hour telemetry from `outbound_call_logs`, returning a formatted Markdown table with Status (Live/Degraded/Down), Uptime %, Average Latency (ms), and 24-hr invocation counts.
+   * **Strict Line Ceiling:** All watchdog and executor files strictly $\le 140$ lines. Clean compile with 0 errors.

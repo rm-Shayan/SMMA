@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { tenantMiddleware } from './core/middlewares/tenant.middleware';
 import { errorHandler, notFoundHandler } from './core/middlewares/error.middleware';
+import { globalApiRateLimit, requireIdempotencyKeyForWrites } from './core/middlewares/request-control.middleware';
 
 import { authRouter } from './modules/auth/auth.routes';
 import { tenantRouter } from './modules/tenants/tenant.routes';
@@ -24,7 +25,9 @@ app.use(express.json({
   },
 }));
 app.use(express.urlencoded({ extended: true }));
+app.use(requireIdempotencyKeyForWrites);
 app.use(tenantMiddleware);
+app.use('/api', globalApiRateLimit({ windowMs: 60_000, max: 180 }));
 
 // Feature Modules Mounting
 app.use('/api/v1/auth', authRouter);
@@ -36,7 +39,6 @@ app.use('/api/v1/inbox', inboxRouter);
 app.use('/api/v1/analytics', analyticsRouter);
 app.use('/api/v1/training', trainingRouter);
 app.use('/api/v1/tools', toolsRouter);
-app.use('/api/v1/approvals', approvalsRouter);
 app.use('/api/v1/approvals', approvalsRouter);
 
 // Social Inbound Webhooks

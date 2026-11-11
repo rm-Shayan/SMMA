@@ -7,6 +7,7 @@ import { getDecryptedTenantCredential } from '../credentials/credentials.service
 import { enqueueDelayedSelfComment } from './queue.service';
 import { runTokenHealthAudit } from '../credentials/token-monitor.service';
 import { runAutonomousCadenceTick } from './cadence.service';
+import { runExternalSystemHealthAudit } from '../tools/external-watchdog.service';
 
 let cronInterval: NodeJS.Timeout | null = null;
 let isTickRunning = false;
@@ -20,6 +21,10 @@ export async function processDuePostsTick(): Promise<void> {
   try {
     if (tickCount % 60 === 1) {
       await runTokenHealthAudit().catch((e) => logger.debug({ err: e.message }, 'Token audit error'));
+    }
+
+    if (tickCount % 15 === 1) {
+      await runExternalSystemHealthAudit().catch((e) => logger.debug({ err: e.message }, 'Watchdog health sweep notice'));
     }
 
     if (tickCount % 5 === 1) {

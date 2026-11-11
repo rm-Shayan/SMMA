@@ -4,6 +4,7 @@ import { createGoogleCalendarEvent } from '../integrations/google-calendar.servi
 import { createGoogleSpreadsheet } from '../integrations/google-sheets-creator.service';
 import { sendLeadAlertEmail } from '../integrations/smtp-email.service';
 import { executeExternalTool } from '../tools/external-tools.service';
+import { queryExternalSystemHealth } from '../tools/external-watchdog.service';
 
 export interface ToolResult {
   success: boolean;
@@ -95,7 +96,10 @@ export async function executeToolQueryData(tenantId: string, entity: string, lim
     let tableName = 'Leads Data';
     let sql = `SELECT name, email, phone, channel, lead_score, created_at FROM leads WHERE tenant_id = $1 ORDER BY created_at DESC LIMIT $2`;
 
-    if (e.includes('POST') || e.includes('SCHEDULE')) {
+    if (e.includes('HEALTH') || e.includes('SYSTEM') || e.includes('API') || e.includes('MONITOR')) {
+      const msg = await queryExternalSystemHealth(tenantId);
+      return { success: true, action: 'query_health', message: msg };
+    } else if (e.includes('POST') || e.includes('SCHEDULE')) {
       tableName = 'Scheduled Posts';
       sql = `SELECT platform, status, scheduled_at, LEFT(content, 30) AS preview FROM scheduled_posts WHERE tenant_id = $1 ORDER BY scheduled_at DESC LIMIT $2`;
     } else if (e.includes('CONVERSATION') || e.includes('CHAT') || e.includes('INBOX')) {
@@ -104,28 +108,16 @@ export async function executeToolQueryData(tenantId: string, entity: string, lim
     } else if (e.includes('ACCOUNT') || e.includes('COMPANY') || e.includes('PLAN')) {
       const res = await executeTenantQuery(tenantId, `SELECT company_name, current_plan, is_active, autonomous_mode_enabled FROM tenants WHERE id = $1`, [tenantId]);
       return {
-        success: true,
-        action: 'query_account',
-        data: res.rows[0],
+        success: true, action: 'query_account', data: res.rows[0],
         message: `Company: ${res.rows[0]?.company_name}\nPlan: ${res.rows[0]?.current_plan}\nAutonomous AI: ${res.rows[0]?.autonomous_mode_enabled ? 'Active' : 'Paused'}\nStatus: ${res.rows[0]?.is_active ? 'Active' : 'Suspended'}`,
       };
     }
 
     const res = await executeTenantQuery(tenantId, sql, [tenantId, limit]);
-    if (!res.rows.length) {
-      return { success: true, action: 'query_data', data: [], message: `No data found in ${tableName} for this company.` };
-    }
-
+    if (!res.rows.length) return { success: true, action: 'query_data', data: [], message: `No data found in ${tableName} for this company.` };
     const headers = Object.keys(res.rows[0]);
-    const headerRow = `| ${headers.join(' | ')} |`;
-    const dividerRow = `| ${headers.map(() => '---').join(' | ')} |`;
-    const dataRows = res.rows.map(r => `| ${headers.map(h => String(r[h] ?? '-')).join(' | ')} |`).join('\n');
-    return {
-      success: true,
-      action: 'query_data',
-      data: res.rows,
-      message: `### ${tableName} (Latest ${res.rows.length} rows)\n${headerRow}\n${dividerRow}\n${dataRows}`,
-    };
+    const tableMd = `| ${headers.join(' | ')} |\n| ${headers.map(() => '---').join(' | ')} |\n` + res.rows.map(r => `| ${headers.map(h => String(r[h] ?? '-')).join(' | ')} |`).join('\n');
+    return { success: true, action: 'query_data', data: res.rows, message: `### ${tableName} (Latest ${res.rows.length} rows)\n${tableMd}` };
   } catch (err: any) {
     return { success: false, action: 'query_data', message: err.message };
   }

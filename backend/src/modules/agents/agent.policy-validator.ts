@@ -18,7 +18,7 @@ export const TOOL_CAPABILITIES: Record<string, ActorRole[]> = {
 
 export const ALLOWED_TOOLS = new Set(Object.keys(TOOL_CAPABILITIES));
 const ALLOWED_PLATFORMS = new Set(['INSTAGRAM', 'FACEBOOK', 'WHATSAPP', 'LINKEDIN', 'TWITTER', 'EMAIL']);
-const ALLOWED_QUERY_ENTITIES = new Set(['LEADS', 'POSTS', 'CONVERSATIONS', 'ACCOUNT_INFO']);
+const ALLOWED_QUERY_ENTITIES = new Set(['LEADS', 'POSTS', 'CONVERSATIONS', 'ACCOUNT_INFO', 'HEALTH', 'SYSTEM']);
 
 export function normalizeTool(tool: any): string {
   const t = String(tool || 'NONE').toUpperCase().trim();
