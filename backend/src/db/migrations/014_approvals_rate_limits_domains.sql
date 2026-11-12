@@ -1,4 +1,4 @@
-﻿-- Migration 013: approval queue, rate limits, idempotency, and endpoint domain allowlists
+-- Migration 013: approval queue, rate limits, idempotency, and endpoint domain allowlists
 
 CREATE TABLE IF NOT EXISTS ai_action_approvals (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

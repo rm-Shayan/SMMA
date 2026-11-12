@@ -64,8 +64,10 @@ export function createAuthRateLimiter(options: {
   };
 }
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 export const loginRateLimiter = createAuthRateLimiter({
-  maxRequests: 5,
+  maxRequests: isDev ? 100 : 5,
   windowMs: 15 * 60 * 1000,
   message: 'Too many login attempts. Please try again after 15 minutes.',
   keyGenerator: (req) => {
@@ -75,14 +77,14 @@ export const loginRateLimiter = createAuthRateLimiter({
 });
 
 export const registerRateLimiter = createAuthRateLimiter({
-  maxRequests: 3,
+  maxRequests: isDev ? 100 : 3,
   windowMs: 15 * 60 * 1000,
   message: 'Too many registration attempts. Please try again after 15 minutes.',
   keyGenerator: (req) => `register:${(req.ip || 'anonymous')}`,
 });
 
 export const forgotPasswordRateLimiter = createAuthRateLimiter({
-  maxRequests: 3,
+  maxRequests: isDev ? 100 : 3,
   windowMs: 15 * 60 * 1000,
   message: 'Too many password reset requests. Please try again after 15 minutes.',
   keyGenerator: (req) => {

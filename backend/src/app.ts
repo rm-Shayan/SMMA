@@ -18,6 +18,18 @@ import { whatsappWebhookRouter } from './modules/webhooks/whatsapp.webhook.route
 
 export const app = express();
 
+app.use((req: Request, res: Response, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-tenant-id, Idempotency-Key, x-idempotency-key');
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(204);
+    return;
+  }
+  next();
+});
+
 app.use(express.json({
   limit: '10mb',
   verify: (req: Request & { rawBody?: Buffer }, _res, buf) => {
@@ -57,8 +69,3 @@ app.get('/health', (_req: Request, res: Response) => {
 // Global Error & 404 Handlers
 app.use(notFoundHandler);
 app.use(errorHandler);
-
-
-app.listen(process.env.PORT || 5000, () => {
-  console.log(`Server is running on port ${process.env.PORT || 5000}`);
-});

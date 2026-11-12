@@ -1,7 +1,7 @@
-﻿-- Migration 012: Outbound egress hardening metadata for tenant external tools
+-- Migration 012: Outbound egress hardening metadata for tenant external tools
 ALTER TABLE tenant_external_tools
-  ADD COLUMN IF NOT EXISTS allowed_roles JSONB DEFAULT \'["SUPERADMIN","CLIENT_OWNER"]\'::jsonb,
-  ADD COLUMN IF NOT EXISTS side_effect VARCHAR(20) DEFAULT \'WRITE\'::varchar,
+  ADD COLUMN IF NOT EXISTS allowed_roles JSONB DEFAULT '["SUPERADMIN","CLIENT_OWNER"]'::jsonb,
+  ADD COLUMN IF NOT EXISTS side_effect VARCHAR(20) DEFAULT 'WRITE'::varchar,
   ADD COLUMN IF NOT EXISTS is_destructive BOOLEAN DEFAULT FALSE,
   ADD COLUMN IF NOT EXISTS requires_approval BOOLEAN DEFAULT FALSE,
   ADD COLUMN IF NOT EXISTS rate_limit_per_min INTEGER DEFAULT 60,

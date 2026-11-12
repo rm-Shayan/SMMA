@@ -1,4 +1,4 @@
-﻿-- Migration 011: AI operation audit logging for agent/tool actions
+-- Migration 011: AI operation audit logging for agent/tool actions
 
 CREATE TABLE IF NOT EXISTS ai_operation_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

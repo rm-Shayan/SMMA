@@ -35,7 +35,10 @@ yarn-error.log*
 .cache/
 *.tsbuildinfo
 
-# OS and Editor
+# Testing & Playwright
+test-results/
+playwright-report/
+blob-report/
 .DS_Store
 Thumbs.db
 .vscode/*
