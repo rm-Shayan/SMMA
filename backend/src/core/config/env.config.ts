@@ -26,6 +26,11 @@ const envSchema = z.object({
   SMTP_MAIL: z.string().default(''),
   SMTP_PASS: z.string().default(''),
   SMTP_FROM: z.string().default(''),
+  ACCESS_TOKEN_EXPIRY_MINUTES: z.string().default('15'),
+  REFRESH_TOKEN_EXPIRY_DAYS: z.string().default('7'),
+  EMAIL_VERIFICATION_EXPIRY_MINUTES: z.string().default('1440'),
+  PASSWORD_RESET_EXPIRY_MINUTES: z.string().default('60'),
+  BASE_URL: z.string().default('http://localhost:3000'),
   ENFORCE_SUBSCRIPTION_QUOTAS: z.string().default('false'),
   COMMERCIAL_SAAS_MODE: z.string().default('false'),
 });

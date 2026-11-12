@@ -4,10 +4,14 @@
   "description": "SMMA Autonomous Sales Platform Monorepo Root",
   "scripts": {
     "dev": "npm --prefix backend run dev",
-    "build": "npm --prefix backend run build",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "build:backend": "npm --prefix backend run build",
+    "build:frontend": "npm --prefix frontend run build",
     "start": "npm --prefix backend start",
+    "start:frontend": "npm --prefix frontend start",
     "migrate": "npm --prefix backend run migrate",
     "seed": "npm --prefix backend run seed"
   }
 }
-

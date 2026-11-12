@@ -2,67 +2,129 @@ import crypto from 'crypto';
 import { pool } from '../../core/database/pool.database';
 import { env } from '../../core/config/env.config';
 import { logger } from '../../core/config/logger.config';
+import { getRedisClient, isRedisConnected } from '../../core/config/redis.config';
+import { sendAuthMail } from './auth.email';
+import {
+  hashPassword,
+  verifyPassword,
+  hashToken,
+  generateAuthTokens,
+  VERIFY_EMAIL_TTL_SECONDS,
+} from './auth.tokens';
 
-export interface TokenPayload {
-  userId: string;
-  email: string;
-  role: 'SUPERADMIN' | 'CLIENT_OWNER' | 'AGENT_OPERATOR' | 'TRAINEE';
-  tenantId: string | null;
-}
+export * from './auth.tokens';
+export * from './auth.recovery.service';
 
-export function hashPassword(password: string): string {
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  return `${salt}:${hash}`;
-}
-
-export function verifyPassword(password: string, storedHash: string): boolean {
-  const [salt, originalHash] = storedHash.split(':');
-  if (!salt || !originalHash) return false;
-  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  return hash === originalHash;
-}
-
-export function createAuthToken(payload: TokenPayload, expiresInSeconds = 86400 * 7): string {
-  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
-  const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
-  const body = Buffer.from(JSON.stringify({ ...payload, exp })).toString('base64url');
-  const signature = crypto.createHmac('sha256', env.JWT_SECRET).update(`${header}.${body}`).digest('base64url');
-  return `${header}.${body}.${signature}`;
-}
-
-export function verifyAuthToken(token: string): TokenPayload | null {
-  try {
-    const [header, body, signature] = token.split('.');
-    if (!header || !body || !signature) return null;
-    const expected = crypto.createHmac('sha256', env.JWT_SECRET).update(`${header}.${body}`).digest('base64url');
-    if (signature !== expected) return null;
-    const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
-    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
-    return payload as TokenPayload;
-  } catch {
-    return null;
+async function recordAuthFailure(identifier: string): Promise<void> {
+  const key = `auth:fail:${identifier}`;
+  if (isRedisConnected) {
+    try {
+      const redis = getRedisClient();
+      await redis.incr(key);
+      await redis.expire(key, 900);
+      return;
+    } catch (err: any) {
+      logger.warn({ err: err.message }, 'Auth failure counter Redis failed');
+    }
   }
 }
 
-export async function loginUser(email: string, pass: string): Promise<{ token: string; user: any } | null> {
-  const sql = `SELECT id, tenant_id, email, password_hash, role, full_name, is_active FROM platform_users WHERE email = $1 LIMIT 1;`;
+async function clearAuthFailures(identifier: string): Promise<void> {
+  const key = `auth:fail:${identifier}`;
+  if (isRedisConnected) {
+    try {
+      const redis = getRedisClient();
+      await redis.del(key);
+    } catch {}
+  }
+}
+
+export interface LoginResult {
+  token: string;
+  refreshToken: string;
+  user: { id: string; email: string; role: string; tenantId: string | null; name: string };
+}
+
+export async function loginUser(email: string, pass: string, opts?: { deviceInfo?: string; ipAddress?: string }): Promise<LoginResult | null> {
+  const normalizedEmail = email.toLowerCase().trim();
+  const sql = `SELECT id, tenant_id, email, password_hash, role, full_name, is_active, email_verified FROM platform_users WHERE email = $1 LIMIT 1;`;
   try {
-    const res = await pool.query(sql, [email.toLowerCase().trim()]);
+    const res = await pool.query(sql, [normalizedEmail]);
     const user = res.rows[0];
-    if (!user || !user.is_active || !verifyPassword(pass, user.password_hash)) {
+    if (!user || !user.is_active || !user.email_verified || !verifyPassword(pass, user.password_hash)) {
+      await recordAuthFailure(normalizedEmail);
+      logger.warn({ email: normalizedEmail }, 'Failed login attempt');
       return null;
     }
-    const token = createAuthToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-      tenantId: user.tenant_id,
-    });
-    return { token, user: { id: user.id, email: user.email, role: user.role, tenantId: user.tenant_id, name: user.full_name } };
+    await clearAuthFailures(normalizedEmail);
+    const tokens = await generateAuthTokens(
+      { userId: user.id, email: user.email, role: user.role, tenantId: user.tenant_id },
+      opts?.deviceInfo,
+      opts?.ipAddress,
+    );
+    logger.info({ userId: user.id, email: user.email }, 'User logged in');
+    return {
+      token: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: { id: user.id, email: user.email, role: user.role, tenantId: user.tenant_id, name: user.full_name },
+    };
   } catch (err: any) {
     logger.error({ err: err.message }, 'User login query failed');
     return null;
   }
 }
 
+export interface RegisterResult {
+  user: { id: string; tenant_id: string | null; email: string; role: string; full_name: string; email_verified: boolean };
+  emailVerificationRequired: boolean;
+}
+
+export async function registerUser(data: {
+  email: string;
+  password: string;
+  fullName: string;
+  role?: 'SUPERADMIN' | 'CLIENT_OWNER' | 'AGENT_OPERATOR' | 'TRAINEE';
+  tenantId?: string | null;
+}): Promise<RegisterResult> {
+  const email = data.email.toLowerCase().trim();
+  const existing = await pool.query(`SELECT id FROM platform_users WHERE email = $1 LIMIT 1`, [email]);
+  if (existing.rows.length > 0) {
+    throw new Error('EMAIL_ALREADY_REGISTERED');
+  }
+
+  const role = data.role || 'CLIENT_OWNER';
+  const tenantId = data.tenantId || null;
+  if (role !== 'SUPERADMIN' && !tenantId) {
+    throw new Error('TENANT_ID_REQUIRED');
+  }
+
+  const userRes = await pool.query(
+    `INSERT INTO platform_users (tenant_id, email, password_hash, role, full_name, email_verified)
+     VALUES ($1, $2, $3, $4, $5, FALSE)
+     RETURNING id, tenant_id, email, role, full_name, email_verified`,
+    [tenantId, email, hashPassword(data.password), role, data.fullName],
+  );
+  const user = userRes.rows[0];
+
+  const token = crypto.randomBytes(32).toString('hex');
+  const tokenHash = hashToken(token);
+  const expiresAt = new Date(Date.now() + VERIFY_EMAIL_TTL_SECONDS * 1000);
+  await pool.query(
+    `INSERT INTO email_verification_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, $3)`,
+    [user.id, tokenHash, expiresAt],
+  );
+
+  const verifyUrl = `${env.BASE_URL.replace(/\/$/, '')}/api/v1/auth/verify-email?token=${token}`;
+  await sendAuthMail({
+    to: email,
+    subject: 'Verify your SMMA account email',
+    text: `Hi ${data.fullName}, please verify your email by visiting: ${verifyUrl}`,
+    html: `<p>Hi ${data.fullName},</p><p>Please verify your email address: <a href="${verifyUrl}">Verify Email</a></p><p>Expires in ${Math.round(VERIFY_EMAIL_TTL_SECONDS / 60)} minutes.</p>`,
+  });
+
+  logger.info({ userId: user.id, email }, 'New user registered, email verification pending');
+  return {
+    user: { id: user.id, tenant_id: user.tenant_id, email: user.email, role: user.role, full_name: user.full_name, email_verified: user.email_verified },
+    emailVerificationRequired: true,
+  };
+}

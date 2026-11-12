@@ -1,7 +1,44 @@
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
+
+# Production builds
 dist/
+build/
+.next/
+out/
+
+# Environment variables
 .env
+.env*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Secrets and credentials
 google-credentials.json
 /credentials/
-*.log
+*.pem
+*.key
 
+# Logs and runtime data
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Caches and diagnostics
+.turbo/
+.cache/
+*.tsbuildinfo
+
+# OS and Editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
