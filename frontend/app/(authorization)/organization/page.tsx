@@ -62,12 +62,12 @@ export default function OrganizationPage() {
     try {
       if (tenantId) {
         await updateTenantApi(tenantId, {
-          company_name: companyName.trim(),
-          notification_email: notificationEmail.trim(),
-          brand_voice: brandVoice.trim(),
-          google_sheet_id: googleSheetId.trim(),
-          booking_calendar_url: bookingCalendarUrl.trim(),
-          is_active: isActive,
+          companyName: companyName.trim(),
+          notificationEmail: notificationEmail.trim(),
+          brandVoice: brandVoice.trim(),
+          googleSheetId: googleSheetId.trim(),
+          bookingCalendarUrl: bookingCalendarUrl.trim(),
+          isActive: isActive,
         });
       }
       setSavedSuccess(true);

@@ -25,7 +25,7 @@ export async function handleRegisterTenant(req: Request, res: Response): Promise
     INSERT INTO tenants
     (company_name, brand_voice, is_internal, current_plan, notification_email, niche, target_audience, competitor_handles, autonomous_mode_enabled, google_sheet_id, booking_calendar_url)
     VALUES ($1, $2, false, 'FREE_STARTER', $3, $4, $5, $6, $7, $8, $9)
-    RETURNING id, company_name, notification_email, niche, target_audience, competitor_handles, autonomous_mode_enabled, google_sheet_id, is_active, created_at;
+    RETURNING id, company_name, brand_voice, notification_email, niche, target_audience, competitor_handles, autonomous_mode_enabled, google_sheet_id, booking_calendar_url, is_active, created_at;
   `;
   try {
     const dbRes = await pool.query(sql, [companyName, brandVoice, email, niche, targetAudience, JSON.stringify(competitorHandles), autonomousModeEnabled, googleSheetId || null, bookingCalendarUrl || null]);
@@ -43,13 +43,13 @@ export async function handleListTenants(req: Request, res: Response): Promise<vo
   const isSuper = req.user.role === 'SUPERADMIN';
   try {
     if (isSuper) {
-      const dbRes = await pool.query(`SELECT id, company_name, niche, target_audience, competitor_handles, autonomous_mode_enabled, is_active, created_at FROM tenants ORDER BY created_at DESC;`);
+      const dbRes = await pool.query(`SELECT id, company_name, brand_voice, niche, target_audience, competitor_handles, autonomous_mode_enabled, google_sheet_id, booking_calendar_url, notification_email, is_active, created_at FROM tenants ORDER BY created_at DESC;`);
       res.status(200).json({ success: true, count: dbRes.rows.length, tenants: dbRes.rows });
       return;
     }
     const tenantId = req.user.tenantId || req.tenantId;
     if (!tenantId) { res.status(403).json({ error: 'Tenant context required' }); return; }
-    const dbRes = await executeTenantQuery(tenantId, `SELECT id, company_name, niche, target_audience, competitor_handles, autonomous_mode_enabled, is_active, created_at FROM tenants WHERE id = $1;`, [tenantId]);
+    const dbRes = await executeTenantQuery(tenantId, `SELECT id, company_name, brand_voice, niche, target_audience, competitor_handles, autonomous_mode_enabled, google_sheet_id, booking_calendar_url, notification_email, is_active, created_at FROM tenants WHERE id = $1;`, [tenantId]);
     res.status(200).json({ success: true, count: dbRes.rows.length, tenants: dbRes.rows });
   } catch (err: any) {
     logger.error({ err: err.message }, 'Failed to list tenants');

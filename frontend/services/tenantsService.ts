@@ -2,7 +2,7 @@
  * Tenant directory and settings calls.
  * Contract: docs/07-api-integration.md §4
  */
-import { apiGet, apiPatch } from "@/services/api";
+import { apiGet, apiPatch, apiPost } from "@/services/api";
 import type { TenantOption } from "@/types/tenant";
 
 export interface TenantDetailsDto {
@@ -18,6 +18,31 @@ export interface TenantDetailsDto {
   notification_email?: string;
   is_active?: boolean;
   created_at?: string;
+}
+
+export interface CreateTenantPayload {
+  companyName: string;
+  email: string;
+  brandVoice?: string;
+  niche?: string;
+  targetAudience?: string;
+  competitorHandles?: string[];
+  autonomousModeEnabled?: boolean;
+  googleSheetId?: string;
+  bookingCalendarUrl?: string;
+}
+
+export interface UpdateTenantPayload {
+  companyName?: string;
+  brandVoice?: string;
+  niche?: string;
+  targetAudience?: string;
+  competitorHandles?: string[];
+  autonomousModeEnabled?: boolean;
+  googleSheetId?: string;
+  bookingCalendarUrl?: string;
+  notificationEmail?: string;
+  isActive?: boolean;
 }
 
 interface TenantsResponse {
@@ -47,8 +72,13 @@ export async function getTenantDetailsApi(tenantId?: string): Promise<TenantDeta
 
 export async function updateTenantApi(
   tenantId: string,
-  payload: Partial<TenantDetailsDto>
+  payload: UpdateTenantPayload
 ): Promise<TenantDetailsDto> {
   const res = await apiPatch<{ success: boolean; tenant: TenantDetailsDto }>(`/tenants/${tenantId}`, payload);
+  return res.tenant;
+}
+
+export async function createTenantApi(payload: CreateTenantPayload): Promise<TenantDetailsDto> {
+  const res = await apiPost<{ success: boolean; tenant: TenantDetailsDto }>("/tenants/register", payload);
   return res.tenant;
 }

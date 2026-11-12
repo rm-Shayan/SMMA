@@ -6,6 +6,16 @@ import Link from "next/link";
 import { resetPasswordApi } from "@/services/authService";
 import { ApiError } from "@/services/api";
 import Logo from "@/components/Logo";
+import {
+  IconKey,
+  IconLock,
+  IconEye,
+  IconEyeOff,
+  IconArrowRight,
+  IconCheckCircle,
+  IconAlertCircle,
+  IconSpinner,
+} from "@/components/Icons";
 
 function ResetPasswordContent() {
   const searchParams = useSearchParams();
@@ -77,7 +87,7 @@ function ResetPasswordContent() {
         {success ? (
           <div className="p-4 text-center space-y-4 animate-in fade-in">
             <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto">
-              <span className="material-symbols-outlined text-[30px]">check_circle</span>
+              <IconCheckCircle size={30} />
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-900 tracking-tight">
@@ -93,7 +103,7 @@ function ResetPasswordContent() {
                 className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-semibold text-xs text-white bg-indigo-600 hover:bg-indigo-700 transition-colors flex items-center justify-center gap-1.5"
               >
                 <span>Sign In with New Password</span>
-                <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
+                <IconArrowRight size={15} />
               </Link>
             </div>
           </div>
@@ -101,9 +111,7 @@ function ResetPasswordContent() {
           <>
             {error && (
               <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200/80 text-rose-700 text-xs flex items-start gap-2.5 animate-in fade-in">
-                <span className="material-symbols-outlined text-[18px] text-rose-500 shrink-0 mt-0.5">
-                  error
-                </span>
+                <IconAlertCircle size={18} className="text-rose-500 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-semibold text-rose-800">Reset Failed</p>
                   <p className="mt-0.5 leading-relaxed text-rose-600">{error}</p>
@@ -121,8 +129,8 @@ function ResetPasswordContent() {
                     Reset Token
                   </label>
                   <div className="relative">
-                    <span className="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                      key
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
+                      <IconKey size={18} />
                     </span>
                     <input
                       type="text"
@@ -145,8 +153,8 @@ function ResetPasswordContent() {
                   New Password (Min 8 Chars)
                 </label>
                 <div className="relative">
-                  <span className="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                    lock
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
+                    <IconLock size={18} />
                   </span>
                   <input
                     type={showPassword ? "text" : "password"}
@@ -163,9 +171,7 @@ function ResetPasswordContent() {
                     className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                     aria-label="Toggle password"
                   >
-                    <span className="material-symbols-outlined text-[18px]">
-                      {showPassword ? "visibility_off" : "visibility"}
-                    </span>
+                    {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
                   </button>
                 </div>
               </div>
@@ -178,8 +184,8 @@ function ResetPasswordContent() {
                   Confirm New Password
                 </label>
                 <div className="relative">
-                  <span className="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                    verified
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
+                    <IconLock size={18} />
                   </span>
                   <input
                     type={showConfirmPassword ? "text" : "password"}
@@ -196,9 +202,7 @@ function ResetPasswordContent() {
                     className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                     aria-label="Toggle password"
                   >
-                    <span className="material-symbols-outlined text-[18px]">
-                      {showConfirmPassword ? "visibility_off" : "visibility"}
-                    </span>
+                    {showConfirmPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
                   </button>
                 </div>
               </div>
@@ -210,24 +214,25 @@ function ResetPasswordContent() {
               >
                 {loading ? (
                   <>
-                    <span className="material-symbols-outlined text-[18px] animate-spin">sync</span>
-                    <span>Re-encrypting Password...</span>
+                    <IconSpinner size={18} />
+                    <span>Resetting Password...</span>
                   </>
                 ) : (
                   <>
-                    <span>Confirm &amp; Update Password</span>
-                    <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    <span>Confirm New Password</span>
+                    <IconArrowRight size={18} />
                   </>
                 )}
               </button>
             </form>
 
             <div className="mt-5 pt-4 border-t border-slate-100 text-center text-xs text-slate-500">
+              <span>Return to </span>
               <Link
                 href="/login"
                 className="text-indigo-600 hover:text-indigo-700 font-semibold transition-colors underline-offset-4 hover:underline"
               >
-                &larr; Return to Sign In
+                Sign In &rarr;
               </Link>
             </div>
           </>
@@ -235,7 +240,7 @@ function ResetPasswordContent() {
       </div>
 
       <div className="mt-6 text-center text-[11px] text-slate-400">
-        <p>&copy; 2026 SMMA AI Systems &middot; Multi-Tenant Isolation</p>
+        <p>&copy; 2026 SMMA AI Systems &middot; Multi-Tenant Enterprise Security</p>
       </div>
     </div>
   );
@@ -246,7 +251,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen w-full bg-gradient-to-b from-slate-50 via-white to-slate-100/90 flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden font-sans text-slate-800 antialiased">
       <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-70 pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-indigo-200/30 blur-[130px] rounded-full pointer-events-none" />
-      <Suspense fallback={<div className="p-12 text-slate-500 text-sm">Loading security parameters...</div>}>
+      <Suspense fallback={<div className="text-slate-500 text-xs">Loading recovery enclave...</div>}>
         <ResetPasswordContent />
       </Suspense>
     </div>

@@ -5,6 +5,19 @@ import Link from "next/link";
 import { registerApi } from "@/services/authService";
 import { ApiError } from "@/services/api";
 import Logo from "@/components/Logo";
+import {
+  IconBuilding,
+  IconUser,
+  IconMail,
+  IconLock,
+  IconEye,
+  IconEyeOff,
+  IconArrowRight,
+  IconShield,
+  IconSpinner,
+  IconMailCheck,
+  IconAlertCircle,
+} from "@/components/Icons";
 
 export default function RegisterPage() {
   const [companyName, setCompanyName] = useState("");
@@ -85,26 +98,26 @@ export default function RegisterPage() {
       <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-70 pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-indigo-200/30 blur-[130px] rounded-full pointer-events-none" />
 
-      <div className="w-full max-w-[500px] relative z-10 flex flex-col">
+      <div className="w-full max-w-[600px] relative z-10 flex flex-col">
         {/* Header */}
         <div className="text-center mb-6">
           <Link href="/login" className="inline-block transition-transform hover:scale-[1.02] mb-3">
             <Logo size="lg" showText={true} />
           </Link>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
             Create Your Agency Enclave
           </h1>
-          <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
+          <p className="mt-1.5 text-sm text-slate-500 max-w-md mx-auto">
             Onboard your agency into a dedicated, multi-tenant isolated AI workspace.
           </p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-3xl p-8 sm:p-9 border border-slate-200/90 shadow-[0_20px_60px_-15px_rgba(79,70,229,0.08),0_4px_16px_rgba(0,0,0,0.02)]">
+        <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200/90 shadow-[0_20px_60px_-15px_rgba(79,70,229,0.08),0_4px_16px_rgba(0,0,0,0.02)]">
           {success ? (
             <div className="p-4 text-center space-y-4 animate-in fade-in">
               <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto">
-                <span className="material-symbols-outlined text-[30px]">mark_email_read</span>
+                <IconMailCheck size={28} />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-900 tracking-tight">
@@ -120,7 +133,7 @@ export default function RegisterPage() {
 
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-left text-xs text-slate-600 space-y-1.5">
                 <div className="font-semibold text-slate-900 flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[16px] text-indigo-600">domain</span>
+                  <IconBuilding size={16} className="text-indigo-600 shrink-0" />
                   <span>{companyName}</span>
                 </div>
                 <div>Role: <strong className="text-indigo-600">CLIENT_OWNER</strong> (Full Enclave Access)</div>
@@ -133,7 +146,7 @@ export default function RegisterPage() {
                   className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs text-white bg-indigo-600 hover:bg-indigo-700 transition-colors flex items-center justify-center gap-1.5"
                 >
                   <span>Proceed to Sign In</span>
-                  <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
+                  <IconArrowRight size={15} />
                 </Link>
                 <Link
                   href="/verify-email"
@@ -147,9 +160,7 @@ export default function RegisterPage() {
             <>
               {apiError && (
                 <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200/80 text-rose-700 text-xs flex items-start gap-2.5 animate-in fade-in">
-                  <span className="material-symbols-outlined text-[18px] text-rose-500 shrink-0 mt-0.5">
-                    error
-                  </span>
+                  <IconAlertCircle size={18} className="text-rose-500 shrink-0 mt-0.5" />
                   <div>
                     <p className="font-semibold text-rose-800">Registration Failed</p>
                     <p className="mt-0.5 leading-relaxed text-rose-600">{apiError}</p>
@@ -157,17 +168,17 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              <form onSubmit={handleRegister} noValidate className="space-y-3.5">
+              <form onSubmit={handleRegister} noValidate className="space-y-4">
                 <div>
                   <label
                     htmlFor="companyName"
-                    className="block text-xs font-semibold tracking-wide uppercase text-slate-600 mb-1"
+                    className="block text-[13px] font-semibold tracking-wide uppercase text-slate-600 mb-1.5"
                   >
                     Agency / Company Name
                   </label>
                   <div className="relative">
-                    <span className="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                      domain
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
+                      <IconBuilding size={18} />
                     </span>
                     <input
                       type="text"
@@ -176,7 +187,7 @@ export default function RegisterPage() {
                       onChange={(e) => setCompanyName(e.target.value)}
                       placeholder="e.g. Apex Growth Partners LLC"
                       required
-                      className={`w-full pl-10 pr-4 py-2 text-sm rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
+                      className={`w-full pl-10 pr-4 py-3 text-[15px] rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
                         validationErrors.companyName
                           ? "border-rose-400 ring-2 ring-rose-100 bg-white"
                           : "border-slate-200 hover:border-slate-300 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10"
@@ -185,23 +196,23 @@ export default function RegisterPage() {
                   </div>
                   {validationErrors.companyName && (
                     <p className="text-xs text-rose-500 mt-1 flex items-center gap-1 font-medium">
-                      <span className="material-symbols-outlined text-[14px]">info</span>
+                      <IconAlertCircle size={14} />
                       {validationErrors.companyName}
                     </p>
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label
                       htmlFor="fullName"
-                      className="block text-xs font-semibold tracking-wide uppercase text-slate-600 mb-1"
+                      className="block text-[13px] font-semibold tracking-wide uppercase text-slate-600 mb-1.5"
                     >
                       Owner Full Name
                     </label>
                     <div className="relative">
-                      <span className="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                        person
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
+                        <IconUser size={18} />
                       </span>
                       <input
                         type="text"
@@ -210,7 +221,7 @@ export default function RegisterPage() {
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="Alex Morgan"
                         required
-                        className={`w-full pl-10 pr-4 py-2 text-sm rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
+                        className={`w-full pl-10 pr-4 py-3 text-[15px] rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
                           validationErrors.fullName
                             ? "border-rose-400 ring-2 ring-rose-100 bg-white"
                             : "border-slate-200 hover:border-slate-300 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10"
@@ -219,7 +230,7 @@ export default function RegisterPage() {
                     </div>
                     {validationErrors.fullName && (
                       <p className="text-xs text-rose-500 mt-1 flex items-center gap-1 font-medium">
-                        <span className="material-symbols-outlined text-[14px]">info</span>
+                        <IconAlertCircle size={14} />
                         {validationErrors.fullName}
                       </p>
                     )}
@@ -228,13 +239,13 @@ export default function RegisterPage() {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-xs font-semibold tracking-wide uppercase text-slate-600 mb-1"
+                      className="block text-[13px] font-semibold tracking-wide uppercase text-slate-600 mb-1.5"
                     >
                       Work Email
                     </label>
                     <div className="relative">
-                      <span className="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                        mail
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
+                        <IconMail size={18} />
                       </span>
                       <input
                         type="email"
@@ -243,7 +254,7 @@ export default function RegisterPage() {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="alex@agency.com"
                         required
-                        className={`w-full pl-10 pr-4 py-2 text-sm rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
+                        className={`w-full pl-10 pr-4 py-3 text-[15px] rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
                           validationErrors.email
                             ? "border-rose-400 ring-2 ring-rose-100 bg-white"
                             : "border-slate-200 hover:border-slate-300 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10"
@@ -252,24 +263,24 @@ export default function RegisterPage() {
                     </div>
                     {validationErrors.email && (
                       <p className="text-xs text-rose-500 mt-1 flex items-center gap-1 font-medium">
-                        <span className="material-symbols-outlined text-[14px]">info</span>
+                        <IconAlertCircle size={14} />
                         {validationErrors.email}
                       </p>
                     )}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label
                       htmlFor="password"
-                      className="block text-xs font-semibold tracking-wide uppercase text-slate-600 mb-1"
+                      className="block text-[13px] font-semibold tracking-wide uppercase text-slate-600 mb-1.5"
                     >
                       Master Password
                     </label>
                     <div className="relative">
-                      <span className="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                        lock
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
+                        <IconLock size={18} />
                       </span>
                       <input
                         type={showPassword ? "text" : "password"}
@@ -278,7 +289,7 @@ export default function RegisterPage() {
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Min 8 chars"
                         required
-                        className={`w-full pl-10 pr-10 py-2 text-sm rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
+                        className={`w-full pl-10 pr-10 py-3 text-[15px] rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
                           validationErrors.password
                             ? "border-rose-400 ring-2 ring-rose-100 bg-white"
                             : "border-slate-200 hover:border-slate-300 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10"
@@ -290,14 +301,12 @@ export default function RegisterPage() {
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                         aria-label="Toggle password"
                       >
-                        <span className="material-symbols-outlined text-[17px]">
-                          {showPassword ? "visibility_off" : "visibility"}
-                        </span>
+                        {showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                       </button>
                     </div>
                     {validationErrors.password && (
                       <p className="text-xs text-rose-500 mt-1 flex items-center gap-1 font-medium">
-                        <span className="material-symbols-outlined text-[14px]">info</span>
+                        <IconAlertCircle size={14} />
                         {validationErrors.password}
                       </p>
                     )}
@@ -306,13 +315,13 @@ export default function RegisterPage() {
                   <div>
                     <label
                       htmlFor="confirmPassword"
-                      className="block text-xs font-semibold tracking-wide uppercase text-slate-600 mb-1"
+                      className="block text-[13px] font-semibold tracking-wide uppercase text-slate-600 mb-1.5"
                     >
                       Confirm Password
                     </label>
                     <div className="relative">
-                      <span className="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                        verified
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
+                        <IconLock size={18} />
                       </span>
                       <input
                         type={showConfirmPassword ? "text" : "password"}
@@ -321,7 +330,7 @@ export default function RegisterPage() {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Repeat password"
                         required
-                        className={`w-full pl-10 pr-10 py-2 text-sm rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
+                        className={`w-full pl-10 pr-10 py-3 text-[15px] rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
                           validationErrors.confirmPassword
                             ? "border-rose-400 ring-2 ring-rose-100 bg-white"
                             : "border-slate-200 hover:border-slate-300 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10"
@@ -333,14 +342,12 @@ export default function RegisterPage() {
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                         aria-label="Toggle password"
                       >
-                        <span className="material-symbols-outlined text-[17px]">
-                          {showConfirmPassword ? "visibility_off" : "visibility"}
-                        </span>
+                        {showConfirmPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                       </button>
                     </div>
                     {validationErrors.confirmPassword && (
                       <p className="text-xs text-rose-500 mt-1 flex items-center gap-1 font-medium">
-                        <span className="material-symbols-outlined text-[14px]">info</span>
+                        <IconAlertCircle size={14} />
                         {validationErrors.confirmPassword}
                       </p>
                     )}
@@ -349,9 +356,7 @@ export default function RegisterPage() {
 
                 {/* Role Pill Banner */}
                 <div className="p-3 rounded-2xl bg-indigo-50/80 border border-indigo-100 text-xs text-indigo-900 flex items-start gap-2">
-                  <span className="material-symbols-outlined text-[17px] text-indigo-600 shrink-0 mt-0.5">
-                    shield
-                  </span>
+                  <IconShield size={17} className="text-indigo-600 shrink-0 mt-0.5" />
                   <div>
                     <span className="font-semibold text-indigo-950">Privileged Role Assignment: </span>
                     Public signups provision a dedicated <strong className="text-indigo-600">CLIENT_OWNER</strong> with full tenant autonomy.
@@ -361,17 +366,17 @@ export default function RegisterPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full mt-2 py-3 px-4 rounded-xl font-semibold text-sm text-white bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] shadow-md shadow-indigo-600/20 transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+                  className="w-full mt-2 py-3.5 px-4 rounded-xl font-semibold text-[15px] text-white bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] shadow-md shadow-indigo-600/20 transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
                 >
                   {loading ? (
                     <>
-                      <span className="material-symbols-outlined text-[18px] animate-spin">sync</span>
+                      <IconSpinner size={18} />
                       <span>Provisioning Enclave...</span>
                     </>
                   ) : (
                     <>
                       <span>Provision Agency Enclave</span>
-                      <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                      <IconArrowRight size={18} />
                     </>
                   )}
                 </button>

@@ -8,23 +8,26 @@ import { useAppDispatch } from "@/redux/hooks";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { ApiError } from "@/services/api";
 import Logo from "@/components/Logo";
+import {
+  IconMail,
+  IconLock,
+  IconEye,
+  IconEyeOff,
+  IconArrowRight,
+  IconSpinner,
+  IconAlertCircle,
+  IconShield,
+} from "@/components/Icons";
 
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const [email, setEmail] = useState("admin@agency.com");
-  const [password, setPassword] = useState("admin123456");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<{ email?: string; password?: string }>({});
-
-  const setDemoAccount = (roleEmail: string, rolePass: string) => {
-    setEmail(roleEmail);
-    setPassword(rolePass);
-    setErrorState(null);
-    setValidationErrors({});
-  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,57 +87,10 @@ export default function LoginPage() {
 
         {/* Floating Card */}
         <div className="bg-white rounded-3xl p-8 sm:p-9 border border-slate-200/90 shadow-[0_20px_60px_-15px_rgba(79,70,229,0.08),0_4px_16px_rgba(0,0,0,0.02)]">
-          {/* Quick Demo Credentials Bar */}
-          <div className="mb-5 p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">
-                1-Click Quick Demo Login:
-              </span>
-              <span className="text-[10px] text-indigo-600 font-medium">Click to fill</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => setDemoAccount("admin@agency.com", "admin123456")}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold border text-center transition-all cursor-pointer ${
-                  email === "admin@agency.com"
-                    ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300"
-                }`}
-              >
-                SuperAdmin
-              </button>
-              <button
-                type="button"
-                onClick={() => setDemoAccount("owner@agency.com", "owner123456")}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold border text-center transition-all cursor-pointer ${
-                  email === "owner@agency.com"
-                    ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300"
-                }`}
-              >
-                Agency Owner
-              </button>
-              <button
-                type="button"
-                onClick={() => setDemoAccount("operator@agency.com", "operator123456")}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold border text-center transition-all cursor-pointer ${
-                  email === "operator@agency.com"
-                    ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300"
-                }`}
-              >
-                Operator
-              </button>
-            </div>
-          </div>
-
           {/* Error Banner */}
           {errorState && (
             <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200/80 text-rose-700 text-xs flex items-start gap-2.5 animate-in fade-in">
-              <span className="material-symbols-outlined text-[18px] text-rose-500 shrink-0 mt-0.5">
-                error
-              </span>
+              <IconAlertCircle size={18} className="text-rose-500 shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold text-rose-800">Authentication Failed</p>
                 <p className="mt-0.5 leading-relaxed text-rose-600">{errorState}</p>
@@ -152,8 +108,8 @@ export default function LoginPage() {
                 Work Email Address
               </label>
               <div className="relative">
-                <span className="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                  mail
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
+                  <IconMail size={18} />
                 </span>
                 <input
                   type="email"
@@ -162,6 +118,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@agency.com"
                   required
+                  autoComplete="email"
                   className={`w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
                     validationErrors.email
                       ? "border-rose-400 ring-2 ring-rose-100 bg-white"
@@ -171,7 +128,7 @@ export default function LoginPage() {
               </div>
               {validationErrors.email && (
                 <p className="text-xs text-rose-500 mt-1.5 flex items-center gap-1 font-medium">
-                  <span className="material-symbols-outlined text-[14px]">info</span>
+                  <IconAlertCircle size={14} />
                   {validationErrors.email}
                 </p>
               )}
@@ -193,8 +150,8 @@ export default function LoginPage() {
                 </Link>
               </div>
               <div className="relative">
-                <span className="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                  lock
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
+                  <IconLock size={18} />
                 </span>
                 <input
                   type={showPassword ? "text" : "password"}
@@ -203,6 +160,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   required
+                  autoComplete="current-password"
                   className={`w-full pl-10 pr-11 py-2.5 text-sm rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
                     validationErrors.password
                       ? "border-rose-400 ring-2 ring-rose-100 bg-white"
@@ -215,14 +173,12 @@ export default function LoginPage() {
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                   aria-label="Toggle password visibility"
                 >
-                  <span className="material-symbols-outlined text-[18px]">
-                    {showPassword ? "visibility_off" : "visibility"}
-                  </span>
+                  {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
                 </button>
               </div>
               {validationErrors.password && (
                 <p className="text-xs text-rose-500 mt-1.5 flex items-center gap-1 font-medium">
-                  <span className="material-symbols-outlined text-[14px]">info</span>
+                  <IconAlertCircle size={14} />
                   {validationErrors.password}
                 </p>
               )}
@@ -236,13 +192,13 @@ export default function LoginPage() {
             >
               {loading ? (
                 <>
-                  <span className="material-symbols-outlined text-[18px] animate-spin">sync</span>
+                  <IconSpinner size={18} />
                   <span>Signing In...</span>
                 </>
               ) : (
                 <>
                   <span>Sign In</span>
-                  <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                  <IconArrowRight size={18} />
                 </>
               )}
             </button>
@@ -280,8 +236,8 @@ export default function LoginPage() {
 
         {/* Trust Footer */}
         <div className="mt-6 text-center text-[11px] text-slate-400 flex items-center justify-center gap-2">
-          <span className="flex items-center gap-1">
-            <span className="material-symbols-outlined text-[13px] text-emerald-500">verified_user</span>
+          <span className="flex items-center gap-1 text-slate-500">
+            <IconShield size={13} className="text-emerald-500" />
             SOC-2 Type II
           </span>
           <span>&bull;</span>

@@ -8,19 +8,14 @@ test.describe('SMMA Platform - Complete UI & Navigation E2E', () => {
 
     // Verify brand logo and headings
     await expect(page.locator('text=Sign in to your account')).toBeVisible();
-    await expect(page.locator('text=SMMA.AI').first()).toBeVisible();
-    await expect(page.locator('text=v4.2').first()).toBeVisible();
+    await expect(page.locator('text=SMMA').first()).toBeVisible();
+    await expect(page.locator('text=Autonomous Agency Enclave').first()).toBeVisible();
 
-    // Verify Quick Demo Pills exist
-    const adminPill = page.locator('button:has-text("SuperAdmin")');
-    await expect(adminPill).toBeVisible();
-
-    // Click demo SuperAdmin pill to auto-populate
-    await adminPill.click();
-
-    // Verify input fields populated
+    // Fill valid credentials directly (no auto-fill demo bar)
     const emailInput = page.locator('input#email');
-    await expect(emailInput).toHaveValue('admin@agency.com');
+    await emailInput.fill('admin@agency.com');
+    const passwordInput = page.locator('input#password');
+    await passwordInput.fill('admin123456');
 
     // Click Sign In
     const submitBtn = page.locator('button[type="submit"]');
@@ -37,28 +32,26 @@ test.describe('SMMA Platform - Complete UI & Navigation E2E', () => {
     await expect(page.locator('text=Scheduled Posts').first()).toBeVisible();
     await expect(page.locator('text=Published Posts').first()).toBeVisible();
 
-    // Verify Platform breakdown
-    await expect(page.locator('text=Platform Breakdown')).toBeVisible();
+    // 2. Navigate to Tenant Directory (SuperAdmin Portal)
+    await page.click('nav a:has-text("Tenant Directory")');
+    await page.waitForURL('**/admin/tenants');
+    await expect(page.locator('h1:has-text("Tenant Organizations")')).toBeVisible();
+    await expect(page.locator('text=Provisioned Agency Enclaves')).toBeVisible();
 
-    // 2. Navigate to Agent Workspace
-    await page.click('nav a:has-text("Agent Workspace")');
+    // 3. Navigate to AI Agents
+    await page.click('nav a:has-text("AI Agents")');
     await page.waitForURL('**/agents');
     await expect(page.locator('h1:has-text("Agent Workspace")')).toBeVisible();
 
-    // 3. Navigate to Inbox
-    await page.click('nav a:has-text("Inbox")');
+    // 4. Navigate to Unified Inbox
+    await page.click('nav a:has-text("Unified Inbox")');
     await page.waitForURL('**/inbox');
     await expect(page.locator('h1:has-text("Conversations & Inbound")')).toBeVisible();
 
-    // 4. Navigate to Leads
-    await page.click('nav a:has-text("Leads")');
+    // 5. Navigate to Leads & Pipeline
+    await page.click('nav a:has-text("Leads & Pipeline")');
     await page.waitForURL('**/leads');
     await expect(page.locator('h1:has-text("Captured Leads")')).toBeVisible();
-
-    // 5. Navigate to Action Approvals (HITL Gate)
-    await page.click('nav a:has-text("Action Approvals")');
-    await page.waitForURL('**/approvals');
-    await expect(page.locator('h1:has-text("Action Approvals")')).toBeVisible();
 
     // 6. Navigate to Publishing
     await page.click('nav a:has-text("Publishing")');
@@ -70,25 +63,15 @@ test.describe('SMMA Platform - Complete UI & Navigation E2E', () => {
     await page.waitForURL('**/channels');
     await expect(page.locator('h1:has-text("Social Channels")')).toBeVisible();
 
-    // 8. Navigate to External Tools
-    await page.click('nav a:has-text("External Tools")');
-    await page.waitForURL('**/tools');
-    await expect(page.locator('h1:has-text("External Systems")')).toBeVisible();
+    // 8. Navigate to Team Members
+    await page.click('nav a:has-text("Team Members")');
+    await page.waitForURL('**/team');
+    await expect(page.locator('h1:has-text("Team")')).toBeVisible();
 
-    // 9. Navigate to SOP & Training
-    await page.click('nav a:has-text("SOP & Training")');
-    await page.waitForURL('**/training');
-    await expect(page.locator('h1:has-text("Company Training")')).toBeVisible();
-
-    // 10. Navigate to Organization Settings
+    // 9. Navigate to Organization Settings
     await page.click('nav a:has-text("Organization")');
     await page.waitForURL('**/organization');
     await expect(page.locator('h1:has-text("Organization Settings")')).toBeVisible();
-
-    // 11. Navigate to Team Management
-    await page.click('nav a:has-text("Team")');
-    await page.waitForURL('**/team');
-    await expect(page.locator('h1:has-text("Team")')).toBeVisible();
 
     // Take screenshot of finished flow
     await page.screenshot({ path: 'test-results/dashboard-success.png' });

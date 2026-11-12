@@ -5,6 +5,13 @@ import Link from "next/link";
 import { forgotPasswordApi } from "@/services/authService";
 import { ApiError } from "@/services/api";
 import Logo from "@/components/Logo";
+import {
+  IconMail,
+  IconArrowRight,
+  IconSpinner,
+  IconAlertCircle,
+  IconMailCheck,
+} from "@/components/Icons";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -55,7 +62,7 @@ export default function ForgotPasswordPage() {
           {sent ? (
             <div className="p-4 text-center space-y-4 animate-in fade-in">
               <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto">
-                <span className="material-symbols-outlined text-[30px]">mark_email_read</span>
+                <IconMailCheck size={28} />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-900 tracking-tight">Check Your Inbox</h2>
@@ -73,7 +80,7 @@ export default function ForgotPasswordPage() {
                   className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs text-white bg-indigo-600 hover:bg-indigo-700 transition-colors flex items-center justify-center gap-1.5"
                 >
                   <span>Enter Token Now</span>
-                  <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
+                  <IconArrowRight size={15} />
                 </Link>
                 <Link
                   href="/login"
@@ -87,9 +94,7 @@ export default function ForgotPasswordPage() {
             <>
               {error && (
                 <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200/80 text-rose-700 text-xs flex items-start gap-2.5 animate-in fade-in">
-                  <span className="material-symbols-outlined text-[18px] text-rose-500 shrink-0 mt-0.5">
-                    error
-                  </span>
+                  <IconAlertCircle size={18} className="text-rose-500 shrink-0 mt-0.5" />
                   <div>
                     <p className="font-semibold text-rose-800">Recovery Notice</p>
                     <p className="mt-0.5 leading-relaxed text-rose-600">{error}</p>
@@ -106,8 +111,8 @@ export default function ForgotPasswordPage() {
                     Registered Work Email
                   </label>
                   <div className="relative">
-                    <span className="material-symbols-outlined text-[18px] text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                      mail
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
+                      <IconMail size={18} />
                     </span>
                     <input
                       type="email"
@@ -128,13 +133,13 @@ export default function ForgotPasswordPage() {
                 >
                   {loading ? (
                     <>
-                      <span className="material-symbols-outlined text-[18px] animate-spin">sync</span>
+                      <IconSpinner size={18} />
                       <span>Dispatching Token...</span>
                     </>
                   ) : (
                     <>
                       <span>Send Recovery Token</span>
-                      <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                      <IconArrowRight size={18} />
                     </>
                   )}
                 </button>
