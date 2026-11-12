@@ -8,6 +8,7 @@ import type { AuthState, User } from "@/types/auth";
 const initialState: AuthState = {
   user: null,
   token: null,
+  refreshToken: null,
   tenantId: null,
   status: "idle",
   error: null,
@@ -31,10 +32,11 @@ const authSlice = createSlice({
   reducers: {
     setCredentials(
       state,
-      action: PayloadAction<{ token: string; user: User; tenantId?: string | null }>
+      action: PayloadAction<{ token: string; refreshToken?: string | null; user: User; tenantId?: string | null }>
     ) {
-      const { token, user, tenantId } = action.payload;
+      const { token, refreshToken, user, tenantId } = action.payload;
       state.token = token;
+      state.refreshToken = refreshToken ?? null;
       state.user = user;
       state.tenantId = tenantId ?? user.tenantId ?? null;
       state.status = "succeeded";
@@ -45,6 +47,7 @@ const authSlice = createSlice({
     logout(state) {
       state.user = null;
       state.token = null;
+      state.refreshToken = null;
       state.tenantId = null;
       state.status = "idle";
       state.error = null;

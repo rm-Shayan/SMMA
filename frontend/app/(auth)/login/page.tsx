@@ -3,7 +3,6 @@
 import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Cookies from "js-cookie";
 import { loginApi } from "@/services/authService";
 import { useAppDispatch } from "@/redux/hooks";
 import { setCredentials } from "@/redux/slices/authSlice";
@@ -33,13 +32,18 @@ export default function LoginPage() {
     setValidationErrors({}); setErrorState(null); setLoading(true);
     try {
       const res = await loginApi({ email: email.trim(), password });
-      Cookies.set("smma.token", res.token, { sameSite: "lax" });
-      dispatch(setCredentials({ token: res.token, user: res.user }));
+      dispatch(setCredentials({ token: res.token, refreshToken: res.refreshToken ?? null, user: res.user }));
       router.push("/dashboard");
     } catch (err) {
       setLoading(false);
       if (err instanceof ApiError) {
-        setErrorState(err.status === 429 && err.retryAfterSeconds ? `${err.message} Try again in ${err.retryAfterSeconds}s.` : err.message);
+        if (err.status === 429 && err.retryAfterSeconds) {
+          setErrorState(`${err.message} Try again in ${err.retryAfterSeconds}s.`);
+        } else if (err.status === 401) {
+          setErrorState(err.message || "Invalid email or password. If your email is not verified, use Resend Verification below.");
+        } else {
+          setErrorState(err.message);
+        }
       } else {
         setErrorState("Something went wrong while signing in. Please try again.");
       }
@@ -83,8 +87,10 @@ export default function LoginPage() {
               {loading ? <><span className="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Authenticating...</span></> : <><span>Sign In</span><span className="material-symbols-outlined text-[18px]">arrow_forward</span></>}
             </button>
           </form>
-          <div className="mt-5 pt-4 border-t border-outline-variant/30 text-center text-xs text-secondary">
+          <div className="mt-5 pt-4 border-t border-outline-variant/30 text-center text-xs text-secondary space-y-2">
             <span>Need an organization enclave? </span><Link href="/register" className="text-primary-container font-semibold hover:underline">Register Tenant Record</Link>
+            <span>Forgot your password? </span><Link href="/forgot-password" className="text-primary-container font-semibold hover:underline">Reset Password</Link>
+            <div><span>Didn't receive a verification email? </span><Link href="/verify-email" className="text-primary-container font-semibold hover:underline">Verify / Resend</Link></div>
           </div>
         </div>
         <div className="mt-6 text-center text-xs text-secondary"><p>&copy; {copyrightYear} SMMA AI Platform. All rights reserved.</p></div>

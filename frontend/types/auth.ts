@@ -21,6 +21,7 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   fullName: string;
+  companyName?: string;
   role?: UserRole;
   tenantId?: string;
 }

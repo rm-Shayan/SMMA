@@ -16,7 +16,7 @@ const ROUTE_ACCESS = [
   { prefix: "/publishing", label: "Publishing", roles: OWNER },
   { prefix: "/channels", label: "Channels", roles: OWNER },
   { prefix: "/team", label: "Team", roles: OWNER },
-  { prefix: "/organization", label: "Organization", roles: OPS },
+  { prefix: "/organization", label: "Organization", roles: OWNER },
   { prefix: "/dashboard", label: "Overview", roles: OPS },
   { prefix: "/agents", label: "Agent Workspace", roles: OPS },
   { prefix: "/inbox", label: "Inbox", roles: OPS },

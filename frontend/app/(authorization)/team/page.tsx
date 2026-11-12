@@ -4,16 +4,18 @@ import { useState } from "react";
 import AppShell from "@/components/AppShell";
 import { ViewState } from "@/components/StateSwitcher";
 import { apiPost, ApiError } from "@/services/api";
+import { useAppSelector } from "@/redux/hooks";
 
-type UserRole = "CLIENT_OWNER" | "AGENT_OPERATOR" | "SUPERADMIN";
+type UserRole = "CLIENT_OWNER" | "AGENT_OPERATOR" | "TRAINEE" | "SUPERADMIN";
 
 export default function TeamPage() {
+  const currentUser = useAppSelector((state) => state.auth.user);
   const [viewState, setViewState] = useState<ViewState>("live");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<UserRole>("AGENT_OPERATOR");
-  const [tenantId, setTenantId] = useState("TEN-8841");
+  const [tenantId, setTenantId] = useState(currentUser?.tenantId || "");
   const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -59,7 +61,7 @@ export default function TeamPage() {
       email: email.trim(),
       password,
       role,
-      tenantId: tenantId && tenantId.includes("-") && tenantId.length > 20 ? tenantId : undefined,
+      tenantId: (currentUser?.role === "SUPERADMIN" ? (tenantId || currentUser?.tenantId) : currentUser?.tenantId) || undefined,
     })
       .then((res) => {
         setLoading(false);
@@ -326,21 +328,14 @@ export default function TeamPage() {
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       {[
-                        {
-                          val: "AGENT_OPERATOR" as UserRole,
-                          label: "Operator",
-                          desc: "Inbound & Publishing",
-                        },
-                        {
-                          val: "CLIENT_OWNER" as UserRole,
-                          label: "Client Owner",
-                          desc: "Tenant Admin",
-                        },
-                        {
-                          val: "SUPERADMIN" as UserRole,
-                          label: "Superadmin",
-                          desc: "Platform Operator",
-                        },
+                        { val: "AGENT_OPERATOR" as UserRole, label: "Operator", desc: "Inbound & Leads" },
+                        { val: "TRAINEE" as UserRole, label: "Trainee / Intern", desc: "SOP Training Only" },
+                        ...(currentUser?.role === "SUPERADMIN" ? [
+                          { val: "CLIENT_OWNER" as UserRole, label: "Client Owner", desc: "Tenant Admin" },
+                          { val: "SUPERADMIN" as UserRole, label: "Superadmin", desc: "Platform Operator" },
+                        ] : [
+                          { val: "CLIENT_OWNER" as UserRole, label: "Client Owner", desc: "Co-Owner" },
+                        ]),
                       ].map((r) => {
                         const isSelected = role === r.val;
                         return (

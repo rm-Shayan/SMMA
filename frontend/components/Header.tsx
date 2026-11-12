@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { logout } from "@/redux/slices/authSlice";
+import { logout as logoutAction } from "@/redux/slices/authSlice";
+import { logoutApi } from "@/services/authService";
 import { ROLE_LABEL, roleInitials } from "@/types/role-labels";
 import TenantContextMenu from "@/components/TenantContextMenu";
 
@@ -18,7 +19,16 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
   const displayName = user?.name || user?.email || "Signed in";
   const displayRole = user?.role ? ROLE_LABEL[user.role] : "Session";
 
-  const onLogout = () => { dispatch(logout()); setProfileOpen(false); router.push("/login"); };
+  const onLogout = async () => {
+    setProfileOpen(false);
+    try {
+      await logoutApi();
+    } catch {
+      /* best-effort revoke; clear local session regardless */
+    }
+    dispatch(logoutAction());
+    router.push("/login");
+  };
 
   return (
     <header className="fixed top-0 left-0 md:left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/40 z-40 px-4 md:px-space-xl flex items-center justify-between">
@@ -29,7 +39,6 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
         <TenantContextMenu />
       </div>
       <div className="flex items-center gap-space-md">
-        
         <div className="relative">
           <button onClick={() => setProfileOpen(!profileOpen)} className="flex items-center gap-space-md pl-space-md border-l border-outline-variant/40">
             <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-semibold text-xs">{roleInitials(displayName)}</div>
@@ -48,6 +57,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
               <div className="py-1 text-xs">
                 <Link href="/organization" onClick={() => setProfileOpen(false)} className="block px-4 py-2 hover:bg-surface-container-low">Organization Profile</Link>
                 <Link href="/team" onClick={() => setProfileOpen(false)} className="block px-4 py-2 hover:bg-surface-container-low">Team & Users</Link>
+                <Link href="/change-password" onClick={() => setProfileOpen(false)} className="block px-4 py-2 hover:bg-surface-container-low">Change Password</Link>
               </div>
               <div className="pt-1 border-t border-outline-variant/30 text-xs">
                 <button type="button" onClick={onLogout} className="w-full text-left px-4 py-2 text-error hover:bg-error-container/20 font-medium">Sign Out</button>

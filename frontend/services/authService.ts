@@ -45,3 +45,7 @@ export async function verifyEmailApi(token: string): Promise<{ success: boolean;
 export async function resendVerificationApi(email: string): Promise<{ success: boolean; sent: boolean; message: string }> {
   return apiPost("/auth/resend-verification", { email }, { skipAuthRedirect: true });
 }
+
+export async function changePasswordApi(oldPassword: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+  return apiPost("/auth/change-password", { oldPassword, newPassword });
+}
