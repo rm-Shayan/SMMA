@@ -19,9 +19,8 @@ export async function runSeed(): Promise<void> {
       ON CONFLICT (plan_name) DO NOTHING;
     `;
     await client.query(plansSql);
-    logger.info('✅ Subscription plans seeded.');
 
-    // 2. Seed Founding Master Agency Tenant (is_internal = true)
+    // 2. Seed Founding Master Agency Tenant
     const masterTenantSql = `
       INSERT INTO tenants 
       (company_name, brand_voice, is_internal, current_plan, billing_provider)
@@ -29,19 +28,29 @@ export async function runSeed(): Promise<void> {
       WHERE NOT EXISTS (SELECT 1 FROM tenants WHERE is_internal = true);
     `;
     await client.query(masterTenantSql);
-    logger.info('✅ Master Agency Tenant seeded (is_internal: true).');
 
-    // 3. Seed Default SuperAdmin User
-    const adminSql = `
-      INSERT INTO platform_users 
-      (email, password_hash, role, full_name)
-      VALUES ('admin@agency.com', $1, 'SUPERADMIN', 'Platform Owner')
-      ON CONFLICT (email) DO NOTHING;
-    `;
-    await client.query(adminSql, [hashPassword('admin123456')]);
-    logger.info('✅ Platform SuperAdmin seeded (admin@agency.com).');
+    const tenantRes = await client.query(`SELECT id FROM tenants WHERE is_internal = true LIMIT 1;`);
+    const tenantId = tenantRes.rows[0]?.id;
+
+    // 3. Seed Default Platform Users (Verified by default)
+    const users = [
+      { email: 'admin@agency.com', role: 'SUPERADMIN', name: 'Platform Owner', pass: 'admin123456', tId: null },
+      { email: 'owner@agency.com', role: 'CLIENT_OWNER', name: 'Agency Boss', pass: 'owner123456', tId: tenantId },
+      { email: 'operator@agency.com', role: 'AGENT_OPERATOR', name: 'Support Operator', pass: 'operator123456', tId: tenantId },
+    ];
+
+    for (const u of users) {
+      await client.query(
+        `INSERT INTO platform_users (tenant_id, email, password_hash, role, full_name, email_verified)
+         VALUES ($1, $2, $3, $4, $5, TRUE)
+         ON CONFLICT (email) DO UPDATE SET email_verified = TRUE;`,
+        [u.tId, u.email, hashPassword(u.pass), u.role, u.name],
+      );
+      logger.info(`✅ Seeded ${u.role}: ${u.email}`);
+    }
 
     await client.query('COMMIT');
+    logger.info('Database seeding completed successfully.');
   } catch (error) {
     await client.query('ROLLBACK');
     logger.error({ error }, '❌ Seeding failed');
@@ -52,14 +61,5 @@ export async function runSeed(): Promise<void> {
 }
 
 if (require.main === module) {
-  runSeed()
-    .then(() => {
-      logger.info('Database seeding completed successfully.');
-      process.exit(0);
-    })
-    .catch((err) => {
-      logger.error({ err }, 'Seeding failed');
-      process.exit(1);
-    });
+  runSeed().then(() => process.exit(0)).catch(() => process.exit(1));
 }
-

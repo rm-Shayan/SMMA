@@ -18,6 +18,7 @@ export const RegisterSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   fullName: z.string().min(2),
+  companyName: z.string().min(2).optional(),
   role: z.enum(['CLIENT_OWNER', 'AGENT_OPERATOR', 'TRAINEE']).optional(),
   tenantId: z.string().uuid().optional(),
 });

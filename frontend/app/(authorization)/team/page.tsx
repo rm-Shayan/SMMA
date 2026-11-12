@@ -3,6 +3,7 @@
 import { useState } from "react";
 import AppShell from "@/components/AppShell";
 import { ViewState } from "@/components/StateSwitcher";
+import { apiPost, ApiError } from "@/services/api";
 
 type UserRole = "CLIENT_OWNER" | "AGENT_OPERATOR" | "SUPERADMIN";
 
@@ -52,18 +53,32 @@ export default function TeamPage() {
     setErrorMsg(null);
     setLoading(true);
 
-    // Simulate POST /api/v1/auth/create-user
-    setTimeout(() => {
-      setLoading(false);
-      setCreatedUser({
-        id: "usr_" + Math.random().toString(36).substring(2, 9),
-        name: fullName.trim(),
-        email: email.trim(),
-        role: role,
+    // Call real POST /api/v1/auth/create-user
+    apiPost<{ success: boolean; user: any }>("/auth/create-user", {
+      fullName: fullName.trim(),
+      email: email.trim(),
+      password,
+      role,
+      tenantId: tenantId && tenantId.includes("-") && tenantId.length > 20 ? tenantId : undefined,
+    })
+      .then((res) => {
+        setLoading(false);
+        setCreatedUser({
+          id: res.user.id,
+          name: res.user.full_name,
+          email: res.user.email,
+          role: res.user.role,
+        });
+        setPassword("");
+      })
+      .catch((err) => {
+        setLoading(false);
+        if (err instanceof ApiError) {
+          setErrorMsg(err.message);
+        } else {
+          setErrorMsg("Failed to provision user. Please try again.");
+        }
       });
-      // Clear password for security policy (never echo or retain password)
-      setPassword("");
-    }, 800);
   };
 
   const handleResetForm = () => {
