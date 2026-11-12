@@ -1,4 +1,4 @@
-﻿import { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { getTenantAnalytics, getSystemWideAnalytics } from './analytics.service';
 import { logAiOperation } from '../agents/agent.audit';
 

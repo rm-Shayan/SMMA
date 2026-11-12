@@ -1,4 +1,4 @@
-﻿import { pool } from '../../core/database/pool.database';
+import { pool } from '../../core/database/pool.database';
 import { executeTenantQuery } from '../../core/database/tenant-query.database';
 import { logger } from '../../core/config/logger.config';
 
