@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppShell from "@/components/AppShell";
 import { ViewState } from "@/components/StateSwitcher";
+import { listConversationsApi, sendReplyApi, toggleEscalationApi } from "@/services/inboxService";
 
 interface Conversation {
   id: string;
@@ -175,6 +176,17 @@ export default function InboxPage() {
   const [replyText, setReplyText] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
 
+  useEffect(() => {
+    let mounted = true;
+    listConversationsApi().then((data) => {
+      if (mounted && data && data.length > 0) {
+        setConversations(data as any);
+        setSelectedId(data[0].id);
+      }
+    }).catch(() => {});
+    return () => { mounted = false; };
+  }, []);
+
   const selectedConv = conversations.find((c) => c.id === selectedId) || conversations[0];
 
   const filteredConversations = conversations.filter((c) => {
@@ -186,41 +198,52 @@ export default function InboxPage() {
     return matchesPlatform && matchesSearch;
   });
 
-  const handleSendReply = (e: React.FormEvent) => {
+  const handleSendReply = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyText.trim() || !selectedConv) return;
 
     setSendingReply(true);
-    setTimeout(() => {
-      const newMsg = {
-        id: Date.now().toString(),
-        sender: "operator" as const,
-        senderName: "Alex Morgan",
-        text: replyText.trim(),
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      };
+    const newMsg = {
+      id: Date.now().toString(),
+      sender: "operator" as const,
+      senderName: "Operator",
+      text: replyText.trim(),
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
 
-      setConversations((prev) =>
-        prev.map((c) =>
-          c.id === selectedConv.id
-            ? {
-                ...c,
-                lastMessage: replyText.trim(),
-                time: "Just now",
-                messages: [...c.messages, newMsg],
-              }
-            : c
-        )
-      );
-      setReplyText("");
-      setSendingReply(false);
-    }, 500);
+    try {
+      await sendReplyApi(selectedConv.id, replyText.trim());
+    } catch {
+      // Optimistic update fallback
+    }
+
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === selectedConv.id
+          ? {
+              ...c,
+              lastMessage: replyText.trim(),
+              time: "Just now",
+              messages: [...c.messages, newMsg],
+            }
+          : c
+      )
+    );
+    setReplyText("");
+    setSendingReply(false);
   };
 
-  const handleToggleEscalation = (id: string) => {
+  const handleToggleEscalation = async (id: string) => {
+    const current = conversations.find((c) => c.id === id);
+    const targetState = !current?.escalated;
     setConversations((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, escalated: !c.escalated } : c))
+      prev.map((c) => (c.id === id ? { ...c, escalated: targetState } : c))
     );
+    try {
+      await toggleEscalationApi(id, targetState);
+    } catch {
+      // Ignored for UI responsiveness
+    }
   };
 
   return (

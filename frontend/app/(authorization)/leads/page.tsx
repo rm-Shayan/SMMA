@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppShell from "@/components/AppShell";
 import { ViewState } from "@/components/StateSwitcher";
+import { apiGet } from "@/services/api";
 
 interface Lead {
   id: string;
@@ -82,8 +83,33 @@ const sampleLeads: Lead[] = [
 
 export default function LeadsPage() {
   const [viewState, setViewState] = useState<ViewState>("live");
+  const [leadsList, setLeadsList] = useState<Lead[]>(sampleLeads);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  useEffect(() => {
+    apiGet<{ success: boolean; count: number; leads: any[] }>("/agents/leads")
+      .then((res) => {
+        if (res.leads && res.leads.length > 0) {
+          const mapped: Lead[] = res.leads.map((l) => ({
+            id: l.id,
+            name: l.name || "Prospect",
+            role: "Captured Lead",
+            email: l.email || "N/A",
+            phone: l.phone || "N/A",
+            channel: l.channel || "INBOUND",
+            inquiry: l.inquiry_interest || l.inquiry || "Direct Inbound Prospect",
+            score: l.lead_score ?? 75,
+            stage: l.crm_stage || "NEW_LEAD",
+            createdDate: l.created_at ? new Date(l.created_at).toLocaleDateString() : "Recent",
+          }));
+          setLeadsList(mapped);
+        }
+      })
+      .catch(() => {
+        /* fallback to sample data gracefully */
+      });
+  }, []);
 
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);

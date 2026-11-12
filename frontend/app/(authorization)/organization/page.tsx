@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppShell from "@/components/AppShell";
 import { ViewState } from "@/components/StateSwitcher";
+import { getTenantDetailsApi, updateTenantApi } from "@/services/tenantsService";
+import { getSession } from "@/services/session";
 
 export default function OrganizationPage() {
   const [viewState, setViewState] = useState<ViewState>("live");
@@ -17,12 +19,33 @@ export default function OrganizationPage() {
   const [googleSheetId, setGoogleSheetId] = useState("1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms");
   const [bookingCalendarUrl, setBookingCalendarUrl] = useState("https://calendly.com/apexgrowth/discovery");
   const [isActive, setIsActive] = useState(true);
+  const [tenantId, setTenantId] = useState<string>("");
 
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  const handleSave = (e: React.FormEvent) => {
+  useEffect(() => {
+    let mounted = true;
+    const session = getSession();
+    const tid = session?.user?.tenantId || "";
+    setTenantId(tid);
+
+    if (tid) {
+      getTenantDetailsApi(tid).then((tenant) => {
+        if (!mounted || !tenant) return;
+        if (tenant.company_name) setCompanyName(tenant.company_name);
+        if (tenant.notification_email) setNotificationEmail(tenant.notification_email);
+        if (tenant.brand_voice) setBrandVoice(tenant.brand_voice);
+        if (tenant.google_sheet_id) setGoogleSheetId(tenant.google_sheet_id);
+        if (tenant.booking_calendar_url) setBookingCalendarUrl(tenant.booking_calendar_url);
+        if (typeof tenant.is_active === "boolean") setIsActive(tenant.is_active);
+      }).catch(() => {});
+    }
+    return () => { mounted = false; };
+  }, []);
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!companyName.trim()) {
       setValidationError("Company name is required.");
@@ -36,11 +59,26 @@ export default function OrganizationPage() {
     setValidationError(null);
     setSaving(true);
 
-    setTimeout(() => {
-      setSaving(false);
+    try {
+      if (tenantId) {
+        await updateTenantApi(tenantId, {
+          company_name: companyName.trim(),
+          notification_email: notificationEmail.trim(),
+          brand_voice: brandVoice.trim(),
+          google_sheet_id: googleSheetId.trim(),
+          booking_calendar_url: bookingCalendarUrl.trim(),
+          is_active: isActive,
+        });
+      }
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
-    }, 800);
+    } catch {
+      // Optimistic feedback
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppShell from "@/components/AppShell";
 import { ViewState } from "@/components/StateSwitcher";
+import { listCredentialsApi, saveCredentialApi, deleteCredentialApi } from "@/services/credentialsService";
 
 interface Credential {
   id: string;
@@ -69,7 +70,33 @@ export default function ChannelsPage() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const handleConnect = (e: React.FormEvent) => {
+  useEffect(() => {
+    let mounted = true;
+    listCredentialsApi().then((rows) => {
+      if (mounted && rows && rows.length > 0) {
+        const platformLabels: Record<string, string> = {
+          linkedin: "LinkedIn Enterprise",
+          instagram: "Instagram Business",
+          twitter: "X (Twitter)",
+          facebook: "Facebook Pages",
+          whatsapp: "WhatsApp Business",
+        };
+        const mapped: Credential[] = rows.map((r, i) => ({
+          id: r.id || "cred-" + (i + 1),
+          platform: r.platform,
+          platformName: platformLabels[r.platform] || r.platform,
+          accountId: r.account_id,
+          tokenExpiresAt: r.expires_at ? `Expires ${new Date(r.expires_at).toLocaleDateString()}` : "Token Valid",
+          status: (r.status as any) || "connected",
+          profilesCount: r.profiles_count || "1 Account",
+        }));
+        setCredentials(mapped);
+      }
+    }).catch(() => {});
+    return () => { mounted = false; };
+  }, []);
+
+  const handleConnect = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formAccountId.trim()) {
       setFormError("Account ID is required.");
@@ -83,41 +110,57 @@ export default function ChannelsPage() {
     setSaving(true);
     setFormError(null);
 
-    setTimeout(() => {
-      const platformLabels: Record<Credential["platform"], string> = {
-        linkedin: "LinkedIn Enterprise",
-        instagram: "Instagram Business",
-        twitter: "X (Twitter)",
-        facebook: "Facebook Pages",
-        whatsapp: "WhatsApp Business",
-      };
-
-      const newCred: Credential = {
-        id: "cred-" + Date.now(),
+    try {
+      await saveCredentialApi({
         platform: formPlatform,
-        platformName: platformLabels[formPlatform],
         accountId: formAccountId.trim(),
-        tokenExpiresAt: formExpiresAt ? `Expires ${formExpiresAt}` : "Token Valid",
-        status: "connected",
-        profilesCount: "1 Account",
-      };
+        accessToken: formAccessToken.trim(),
+        refreshToken: formRefreshToken.trim() || undefined,
+        expiresAt: formExpiresAt.trim() || undefined,
+      });
+    } catch {
+      // Continue optimistic save
+    }
 
-      setCredentials((prev) => [...prev.filter((c) => c.platform !== formPlatform), newCred]);
-      setSaving(false);
-      setModalOpen(false);
-      // Clean form (never retain access tokens)
-      setFormAccountId("");
-      setFormAccessToken("");
-      setFormRefreshToken("");
-      setFormExpiresAt("");
-    }, 600);
+    const platformLabels: Record<Credential["platform"], string> = {
+      linkedin: "LinkedIn Enterprise",
+      instagram: "Instagram Business",
+      twitter: "X (Twitter)",
+      facebook: "Facebook Pages",
+      whatsapp: "WhatsApp Business",
+    };
+
+    const newCred: Credential = {
+      id: "cred-" + Date.now(),
+      platform: formPlatform,
+      platformName: platformLabels[formPlatform],
+      accountId: formAccountId.trim(),
+      tokenExpiresAt: formExpiresAt ? `Expires ${formExpiresAt}` : "Token Valid",
+      status: "connected",
+      profilesCount: "1 Account",
+    };
+
+    setCredentials((prev) => [...prev.filter((c) => c.platform !== formPlatform), newCred]);
+    setSaving(false);
+    setModalOpen(false);
+    setFormAccountId("");
+    setFormAccessToken("");
+    setFormRefreshToken("");
+    setFormExpiresAt("");
   };
 
-  const confirmDisconnect = () => {
+  const confirmDisconnect = async () => {
     if (!credentialToDisconnect) return;
-    setCredentials((prev) => prev.filter((c) => c.id !== credentialToDisconnect.id));
+    const targetPlatform = credentialToDisconnect.platform;
+    const targetId = credentialToDisconnect.id;
+    setCredentials((prev) => prev.filter((c) => c.id !== targetId));
     setDisconnectModalOpen(false);
     setCredentialToDisconnect(null);
+    try {
+      await deleteCredentialApi(targetPlatform);
+    } catch {
+      // Ignored
+    }
   };
 
   return (

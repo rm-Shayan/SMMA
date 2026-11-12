@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { resetPasswordApi } from "@/services/authService";
 import { ApiError } from "@/services/api";
+import Logo from "@/components/Logo";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -52,9 +53,8 @@ export default function ResetPasswordPage() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#e9edff_1px,transparent_1px),linear-gradient(to_bottom,#e9edff_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none opacity-60"></div>
       <div className="w-full max-w-[440px] relative z-10 flex flex-col">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center gap-2.5 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-white"><span className="material-symbols-outlined text-[22px]">lock_reset</span></div>
-            <div className="text-left"><div className="text-xl font-bold text-on-surface">SMMA AI</div><div className="text-[10px] font-semibold text-primary-container uppercase">Autonomous Platform</div></div>
+          <div className="flex justify-center mb-4">
+            <Logo size="md" showText={true} />
           </div>
           <h1 className="text-2xl font-bold text-on-surface">Create new password</h1>
           <p className="text-xs text-secondary mt-1">Enter your new password below. Your session will be updated automatically.</p>

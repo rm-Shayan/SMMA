@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import AppShell from "@/components/AppShell";
 import { ViewState } from "@/components/StateSwitcher";
+import { apiPost, ApiError } from "@/services/api";
 
 interface Message {
   id: string;
@@ -77,33 +78,51 @@ export default function AgentWorkspacePage() {
     e.preventDefault();
     if (!inputText.trim()) return;
 
+    const prompt = inputText.trim();
     const userMsg: Message = {
       id: Date.now().toString(),
       sender: "user",
-      text: inputText.trim(),
+      text: prompt,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
     setInputText("");
 
-    // Simulate Agent execution
-    setTimeout(() => {
-      const agentMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        sender: "agent",
-        agentName: selectedDirectAgent || "supervisor_core",
-        text: `Processed task across ${selectedChannel} using agent node [${
-          selectedDirectAgent || "auto_supervisor"
-        }]. Execution verified with status code 200 OK.`,
-        leadScore: 88,
-        stage: "QUALIFIED_HOT",
-        requiresReview: false,
-        trace: `Node [${selectedDirectAgent || "auto"}] dispatched at ${new Date().toISOString()} via ${selectedChannel}`,
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      };
-      setMessages((prev) => [...prev, agentMsg]);
-    }, 800);
+    const endpoint = selectedDirectAgent ? `/agents/direct/${selectedDirectAgent}` : "/agents/chat";
+    apiPost<{
+      success: boolean;
+      agentAssigned?: string;
+      response: string;
+      leadScore?: number;
+      suggestedStage?: string;
+      requiresHumanReview?: boolean;
+      executionTrace?: string[];
+    }>(endpoint, { message: prompt, channel: selectedChannel })
+      .then((res) => {
+        const agentMsg: Message = {
+          id: (Date.now() + 1).toString(),
+          sender: "agent",
+          agentName: res.agentAssigned || selectedDirectAgent || "supervisor_core",
+          text: res.response || "Task processed.",
+          leadScore: res.leadScore,
+          stage: res.suggestedStage,
+          requiresReview: res.requiresHumanReview,
+          trace: res.executionTrace?.join(" -> ") || "Direct supervisor dispatch",
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        };
+        setMessages((prev) => [...prev, agentMsg]);
+      })
+      .catch((err) => {
+        const errMsg: Message = {
+          id: (Date.now() + 1).toString(),
+          sender: "agent",
+          agentName: "system_guard",
+          text: `⚠️ Notice: ${err.message || "Failed to contact agent cluster"}`,
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        };
+        setMessages((prev) => [...prev, errMsg]);
+      });
   };
 
   const handleApplyPrompt = (prompt: string) => {

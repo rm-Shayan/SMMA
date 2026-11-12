@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
@@ -9,14 +9,19 @@ import { logout as logoutAction } from "@/redux/slices/authSlice";
 import type { UserRole } from "@/types/auth";
 import { ROLE_LABEL } from "@/types/role-labels";
 
+const ALL_ROLES: UserRole[] = ["SUPERADMIN", "CLIENT_OWNER", "AGENT_OPERATOR", "TRAINEE"];
 const OPS: UserRole[] = ["SUPERADMIN", "CLIENT_OWNER", "AGENT_OPERATOR"];
 const OWNER: UserRole[] = ["SUPERADMIN", "CLIENT_OWNER"];
 const ROUTE_ACCESS = [
   { prefix: "/admin/tenants", label: "Tenant Directory", roles: ["SUPERADMIN"] as UserRole[] },
   { prefix: "/publishing", label: "Publishing", roles: OWNER },
   { prefix: "/channels", label: "Channels", roles: OWNER },
+  { prefix: "/approvals", label: "Action Approvals", roles: OWNER },
+  { prefix: "/tools", label: "External Tools", roles: OWNER },
   { prefix: "/team", label: "Team", roles: OWNER },
   { prefix: "/organization", label: "Organization", roles: OWNER },
+  { prefix: "/training", label: "SOP & Training", roles: ALL_ROLES },
+  { prefix: "/change-password", label: "Account Security", roles: ALL_ROLES },
   { prefix: "/dashboard", label: "Overview", roles: OPS },
   { prefix: "/agents", label: "Agent Workspace", roles: OPS },
   { prefix: "/inbox", label: "Inbox", roles: OPS },

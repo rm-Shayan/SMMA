@@ -1,13 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppShell from "@/components/AppShell";
 import StateSwitcher, { ViewState } from "@/components/StateSwitcher";
 import { useAppSelector } from "@/redux/hooks";
+import { getAnalyticsApi } from "@/services/analyticsService";
+import type { Analytics } from "@/types/analytics";
 
 export default function DashboardPage() {
   const user = useAppSelector((state) => state.auth.user);
   const [viewState, setViewState] = useState<ViewState>("live");
+  const [stats, setStats] = useState<Analytics>({
+    tenantId: "",
+    totalLeads: 1248,
+    hotLeads: 86,
+    totalConversations: 3412,
+    totalScheduledPosts: 94,
+    publishedPosts: 1520,
+    platformBreakdown: { LINKEDIN: 620, INSTAGRAM: 410, TWITTER: 330, FACEBOOK: 160 },
+  });
+
+  useEffect(() => {
+    let mounted = true;
+    getAnalyticsApi().then((data) => {
+      if (mounted && data) {
+        setStats(data);
+      }
+    }).catch(() => {});
+    return () => { mounted = false; };
+  }, []);
+
   const firstName =
     user?.name?.trim().split(/\s+/)[0] || user?.email?.split("@")[0] || "there";
 
@@ -55,7 +77,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-4">
                   <div className="font-headline-xl text-headline-xl text-on-surface tracking-tight font-semibold">
-                    1,248
+                    {stats.totalLeads.toLocaleString()}
                   </div>
                   <div className="mt-2 flex items-center gap-1.5">
                     <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md font-label-sm text-label-sm bg-surface-container text-primary font-semibold">
@@ -76,7 +98,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-4">
                   <div className="font-headline-xl text-headline-xl text-on-surface tracking-tight font-semibold">
-                    86
+                    {stats.hotLeads.toLocaleString()}
                   </div>
                   <div className="mt-2 flex items-center gap-1.5">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-label-sm text-label-sm bg-amber-100 text-amber-800 font-semibold">
@@ -97,7 +119,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-4">
                   <div className="font-headline-xl text-headline-xl text-on-surface tracking-tight font-semibold">
-                    3,412
+                    {stats.totalConversations.toLocaleString()}
                   </div>
                   <div className="mt-2 flex items-center gap-1.5">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-label-sm text-label-sm bg-surface-container-high text-tertiary-container font-semibold">
@@ -118,7 +140,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-4">
                   <div className="font-headline-xl text-headline-xl text-on-surface tracking-tight font-semibold">
-                    94
+                    {stats.totalScheduledPosts.toLocaleString()}
                   </div>
                   <div className="mt-2 flex items-center gap-1.5">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-label-sm text-label-sm bg-surface-container text-on-secondary-container font-semibold">
@@ -138,7 +160,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-4">
                   <div className="font-headline-xl text-headline-xl text-on-surface tracking-tight font-semibold">
-                    1,520
+                    {stats.publishedPosts.toLocaleString()}
                   </div>
                   <div className="mt-2 flex items-center gap-1.5">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-label-sm text-label-sm bg-surface-container-high text-tertiary-container font-semibold">

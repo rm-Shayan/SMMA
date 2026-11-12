@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppShell from "@/components/AppShell";
 import { ViewState } from "@/components/StateSwitcher";
+import { listAllTenantsDetailsApi, updateTenantApi } from "@/services/tenantsService";
 
 interface Tenant {
   id: string;
@@ -75,26 +76,57 @@ export default function TenantDirectoryPage() {
   const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
+  useEffect(() => {
+    let mounted = true;
+    listAllTenantsDetailsApi().then((data) => {
+      if (mounted && data && data.length > 0) {
+        const mapped: Tenant[] = data.map((t, i) => ({
+          id: t.id,
+          name: t.company_name || `Tenant ${i + 1}`,
+          plan: "Enterprise Scale",
+          contactEmail: t.notification_email || "support@tenant.io",
+          cluster: "us-east-cluster-04",
+          createdDate: t.created_at ? new Date(t.created_at).toLocaleDateString() : "Active",
+          isActive: t.is_active ?? true,
+          brandVoice: t.brand_voice || "Professional, authoritative, high-conversion",
+          googleSheetId: t.google_sheet_id || "",
+          bookingUrl: t.booking_calendar_url || "",
+        }));
+        setTenants(mapped);
+      }
+    }).catch(() => {});
+    return () => { mounted = false; };
+  }, []);
+
   const handleOpenDrawer = (tenant: Tenant) => {
     setSelectedTenant(tenant);
     setEditingTenant({ ...tenant });
     setSaveStatus(null);
   };
 
-  const handleSaveTenant = (e: React.FormEvent) => {
+  const handleSaveTenant = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingTenant) return;
 
     setSaveStatus("saving");
-    // Simulate PATCH /api/v1/tenants/:id
-    setTimeout(() => {
-      setTenants((prev) =>
-        prev.map((t) => (t.id === editingTenant.id ? { ...editingTenant } : t))
-      );
-      setSelectedTenant({ ...editingTenant });
-      setSaveStatus("saved");
-      setTimeout(() => setSaveStatus(null), 2500);
-    }, 600);
+    try {
+      await updateTenantApi(editingTenant.id, {
+        company_name: editingTenant.name,
+        brand_voice: editingTenant.brandVoice,
+        google_sheet_id: editingTenant.googleSheetId,
+        booking_calendar_url: editingTenant.bookingUrl,
+        is_active: editingTenant.isActive,
+      });
+    } catch {
+      // Continue optimistic update
+    }
+
+    setTenants((prev) =>
+      prev.map((t) => (t.id === editingTenant.id ? { ...editingTenant } : t))
+    );
+    setSelectedTenant({ ...editingTenant });
+    setSaveStatus("saved");
+    setTimeout(() => setSaveStatus(null), 2500);
   };
 
   return (

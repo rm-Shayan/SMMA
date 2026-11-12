@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { registerApi } from "@/services/authService";
 import { ApiError } from "@/services/api";
+import Logo from "@/components/Logo";
 
 export default function RegisterPage() {
   const [companyName, setCompanyName] = useState("");
@@ -73,14 +74,8 @@ export default function RegisterPage() {
 
       <div className="w-full max-w-[460px] relative z-10 flex flex-col">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center gap-2.5 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-white">
-              <span className="material-symbols-outlined text-[22px]">domain</span>
-            </div>
-            <div className="text-left">
-              <div className="text-xl font-bold text-on-surface">SMMA AI</div>
-              <div className="text-[10px] font-semibold text-primary-container uppercase">Agency Provisioning</div>
-            </div>
+          <div className="flex justify-center mb-4">
+            <Logo size="md" showText={true} />
           </div>
           <h1 className="text-2xl font-bold text-on-surface">Register Your Agency</h1>
           <p className="text-xs text-secondary mt-1">

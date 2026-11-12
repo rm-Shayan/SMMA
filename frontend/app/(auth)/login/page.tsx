@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
@@ -7,6 +7,7 @@ import { loginApi } from "@/services/authService";
 import { useAppDispatch } from "@/redux/hooks";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { ApiError } from "@/services/api";
+import Logo from "@/components/Logo";
 
 const subscribeNoop = () => () => {};
 
@@ -55,9 +56,8 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#e9edff_1px,transparent_1px),linear-gradient(to_bottom,#e9edff_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none opacity-60"></div>
       <div className="w-full max-w-[440px] relative z-10 flex flex-col">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center gap-2.5 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-white"><span className="material-symbols-outlined text-[22px]">neurology</span></div>
-            <div className="text-left"><div className="text-xl font-bold text-on-surface">SMMA AI</div><div className="text-[10px] font-semibold text-primary-container uppercase">Autonomous Platform</div></div>
+          <div className="flex justify-center mb-4">
+            <Logo size="md" showText={true} />
           </div>
           <h1 className="text-2xl font-bold text-on-surface">Sign in to your enclave</h1>
           <p className="text-xs text-secondary mt-1">Enter your verified credentials to access your agency operations console.</p>
