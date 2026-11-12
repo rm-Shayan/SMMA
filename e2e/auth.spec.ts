@@ -7,7 +7,7 @@ test.describe('SMMA Platform - Complete UI & Navigation E2E', () => {
     await expect(page).toHaveTitle(/SMMA/i);
 
     // Verify brand logo and headings
-    await expect(page.locator('text=Sign in to your enclave')).toBeVisible();
+    await expect(page.locator('text=Sign in to your account')).toBeVisible();
     await expect(page.locator('text=SMMA.AI').first()).toBeVisible();
     await expect(page.locator('text=v4.2').first()).toBeVisible();
 
