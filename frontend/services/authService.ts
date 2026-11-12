@@ -1,4 +1,4 @@
-﻿import { apiPost, apiGet } from "@/services/api";
+import { apiPost, apiGet } from "@/services/api";
 import type { AuthResponse, User, RegisterCredentials } from "@/types/auth";
 
 export interface LoginCredentials {
