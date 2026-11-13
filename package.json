@@ -1,0 +1,36 @@
+{
+  "name": "styre-bot",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Styre-BOT Multi-Tenant SaaS Control Plane",
+  "main": "index.js",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "migrate": "python apps/api/scripts/migrate.py",
+    "verify": "python apps/api/scripts/verify_phases.py",
+    "api": "python -m uvicorn --app-dir apps/api app.main:app --reload --port 5000",
+    "worker": "python -c \"import sys; sys.path.insert(0, 'apps/api'); from app.worker.main import main; main()\""
+  },
+  "keywords": [
+    "saas",
+    "multi-tenant",
+    "nextjs",
+    "fastapi",
+    "express",
+    "bullmq",
+    "pgvector"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3"
+  },
+  "packageManager": "pnpm@10.9.0"
+}

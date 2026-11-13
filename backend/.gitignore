@@ -1,7 +1,0 @@
-node_modules/
-dist/
-.env
-google-credentials.json
-/credentials/
-*.log
-

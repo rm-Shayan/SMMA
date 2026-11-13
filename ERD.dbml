@@ -1,0 +1,521 @@
+Enum user_role {
+  super_admin
+  company_admin
+  manager
+  employee
+}
+
+Enum agent_mode {
+  draft
+  auto
+}
+
+Enum credit_tx_type {
+  purchase
+  allocate
+  reserve
+  consume
+  release
+  revoke
+  expire
+}
+
+Enum run_status {
+  queued
+  running
+  awaiting_approval
+  completed
+  failed
+  cancelled
+}
+
+Enum outbox_status {
+  queued
+  sending
+  sent
+  failed
+  expired
+  paused
+}
+
+Enum msg_direction {
+  inbound
+  outbound
+}
+
+Table companies {
+  id uuid [pk]
+  name varchar [not null]
+  timezone varchar
+  status varchar
+  created_at timestamp
+}
+
+Table teams {
+  id uuid [pk]
+  company_id uuid [not null]
+  manager_id uuid
+  name varchar
+}
+
+Table users {
+  id uuid [pk]
+  company_id uuid
+  team_id uuid
+  email varchar [unique, not null]
+  name varchar
+  role user_role [not null]
+  status varchar
+  created_at timestamp
+}
+
+Table agents {
+  id int [pk]
+  code varchar [unique]
+  name varchar
+  default_mode agent_mode [default: 'draft']
+}
+
+Table agent_actions {
+  id uuid [pk]
+  agent_id int [not null]
+  action varchar
+  credit_cost int
+}
+
+Table company_agents {
+  company_id uuid [not null]
+  agent_id int [not null]
+  enabled_by uuid
+  enabled_at timestamp
+  indexes {
+    (company_id, agent_id) [pk]
+  }
+}
+
+Table user_agent_access {
+  user_id uuid [not null]
+  agent_id int [not null]
+  mode agent_mode [default: 'draft']
+  granted_by uuid
+  granted_at timestamp
+  indexes {
+    (user_id, agent_id) [pk]
+  }
+}
+
+Table credit_wallets {
+  id uuid [pk]
+  company_id uuid [not null]
+  user_id uuid
+  balance int [default: 0]
+  reserved int [default: 0]
+  low_balance_alerted bool
+}
+
+Table credit_transactions {
+  id uuid [pk]
+  wallet_id uuid [not null]
+  counter_wallet_id uuid
+  type credit_tx_type [not null]
+  amount int [not null]
+  agent_run_id uuid
+  task_id uuid
+  created_by uuid
+  note varchar
+  created_at timestamp
+}
+
+Table connected_accounts {
+  id uuid [pk]
+  company_id uuid [not null]
+  user_id uuid
+  provider varchar
+  display_name varchar
+  token_enc text
+  status varchar
+  created_at timestamp
+}
+
+Table account_limits {
+  connected_account_id uuid [pk]
+  min_gap_sec int
+  max_gap_sec int
+  per_hour int
+  per_day int
+  work_hours varchar
+  paused_until timestamp
+  backoff_level int
+}
+
+Table connectors {
+  id uuid [pk]
+  company_id uuid [not null]
+  type varchar
+  name varchar
+  config_enc json
+  write_enabled bool [default: false]
+  status varchar
+}
+
+Table connector_mappings {
+  id uuid [pk]
+  connector_id uuid [not null]
+  resource varchar
+  semantic_name varchar
+  mapping json
+  confirmed_by uuid
+}
+
+Table tasks {
+  id uuid [pk]
+  company_id uuid [not null]
+  user_id uuid [not null]
+  request text
+  plan json
+  credit_budget int
+  status run_status
+  created_at timestamp
+}
+
+Table agent_runs {
+  id uuid [pk]
+  company_id uuid [not null]
+  task_id uuid
+  agent_action_id uuid [not null]
+  user_id uuid
+  thread_key varchar
+  prompt_version varchar
+  status run_status
+  credits_used int
+  cost_usd decimal(10,5)
+  input json
+  output json
+  started_at timestamp
+  finished_at timestamp
+}
+
+Table approvals {
+  id uuid [pk]
+  agent_run_id uuid [not null]
+  approver_id uuid
+  status varchar
+  decided_at timestamp
+}
+
+Table schedules {
+  id uuid [pk]
+  company_id uuid [not null]
+  agent_id int [not null]
+  user_id uuid
+  cron varchar
+  payload json
+  next_run_at timestamp
+  enabled bool
+}
+
+Table outbox_jobs {
+  id uuid [pk]
+  connected_account_id uuid [not null]
+  agent_run_id uuid
+  thread_key varchar
+  target_type varchar
+  target_post_id varchar
+  priority int
+  reply_text text
+  status outbox_status
+  not_before timestamp
+  expires_at timestamp
+  idempotency_key varchar [unique]
+}
+
+Table contacts {
+  id uuid [pk]
+  company_id uuid [not null]
+  name varchar
+  email varchar
+  company_name varchar
+  topic varchar
+  unsubscribed bool [default: false]
+  created_at timestamp
+}
+
+Table contact_lists {
+  id uuid [pk]
+  company_id uuid [not null]
+  user_id uuid
+  name varchar
+}
+
+Table contact_list_members {
+  list_id uuid [not null]
+  contact_id uuid [not null]
+  indexes {
+    (list_id, contact_id) [pk]
+  }
+}
+
+Table email_suppressions {
+  id uuid [pk]
+  company_id uuid [not null]
+  email varchar
+  reason varchar
+  created_at timestamp
+}
+
+Table campaigns {
+  id uuid [pk]
+  company_id uuid [not null]
+  user_id uuid [not null]
+  connected_account_id uuid
+  list_id uuid
+  goal varchar
+  tone varchar
+  followup_rules json
+  credit_limit int
+  status varchar
+}
+
+Table campaign_recipients {
+  id uuid [pk]
+  campaign_id uuid [not null]
+  contact_id uuid [not null]
+  topic varchar
+  status varchar
+  followups_sent int [default: 0]
+}
+
+Table conversations {
+  id uuid [pk]
+  company_id uuid [not null]
+  contact_id uuid
+  connected_account_id uuid
+  channel varchar
+  external_thread_id varchar
+  intent varchar
+}
+
+Table messages {
+  id uuid [pk]
+  conversation_id uuid [not null]
+  campaign_recipient_id uuid
+  agent_run_id uuid
+  direction msg_direction
+  body text
+  status varchar
+  sent_at timestamp
+}
+
+Table deals {
+  id uuid [pk]
+  company_id uuid [not null]
+  contact_id uuid [not null]
+  campaign_id uuid
+  owner_id uuid
+  stage varchar
+  value decimal(12,2)
+  updated_at timestamp
+}
+
+Table social_posts {
+  id uuid [pk]
+  company_id uuid [not null]
+  connected_account_id uuid
+  created_by_run uuid
+  platform varchar
+  external_id varchar
+  content text
+  image_prompt text
+  status varchar
+  scheduled_at timestamp
+  published_at timestamp
+}
+
+Table social_comments {
+  id uuid [pk]
+  company_id uuid [not null]
+  post_id uuid
+  competitor_post_ref varchar
+  agent_run_id uuid
+  platform varchar
+  target_type varchar
+  external_id varchar [unique]
+  parent_external_id varchar
+  thread_key varchar
+  body text
+  sentiment varchar
+  direction msg_direction
+  created_at timestamp
+}
+
+Table competitors {
+  id uuid [pk]
+  company_id uuid [not null]
+  name varchar
+  website varchar
+  social_handles json
+  keywords json
+}
+
+Table competitor_insights {
+  id uuid [pk]
+  competitor_id uuid [not null]
+  agent_run_id uuid
+  type varchar
+  data json
+  captured_at timestamp
+}
+
+Table knowledge_documents {
+  id uuid [pk]
+  company_id uuid [not null]
+  title varchar
+  source varchar
+  storage_path varchar
+  uploaded_by uuid
+}
+
+Table document_chunks {
+  id uuid [pk]
+  company_id uuid [not null]
+  document_id uuid [not null]
+  content text
+  embedding vector(1536)
+}
+
+Table sops {
+  id uuid [pk]
+  company_id uuid [not null]
+  document_id uuid
+  title varchar
+  modules json
+}
+
+Table training_progress {
+  id uuid [pk]
+  sop_id uuid [not null]
+  user_id uuid [not null]
+  module_no int
+  quiz_score int
+  status varchar
+  updated_at timestamp
+}
+
+Table generated_files {
+  id uuid [pk]
+  company_id uuid [not null]
+  user_id uuid
+  agent_run_id uuid
+  file_name varchar
+  storage_path varchar
+  created_at timestamp
+}
+
+Table analytics_snapshots {
+  id uuid [pk]
+  company_id uuid [not null]
+  user_id uuid
+  scope varchar
+  period varchar
+  metrics json
+  ai_summary text
+  created_at timestamp
+}
+
+Table daily_briefs {
+  id uuid [pk]
+  company_id uuid [not null]
+  user_id uuid [not null]
+  agent_run_id uuid
+  brief_date date
+  items json
+}
+
+Table audit_logs {
+  id uuid [pk]
+  company_id uuid
+  user_id uuid
+  action varchar
+  entity varchar
+  entity_id uuid
+  meta json
+  created_at timestamp
+}
+
+Ref: teams.company_id > companies.id
+Ref: teams.manager_id > users.id
+Ref: users.company_id > companies.id
+Ref: users.team_id > teams.id
+Ref: agent_actions.agent_id > agents.id
+Ref: company_agents.company_id > companies.id
+Ref: company_agents.agent_id > agents.id
+Ref: user_agent_access.user_id > users.id
+Ref: user_agent_access.agent_id > agents.id
+Ref: user_agent_access.granted_by > users.id
+Ref: credit_wallets.company_id > companies.id
+Ref: credit_wallets.user_id > users.id
+Ref: credit_transactions.wallet_id > credit_wallets.id
+Ref: credit_transactions.counter_wallet_id > credit_wallets.id
+Ref: credit_transactions.agent_run_id > agent_runs.id
+Ref: credit_transactions.task_id > tasks.id
+Ref: connected_accounts.company_id > companies.id
+Ref: connected_accounts.user_id > users.id
+Ref: account_limits.connected_account_id > connected_accounts.id
+Ref: connectors.company_id > companies.id
+Ref: connector_mappings.connector_id > connectors.id
+Ref: tasks.company_id > companies.id
+Ref: tasks.user_id > users.id
+Ref: agent_runs.company_id > companies.id
+Ref: agent_runs.task_id > tasks.id
+Ref: agent_runs.agent_action_id > agent_actions.id
+Ref: agent_runs.user_id > users.id
+Ref: approvals.agent_run_id > agent_runs.id
+Ref: approvals.approver_id > users.id
+Ref: schedules.company_id > companies.id
+Ref: schedules.agent_id > agents.id
+Ref: outbox_jobs.connected_account_id > connected_accounts.id
+Ref: outbox_jobs.agent_run_id > agent_runs.id
+Ref: contacts.company_id > companies.id
+Ref: contact_lists.company_id > companies.id
+Ref: contact_list_members.list_id > contact_lists.id
+Ref: contact_list_members.contact_id > contacts.id
+Ref: email_suppressions.company_id > companies.id
+Ref: campaigns.company_id > companies.id
+Ref: campaigns.user_id > users.id
+Ref: campaigns.connected_account_id > connected_accounts.id
+Ref: campaigns.list_id > contact_lists.id
+Ref: campaign_recipients.campaign_id > campaigns.id
+Ref: campaign_recipients.contact_id > contacts.id
+Ref: conversations.company_id > companies.id
+Ref: conversations.contact_id > contacts.id
+Ref: conversations.connected_account_id > connected_accounts.id
+Ref: messages.conversation_id > conversations.id
+Ref: messages.campaign_recipient_id > campaign_recipients.id
+Ref: messages.agent_run_id > agent_runs.id
+Ref: deals.company_id > companies.id
+Ref: deals.contact_id > contacts.id
+Ref: deals.campaign_id > campaigns.id
+Ref: deals.owner_id > users.id
+Ref: social_posts.company_id > companies.id
+Ref: social_posts.connected_account_id > connected_accounts.id
+Ref: social_posts.created_by_run > agent_runs.id
+Ref: social_comments.company_id > companies.id
+Ref: social_comments.post_id > social_posts.id
+Ref: social_comments.agent_run_id > agent_runs.id
+Ref: competitors.company_id > companies.id
+Ref: competitor_insights.competitor_id > competitors.id
+Ref: competitor_insights.agent_run_id > agent_runs.id
+Ref: knowledge_documents.company_id > companies.id
+Ref: document_chunks.document_id > knowledge_documents.id
+Ref: sops.company_id > companies.id
+Ref: sops.document_id > knowledge_documents.id
+Ref: training_progress.sop_id > sops.id
+Ref: training_progress.user_id > users.id
+Ref: generated_files.company_id > companies.id
+Ref: generated_files.agent_run_id > agent_runs.id
+Ref: analytics_snapshots.company_id > companies.id
+Ref: daily_briefs.company_id > companies.id
+Ref: daily_briefs.user_id > users.id
+Ref: daily_briefs.agent_run_id > agent_runs.id
+Ref: audit_logs.company_id > companies.id
+Ref: audit_logs.user_id > users.id
