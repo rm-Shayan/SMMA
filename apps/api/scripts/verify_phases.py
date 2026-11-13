@@ -91,7 +91,7 @@ def add_account(db, ctx) -> str:
     db.execute(
         text(
             'INSERT INTO "account_limits" (connected_account_id, min_gap_sec, max_gap_sec, per_hour, per_day, work_hours) '
-            "VALUES (:id, 45, 180, 20, 50, '00:00-23:59')"
+            "VALUES (:id, 45, 180, 20, 50, '00:00-24:00')"
         ),
         {"id": account_id},
     )
