@@ -2,11 +2,13 @@
 
 ## 1. Executive Summary
 - **Architecture:** Modular Monolith (FastAPI + SQLAlchemy + PostgreSQL RLS + Redis Pub/Sub)
-- **Total Registered Endpoints:** **157 Unique Paths / 183 HTTP Operations**
-- **Real-Time WebSockets:** **4 Dedicated Topic Streams**
+- **Total Registered Endpoints:** **269 Unique Paths / 320 HTTP Operations**
+- **Real-Time WebSockets:** **4 Dedicated Topic Streams** with Backpressure & Jitter Control
+- **OpenAPI 3.1 Spec:** Available at [`docs/openapi.json`](file:///d:/saas/Styre-BOT/docs/openapi.json)
 - **File & Line Standard:** All Python files strictly **< 140 lines** (Single Responsibility Principle)
 - **Storage Driver:** Unified driver supporting local storage (`storage/{company_id}/`), Cloudflare R2, and AWS S3 with zero code change.
 - **Stripe Integration:** Production Stripe Checkout + Webhook with instant environment bypass toggle (`ENABLE_STRIPE=false`).
+- **External Integration Engine:** Zero-token autonomous OpenAPI/Swagger discovery + dual-token execution gateway.
 
 ---
 
@@ -25,10 +27,10 @@
 
 ## 3. Roles & Permissions Hierarchy (PRD Section 2)
 
-### A. Super Admin (Platform Owner) — 26 Endpoints
+### A. Super Admin (Platform Owner)
 1. `GET /api/v1/admin/companies` — List all onboarded tenant organizations
 2. `POST /api/v1/admin/companies` — Onboard new company
-3. `PATCH /api/v1/admin/companies/{company_id}` — Update company status & tier
+3. `PATCH /api/v1/admin/companies/{company_id}` — Update company status (active / suspended) & tier
 4. `GET /api/v1/admin/tenants` & `POST /api/v1/admin/tenants` — Global tenant management
 5. `POST /api/v1/admin/impersonate` — Impersonate any tenant organization for support
 6. `GET /api/v1/admin/metrics` — Global platform metrics & throughput
@@ -50,10 +52,11 @@
 22. `PUT /api/v1/admin/governance/companies/{company_id}/feature-flags` — Lock/unlock beta features per tenant
 23. `POST /api/v1/admin/governance/broadcast` — Real-time announcement blast to all active dashboards
 24. `GET /api/v1/admin/governance/agents/stats` — 12-agent leaderboard by popularity and token usage
+25. `POST /api/v1/orchestration/copilot/chat` — Autonomous natural language company creation, suspension, activation, credit allocation, and stats check with anti-destructive guardrails.
 
 ---
 
-### B. Company Admin (Organization Owner) — 25+ Endpoints
+### B. Company Admin (Organization Owner)
 1. `GET /api/v1/company/profile` & `PATCH /api/v1/company/profile` — Organization profile & default language
 2. `GET /api/v1/company/profile/branding` & `PUT /api/v1/company/profile/branding` — Custom brand kit (colors, fonts, email signature)
 3. `GET /api/v1/company/teams` & `POST /api/v1/company/teams` — Department & team structure creation
@@ -76,7 +79,7 @@
 
 ---
 
-### C. Manager (Department Lead / Team Supervisor) — 10 Endpoints
+### C. Manager (Department Lead / Team Supervisor)
 1. `GET /api/v1/manager/team/members` — Team members directory and activity
 2. `GET /api/v1/manager/team/credits` — Team credit balances, consumption & reserved limits
 3. `POST /api/v1/manager/team/credits/allocate` — Manager delegating credits to team member
@@ -90,7 +93,7 @@
 
 ---
 
-### D. Employee (Operator / Executive / Intern) — 9 Endpoints
+### D. Employee (Operator / Executive / Intern)
 1. `GET /api/v1/employee/overview/dashboard` — Personal dashboard: available credits, pending drafts, published posts
 2. `GET /api/v1/employee/overview/wallet` — Personal credit balance and reserved status
 3. `POST /api/v1/employee/overview/credits/request` — Request credit top-up from manager
@@ -106,48 +109,74 @@
 ## 4. The 12 AI Agents & Core Functional Modules
 
 ### 12 Specialized Agents (`/api/v1/agents`)
-- **Agent #1 (Own-Post Engager):** Post comments for conversation starting.
+- **Agent #1 (Own-Post Engager):** Post comments for conversation starting. Auto-triggered by Agent #8 with 45s-180s anti-ban jitter.
 - **Agent #2 (Competitor Researcher):** Research competitor content, pricing, and offers.
-- **Agent #3 (Comment Responder):** Smart FAQ/knowledge-based comment responder.
+- **Agent #3 (Comment Responder):** Smart FAQ/knowledge-based comment responder with dispute escalation.
 - **Agent #4 (Analytics):** Platform metrics, token consumption, and campaign ROI.
-- **Agent #5 (Daily Brief):** Daily morning action plan generator.
+- **Agent #5 (Daily Brief):** Daily morning action plan generator with "Do It" execution buttons.
 - **Agent #6 (Outreach DM/Email):** Cold lead outreach with personalized follow-up sequences.
-- **Agent #7 (Competitor Engager):** High-value competitor post comments for lead acquisition.
+- **Agent #7 (Competitor Engager):** High-value competitor post comments for lead acquisition (Assisted Mode Only).
 - **Agent #8 (Publisher & Distributor):** Content calendar creator, scheduler, and publisher.
-- **Agent #9 (Inbox Responder):** Omnichannel email & DM inbox triage & draft generator.
-- **Agent #10 (Trainee & SOP Agent):** Internal team SOP trainer, quiz generator & evaluator.
+- **Agent #9 (Inbox Responder):** Omnichannel email & DM inbox triage & draft generator (Meta 24-hr compliant).
+- **Agent #10 (Trainee & SOP Agent):** Internal team SOP trainer, quiz generator & spreadsheet data extractor.
 - **Agent #11 (Company Ops Agent):** RAG internal knowledge engine and operational doc answers.
-- **Agent #12 (Supervisor):** Master orchestrator managing agents, workflows, and credit limits.
+- **Agent #12 (Supervisor):** Master orchestrator dynamically decomposing tasks into DAGs across all 11 agents.
 
-### Unified Omnichannel Inbox (`/api/v1/inbox`)
+---
+
+## 5. Universal External Gateway & Auto-Discovery (`/api/v1/connectors/external`)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/v1/connectors/external/discover` | **Autonomous 0-Token Discovery:** Auto-probes external backend Swagger, OpenAPI, or GraphQL schema and indexes callable routes. |
+| `POST` | `/api/v1/connectors/external/dispatch` | **Universal Integration Dispatcher:** Allows any external system (HCM, ERP, CRM, Slack, WhatsApp) to execute Styre-BOT agents using dual tokens. |
+| `GET` | `/api/v1/connectors/external/spec` | **Developer Integration Spec:** Returns required headers, payload formats, and supported agent codes. |
+
+---
+
+## 6. Social Media & Connector Verification (`/api/v1/social` & `/api/v1/connectors`)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/v1/connectors/accounts/{account_id}/test` | Live test of connected Facebook, Instagram, or LinkedIn account token & permissions. |
+| `POST` | `/api/v1/social/posts/{post_id}/regenerate` | Regenerates an AI post draft incorporating user custom thoughts and style requirements. |
+| `PATCH` | `/api/v1/social/posts/{post_id}` | Manually update post text content, image prompt, or scheduled date. |
+| `GET` | `/api/v1/social/webhook` | Meta Webhook hub challenge verification handler. |
+| `POST` | `/api/v1/social/webhook` | Real-time inbound webhook receiver for Meta comments and messages. |
+
+---
+
+## 7. Unified Omnichannel Inbox (`/api/v1/inbox`)
 - `GET /api/v1/inbox/threads` — Unified inbox across Gmail, Outlook, LinkedIn, and Meta
 - `GET /api/v1/inbox/threads/{id}/messages` — Message conversation history
 - `POST /api/v1/inbox/threads/{id}/ai-reply` — Context-aware AI draft response (Roman Urdu & English)
 - `POST /api/v1/inbox/threads/{id}/reply` — Dispatch reply through outbox queue
 
-### Multi-Agent Workflows (`/api/v1/workflows`)
+---
+
+## 8. Multi-Agent Workflows (`/api/v1/workflows`)
 - `POST /api/v1/workflows` — Define multi-agent pipeline
 - `POST /api/v1/workflows/run-pipeline` — 1-click execution: Competitor Research $\to$ Content Writing $\to$ Media Engine Graphic $\to$ Approval
 
-### Neural Media Generation (`/api/v1/media`)
+---
+
+## 9. Neural Media Generation (`/api/v1/media`)
 - `POST /api/v1/media/image` — High-res marketing visual generation via Flux neural engine
 - `POST /api/v1/media/voiceover` — Bilingual audio synthesis via Edge-TTS
 - `POST /api/v1/media/video` — 1080p MP4 motion video rendering with image + voiceover sync
 - `GET /api/v1/media/assets` — Storage assets registry
 
-### Contacts & Leads Directory (`/api/v1/contacts`)
+---
+
+## 10. Contacts & Leads Directory (`/api/v1/contacts`)
 - `GET /api/v1/contacts` & `GET /api/v1/contacts/{id}` — Lead directory with paginated query
 - `PATCH /api/v1/contacts/{id}` & `DELETE /api/v1/contacts/{id}` — Lead updates & deletions
 - `GET /api/v1/contacts/export` — Instant CSV export of contacts
 
-### Bot & External Connectors (`/api/v1/approvals-bot`)
-- `POST /api/v1/telegram-webhook` — Telegram/WhatsApp approval callback receiver (`[Approve]` / `[Reject]`)
-- `POST /api/v1/notify-manager` — Push approval alert to manager's connected chat app
-
 ---
 
-## 5. Postman & API Client Integration
-- **Postman Collection Location:** `docs/Styre-BOT.postman_collection.json`
-- **Total Requests Included:** **183 endpoints organized into 30 folders**
+## 11. Postman & OpenAPI Specification Reference
+- **Complete OpenAPI 3.1 Spec:** [`docs/openapi.json`](file:///d:/saas/Styre-BOT/docs/openapi.json) (269 paths / 320 operations)
+- **Postman Collection Location:** [`docs/Styre-BOT.postman_collection.json`](file:///d:/saas/Styre-BOT/docs/Styre-BOT.postman_collection.json)
+- **Live Postman Workspace:** `9cf1b990-7a78-4aa8-8319-91f332a3429e` (`Styre-BOT Local Dev`)
 - **Import Instructions:** Open Postman $\to$ Click **Import** $\to$ Select `docs/Styre-BOT.postman_collection.json` $\to$ Set environment variable `baseUrl = http://localhost:8000` and `token = <your_jwt>`.
-
