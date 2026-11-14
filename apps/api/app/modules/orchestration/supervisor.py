@@ -9,46 +9,49 @@ from ...core.types import AgentContext, RunResult
 from ..credits import ledger
 
 ROUTES = [
-    (["competitor", "research", "market", "rival"], 2, "Competitor Researcher", "Research competitor positioning", 3),
-    (["post", "content", "publish", "linkedin", "social", "campaign"], 8, "Publisher", "Draft and route post for approval", 2),
-    (["engage", "comment", "conversation", "outreach"], 1, "Own Post Engager", "Queue conversation starter comments", 1),
-    (["policy", "sop", "knowledge", "document", "handbook"], 11, "Company Ops", "Answer from internal knowledge base", 1),
+    (["competitor", "research", "market"], 2, "Competitor Researcher", "Research competitor positioning", 3),
+    (["post", "content", "publish", "social"], 8, "Publisher", "Draft and route post for approval", 2),
+    (["engage", "starter", "conversation"], 1, "Own Post Engager", "Queue conversation starter comments", 1),
+    (["email", "outreach", "cold"], 6, "Outreach Agent", "Personalize email outreach campaign", 1),
+    (["inbox", "dm", "message", "reply"], 9, "Inbox Responder", "Triage and draft inbound replies", 1),
+    (["sop", "train", "quiz"], 10, "Trainee & SOP", "Interactive SOP training & extraction", 2),
+    (["policy", "doc", "knowledge"], 11, "Company Ops", "Answer from internal knowledge base", 1),
+    (["metrics", "analytics", "roi"], 4, "Analytics Agent", "Compile cross-platform analytics", 2),
+    (["brief", "today", "agenda"], 5, "Daily Brief", "Compile daily executive brief", 1),
+    (["comment", "faq", "public"], 3, "Comment Responder", "Triage public post comments", 1),
+    (["rival", "competitor post"], 7, "Competitor Engager", "Draft value-added competitor comment", 1),
 ]
 
-CODES = {1: "own-post-engager", 2: "competitor-researcher", 8: "publisher", 11: "company-ops"}
-ACTIONS = {1: "a0000000-0000-0000-0000-000000000001", 2: "a0000000-0000-0000-0000-000000000002", 8: "a0000000-0000-0000-0000-000000000008", 11: "a0000000-0000-0000-0000-000000000011"}
+CODES = {1: "own-post-engager", 2: "competitor-researcher", 3: "comment-responder", 4: "analytics", 5: "daily-brief", 6: "outreach", 7: "competitor-engager", 8: "publisher", 9: "inbox-responder", 10: "trainee-sop", 11: "company-ops"}
 
 
 def plan_dag(request: str) -> list[dict]:
     lower = request.lower()
-    matched = [route for route in ROUTES if any(keyword in lower for keyword in route[0])]
+    matched = [r for r in ROUTES if any(k in lower for k in r[0])]
     if len(matched) < 3:
-        for route in ROUTES:
-            if route not in matched:
-                matched.append(route)
-            if len(matched) >= 3:
-                break
+        matched += [r for r in ROUTES if r not in matched][:3 - len(matched)]
     return [
-        {"step": index + 1, "agentId": route[1], "agentName": route[2], "description": route[3], "estimatedCredits": route[4], "status": "pending"}
-        for index, route in enumerate(matched[:4])
+        {"step": i + 1, "agentId": r[1], "agentName": r[2], "description": r[3], "estimatedCredits": r[4], "status": "pending"}
+        for i, r in enumerate(matched[:4])
     ]
 
 
 def build_input(step: dict, request: str) -> dict:
-    agent_id = step["agentId"]
-    if agent_id == 2:
-        return {"targetCompetitor": request, "focusArea": "general"}
-    if agent_id == 8:
-        return {"platform": "linkedin", "topic": request, "autoApprove": False}
-    if agent_id == 1:
-        return {"postId": "00000000-0000-0000-0000-000000000000", "postContent": request, "platform": "linkedin", "commentCount": 1}
-    return {"query": request}
+    aid = step["agentId"]
+    if aid == 2: return {"targetCompetitor": request, "focusArea": "general"}
+    if aid == 8: return {"platform": "linkedin", "topic": request, "autoApprove": False}
+    if aid == 1: return {"postId": "00000000-0000-0000-0000-000000000000", "postContent": request, "platform": "linkedin", "commentCount": 1}
+    if aid == 6: return {"campaignGoal": request, "recipients": []}
+    if aid == 4: return {"scope": "company_overview", "period": "7d"}
+    if aid == 10: return {"sopQuery": request, "task": "quiz"}
+    return {"query": request, "request": request}
 
 
 def run_step(step: dict, request: str, context: AgentContext) -> dict:
-    executor = get_agent(CODES.get(step["agentId"], ""))
+    aid = step["agentId"]
+    executor = get_agent(CODES.get(aid, ""))
     if executor is None:
-        return {"ok": False, "attempts": 0, "error": f"No executor for agent #{step['agentId']}", "credits": 0}
+        return {"ok": False, "attempts": 0, "error": f"No executor for agent #{aid}", "credits": 0}
 
     db = SessionLocal()
     try:
@@ -58,12 +61,13 @@ def run_step(step: dict, request: str, context: AgentContext) -> dict:
     finally:
         db.close()
 
+    act_id = f"a0000000-0000-0000-0000-{aid:012d}"
     last_error = ""
     for attempt in range(1, 4):
         result = executor.execute(
             AgentContext(
                 company_id=context.company_id, user_id=context.user_id, wallet_id=context.wallet_id,
-                agent_id=step["agentId"], agent_action_id=ACTIONS.get(step["agentId"], ""), mode="auto", task_id=context.task_id,
+                agent_id=aid, agent_action_id=act_id, mode="auto", task_id=context.task_id,
             ),
             build_input(step, request),
         )

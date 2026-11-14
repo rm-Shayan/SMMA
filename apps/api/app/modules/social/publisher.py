@@ -50,6 +50,16 @@ class PublisherAgent(BaseAgent):
             elif not input_data.get("scheduledAt"):
                 status = "published"
                 external_id = f"{platform}_ext_{run_id[:8]}"
+                from ...core.registry import get as get_agent
+                engager = get_agent("own-post-engager")
+                if engager:
+                    try:
+                        engager.execute(
+                            AgentContext(context.company_id, context.user_id, context.wallet_id, 1, "a0000000-0000-0000-0000-000000000001", "auto"),
+                            {"postId": post_id, "postContent": content, "platform": platform, "connectedAccountId": input_data.get("connectedAccountId")},
+                        )
+                    except Exception:
+                        pass
 
             db.execute(
                 text(

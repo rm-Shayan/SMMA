@@ -53,6 +53,24 @@ def dispatch_external_agent(body: ExternalDispatchRequest, tenant: Tenant = Depe
     }
 
 
+class DiscoverBody(BaseModel):
+    baseUrl: str | None = None
+    openApiUrl: str | None = None
+    openApiSpec: dict | None = None
+    token: str | None = None
+
+
+@router.post("/discover")
+def discover_external_endpoints(body: DiscoverBody, tenant: Tenant = Depends(get_tenant)):
+    """Autonomous zero-config discovery of backend endpoints with 0 LLM token cost."""
+    from .openapi_engine import auto_discover_backend, fetch_and_parse_openapi
+    if body.baseUrl:
+        routes = auto_discover_backend(body.baseUrl, token=body.token)
+    else:
+        routes = fetch_and_parse_openapi(body.openApiUrl, body.openApiSpec)
+    return {"success": bool(routes), "totalEndpoints": len(routes), "endpoints": routes}
+
+
 @router.get("/spec")
 def get_external_integration_spec():
     """Returns the integration specification and header requirements for external developers."""
