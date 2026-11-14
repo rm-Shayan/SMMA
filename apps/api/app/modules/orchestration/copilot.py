@@ -38,6 +38,22 @@ def handle_copilot_request(db: Session, context: AgentContext, query: str, role:
                  if lang == "roman_urdu" else f"Company '{company_name}' (ID: {comp_id}) has been created with {credits_amt} credits allocated.")
         return {"action": "company_created", "companyId": comp_id, "companyName": company_name, "creditsAllocated": credits_amt, "reply": reply}
 
+    if is_admin and "company" in q_lower and any(k in q_lower for k in ["suspend", "activate"]):
+        status_val = "suspended" if "suspend" in q_lower else "active"
+        m = re.search(r'company\s+([A-Za-z0-9_\- ]+?)(?:\s+ko\s+|\s+to\s+)?(?:suspend|activate)', q_lower)
+        c_target = (m.group(1).strip() if m else "").lower()
+        c_row = db.execute(text('SELECT id, name FROM "companies" WHERE lower(name) = :n OR id::text = :i LIMIT 1'), {"n": c_target, "i": c_target}).first()
+        if c_row:
+            db.execute(text('UPDATE "companies" SET status = :s WHERE id = :id'), {"s": status_val, "id": c_row[0]})
+            db.commit()
+            return {"action": "company_status_updated", "companyId": c_row[0], "status": status_val, "reply": f"Company '{c_row[1]}' is now {status_val}."}
+
+    if is_admin and any(k in q_lower for k in ["stats", "total companies", "kitni company", "system overview", "kitne user"]):
+        cc = db.execute(text('SELECT count(*)::int FROM "companies"')).scalar() or 0
+        uc = db.execute(text('SELECT count(*)::int FROM "users"')).scalar() or 0
+        tc = db.execute(text('SELECT COALESCE(SUM(balance), 0)::int FROM "credit_wallets"')).scalar() or 0
+        return {"action": "system_stats", "reply": f"System Overview: {cc} Companies, {uc} Users, {tc} Total Credits Minted."}
+
     if any(k in q_lower for k in ["grant credit", "add credit", "credit do", "allocate credit", "credits dedo"]):
         allowed, err = can_perform_action(role, "grant_credits", grants)
         if not allowed:
