@@ -9,6 +9,12 @@ INJECTION_PATTERNS = [
     r"(?i)\[\/?(INST|SYS)\]",
 ]
 
+DESTRUCTIVE_PATTERNS = [
+    r"(?i)\b(wipe|purge|destroy|erase|nuke|mass\s*delete|delete\s*all)\b",
+    r"(?i)\b(saar[ae]|sab|database|companies|company)\b.*?\b(ura\s*do|delete|khatam|mita|drop)\b",
+    r"(?i)\b(ura\s*do|khatam\s*kr|mita\s*do|drop)\b.*?\b(saar[ae]|sab|database|companies)\b",
+]
+
 SQLI_PATTERNS = [
     r"(?i)\b(union\s+select|select\s+.*\s+from|insert\s+into|delete\s+from|drop\s+table|alter\s+table|update\s+.*\s+set)\b",
     r"(?i)(--|\/\*|\*\/|;\s*drop\b|;\s*delete\b|;\s*update\b|\b1\s*=\s*1\b|\b'1'\s*=\s*'1'\b)",
@@ -28,6 +34,9 @@ def check_prompt_injection(user_input: str) -> tuple[bool, str]:
     for pattern in INJECTION_PATTERNS:
         if re.search(pattern, text_val):
             return True, "Security Alert: Prompt injection or system override pattern detected."
+    for pattern in DESTRUCTIVE_PATTERNS:
+        if re.search(pattern, text_val):
+            return True, "Security Alert: Destructive bulk wipe operation is strictly forbidden via AI. Multi-party console approval required."
     for pattern in SQLI_PATTERNS:
         if re.search(pattern, text_val):
             return True, "Security Alert: Raw SQL injection or unauthorized database query pattern detected."

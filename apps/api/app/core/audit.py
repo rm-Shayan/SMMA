@@ -4,6 +4,8 @@ import uuid
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from .pubsub import publish_event_sync
+
 
 def record(
     db: Session,
@@ -33,5 +35,12 @@ def record(
             },
         )
         db.commit()
+        if company_id:
+            publish_event_sync(
+                company_id,
+                "audit.created",
+                {"action": action, "entity": entity, "entityId": entity_id},
+                "audit",
+            )
     except Exception:
         db.rollback()

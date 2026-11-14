@@ -45,3 +45,24 @@ def craft_social_post(platform: str, topic: str, tone: str = "professional") -> 
         "content": guideline["fallback_body"],
         "imagePrompt": f"Modern minimalist 3D isometric render showing {topic}, cinematic studio lighting, 8k resolution",
     }
+
+
+def refine_social_post(current_content: str, feedback: str, platform: str = "facebook") -> dict:
+    prompt = (
+        f"Rewrite and regenerate this {platform} social post based on user feedback:\n"
+        f"ORIGINAL POST:\n{current_content}\n\n"
+        f"USER THOUGHTS & INSTRUCTIONS:\n{feedback}\n\n"
+        "Return strictly raw JSON format with two keys: "
+        "'content' (the revised complete post with emojis/hashtags), 'imagePrompt' (matching updated image prompt)."
+    )
+    res = generate_text(prompt, system_prompt="You are an expert social media editor. Return raw JSON only.", max_tokens=500)
+    if res:
+        try:
+            match = re.search(r"\{.*\}", res, re.DOTALL)
+            if match:
+                parsed = json.loads(match.group(0))
+                if parsed.get("content"):
+                    return parsed
+        except Exception:
+            pass
+    return {"content": f"{current_content}\n\nNote: {feedback}", "imagePrompt": f"Refined visual for: {feedback}"}

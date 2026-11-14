@@ -2,88 +2,109 @@ import asyncio
 import json
 import logging
 from typing import Any, Dict, Set
+
 from fastapi import WebSocket
+
 from app.core.config import settings
+from app.core.redis_pool import get_redis_client
+from app.core.ws_buffer import BufferedConnection
 
 logger = logging.getLogger("pubsub")
 
+
 class ConnectionManager:
-    """Manages tenant-isolated, topic-based real-time WebSocket connections."""
+    """Tenant-isolated, topic-based WebSocket fan-out with bounded queues."""
 
     def __init__(self) -> None:
-        self.connections: Dict[str, Set[WebSocket]] = {}
-        self.topics: Dict[WebSocket, Set[str]] = {}
+        self.rooms: Dict[str, Set[BufferedConnection]] = {}
+        self.loop: asyncio.AbstractEventLoop | None = None
 
-    async def connect(self, company_id: str, ws: WebSocket, topic: str = "all") -> None:
+    async def connect(self, company_id: str, ws: WebSocket, topic: str = "all") -> BufferedConnection:
         await ws.accept()
-        if company_id not in self.connections:
-            self.connections[company_id] = set()
-        self.connections[company_id].add(ws)
-        if ws not in self.topics:
-            self.topics[ws] = set()
-        self.topics[ws].add(topic)
+        conn = BufferedConnection(str(company_id), ws, topic)
+        conn.start()
+        self.rooms.setdefault(str(company_id), set()).add(conn)
+        return conn
 
-    def subscribe(self, ws: WebSocket, topic: str) -> None:
-        if ws in self.topics:
-            self.topics[ws].add(topic)
+    def subscribe(self, conn: BufferedConnection, topic: str) -> None:
+        conn.topics.add(topic)
 
-    def unsubscribe(self, ws: WebSocket, topic: str) -> None:
-        if ws in self.topics:
-            self.topics[ws].discard(topic)
+    def unsubscribe(self, conn: BufferedConnection, topic: str) -> None:
+        conn.topics.discard(topic)
 
-    def disconnect(self, company_id: str, ws: WebSocket) -> None:
-        if company_id in self.connections:
-            self.connections[company_id].discard(ws)
-            if not self.connections[company_id]:
-                del self.connections[company_id]
-        if ws in self.topics:
-            del self.topics[ws]
+    async def disconnect(self, company_id: str, conn: BufferedConnection) -> None:
+        self.rooms.get(company_id, set()).discard(conn)
+        await conn.close()
 
     async def broadcast(self, company_id: str, message: Dict[str, Any], topic: str = "all") -> None:
-        conns = list(self.connections.get(company_id, []))
-        stale = []
-        for ws in conns:
-            subbed = self.topics.get(ws, {"all"})
-            if "all" in subbed or topic in subbed:
-                try:
-                    await ws.send_json(message)
-                except Exception:
-                    stale.append(ws)
-        for s in stale:
-            self.disconnect(company_id, s)
+        for conn in list(self.rooms.get(company_id, [])):
+            if "all" in conn.topics or topic in conn.topics:
+                conn.enqueue(message)
+
+    async def close_all(self, code: int = 1001) -> None:
+        for conns in self.rooms.values():
+            for conn in list(conns):
+                await conn.close(code)
+        self.rooms.clear()
+
 
 manager = ConnectionManager()
 
-def publish_event_sync(company_id: str, event_type: str, payload: Dict[str, Any], topic: str = "all") -> None:
-    """Synchronous helper for background threads to broadcast WebSocket events."""
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            asyncio.create_task(publish_event(company_id, event_type, payload, topic))
-        else:
-            loop.run_until_complete(publish_event(company_id, event_type, payload, topic))
-    except Exception:
-        pass
 
 async def publish_event(company_id: str, event_type: str, payload: Dict[str, Any], topic: str = "all") -> None:
+    company_id = str(company_id)
     msg = {"company_id": company_id, "event_type": event_type, "topic": topic, "payload": payload}
+    msg = json.loads(json.dumps(msg, default=str))
     await manager.broadcast(company_id, msg, topic)
+    client = get_redis_client()
+    if client is None:
+        return
     try:
-        import redis.asyncio as aioredis
-        client = aioredis.from_url(settings["redis_url"], decode_responses=True)
         await client.publish(f"company:{company_id}:{topic}", json.dumps(msg))
-        await client.aclose()
     except Exception as exc:
         logger.debug("Redis pub/sub publish skipped: %s", exc)
 
-async def listen_redis_channel(company_id: str, topic: str = "all") -> None:
+
+def publish_event_sync(company_id: str, event_type: str, payload: Dict[str, Any], topic: str = "all") -> None:
+    """Fire-and-forget helper for sync routes/background threads."""
+    logger.info("publish_event_sync called: event=%s topic=%s", event_type, topic)
     try:
-        import redis.asyncio as aioredis
-        client = aioredis.from_url(settings["redis_url"], decode_responses=True)
-        pubsub = client.pubsub()
+        loop = asyncio.get_running_loop()
+        loop.create_task(publish_event(company_id, event_type, payload, topic))
+        return
+    except RuntimeError:
+        pass
+
+    loop = manager.loop
+    if loop and loop.is_running():
+        try:
+            loop.call_soon_threadsafe(lambda: loop.create_task(publish_event(company_id, event_type, payload, topic)))
+        except Exception as exc:
+            logger.debug("publish_event_sync thread fallback skipped: %s", exc)
+
+
+async def listen_redis_channel(company_id: str, topic: str = "all") -> None:
+    company_id = str(company_id)
+    client = get_redis_client()
+    if client is None:
+        return
+    pubsub = client.pubsub()
+    try:
         await pubsub.subscribe(f"company:{company_id}:{topic}")
-        async for msg in pubsub.listen():
-            if msg.get("type") == "message":
-                await manager.broadcast(company_id, json.loads(msg["data"]), topic)
+        async for raw in pubsub.listen():
+            if raw.get("type") != "message":
+                continue
+            try:
+                message = json.loads(raw["data"])
+            except Exception:
+                continue
+            await manager.broadcast(company_id, message, topic)
+    except asyncio.CancelledError:
+        raise
     except Exception as exc:
         logger.debug("Redis listener stopped for %s: %s", company_id, exc)
+    finally:
+        try:
+            await pubsub.reset()
+        except Exception:
+            pass

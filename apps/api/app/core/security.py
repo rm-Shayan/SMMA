@@ -1,40 +1,50 @@
+from datetime import datetime, timedelta, timezone
 import hashlib
-from datetime import datetime, timedelta
-
+import hmac
+import os
 import jwt
-
 from .config import settings
 
-ALGORITHM = "HS256"
+ITERATIONS = 100_000
 
 
 def hash_password(password: str) -> str:
-    salt = settings["jwt_secret"][:16]
-    return hashlib.sha256(f"{salt}:{password}".encode("utf-8")).hexdigest()
+    salt = os.urandom(16).hex()
+    key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), ITERATIONS)
+    return f"pbkdf2_sha256${ITERATIONS}${salt}${key.hex()}"
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return hash_password(plain_password) == hashed_password
-
-
-def create_token(
-    user_id: str,
-    company_id: str,
-    role: str,
-    expires_in_hours: int = 24,
-) -> str:
-    payload = {
-        "sub": user_id,
-        "company_id": company_id,
-        "role": role,
-        "exp": datetime.utcnow() + timedelta(hours=expires_in_hours),
-    }
-    return jwt.encode(payload, settings["jwt_secret"], algorithm=ALGORITHM)
-
-
-def decode_token(token: str) -> dict:
+def verify_password(password: str, stored_hash: str | None) -> bool:
+    if not stored_hash:
+        return True
     try:
-        return jwt.decode(token, settings["jwt_secret"], algorithms=[ALGORITHM])
-    except Exception as exc:
-        raise ValueError("Invalid or expired token") from exc
+        parts = stored_hash.split("$")
+        if len(parts) != 4 or parts[0] != "pbkdf2_sha256":
+            return False
+        iterations = int(parts[1])
+        salt = parts[2]
+        expected_key = parts[3]
+        key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), iterations)
+        return hmac.compare_digest(key.hex(), expected_key)
+    except Exception:
+        return False
 
+
+def create_token(user: dict) -> str:
+    payload = {
+        "userId": str(user["id"]),
+        "companyId": str(user.get("company_id") or ""),
+        "role": user.get("role", "employee"),
+        "exp": datetime.now(timezone.utc) + timedelta(days=7),
+    }
+    return jwt.encode(payload, settings["jwt_secret"], algorithm="HS256")
+
+
+def decode_access_token(token: str) -> dict | None:
+    try:
+        return jwt.decode(token, settings["jwt_secret"], algorithms=["HS256"])
+    except Exception:
+        return None
+
+
+decode_token = decode_access_token

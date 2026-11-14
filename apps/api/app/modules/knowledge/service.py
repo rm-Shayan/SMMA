@@ -4,6 +4,7 @@ import uuid
 from sqlalchemy.orm import Session
 
 from ...core.db import query
+from ...core.pubsub import publish_event_sync
 from .chunker import chunk_text
 from .embedding import embed_text, to_vector_literal
 
@@ -23,7 +24,8 @@ def ingest_text(db: Session, company_id: str, title: str, text: str, source: str
         {"id": document_id, "company_id": company_id, "title": title, "source": source, "path": f"inline://{company_id}/{document_id}"},
     )
 
-    for chunk in chunks:
+    publish_event_sync(company_id, "rag.progress", {"documentId": document_id, "indexed": 0, "total": len(chunks)}, "knowledge")
+    for index, chunk in enumerate(chunks, 1):
         query(
             db,
             """
@@ -35,7 +37,10 @@ def ingest_text(db: Session, company_id: str, title: str, text: str, source: str
                 "content": chunk["content"], "embedding": to_vector_literal(embed_text(chunk["content"])),
             },
         )
+        if index % 10 == 0:
+            publish_event_sync(company_id, "rag.progress", {"documentId": document_id, "indexed": index, "total": len(chunks)}, "knowledge")
 
+    publish_event_sync(company_id, "rag.progress", {"documentId": document_id, "indexed": len(chunks), "total": len(chunks), "status": "completed"}, "knowledge")
     return {"documentId": document_id, "chunkCount": len(chunks)}
 
 

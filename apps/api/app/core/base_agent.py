@@ -7,9 +7,26 @@ from sqlalchemy import text
 from ..modules.credits import ledger
 from .audit import record
 from .db import SessionLocal, set_rls_tenant
+from .pubsub import publish_event_sync
 from .types import AgentContext, AgentResult, RunResult
 
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
+
+
+def emit_run(context: AgentContext, run_id: str, status: string, credits: int = 0, cost_usd: float = 0) -> None:
+    publish_event_sync(
+        context.company_id,
+        "agent_run.updated",
+        {
+            "runId": run_id,
+            "agentId": context.agent_id,
+            "status": status,
+            "credits": credits,
+            "costUsd": cost_usd,
+            "taskId": context.task_id,
+        },
+        "agents",
+    )
 
 
 def nullable_user_id(user_id: str | None) -> str | None:
@@ -51,6 +68,7 @@ class BaseAgent:
                 },
             )
             db.commit()
+            emit_run(context, run_id, "queued")
 
             if context.mode != "draft" and context.wallet_id and estimated > 0:
                 ledger.reserve(db, context.wallet_id, estimated, run_id, context.task_id)
@@ -58,6 +76,7 @@ class BaseAgent:
 
             db.execute(text('UPDATE "agent_runs" SET status = \'running\' WHERE id = :id'), {"id": run_id})
             db.commit()
+            emit_run(context, run_id, "running")
 
             result: RunResult = self._execute(context, input_data, run_id)
             actual = result.actual_credits if result.actual_credits is not None else estimated
@@ -74,6 +93,7 @@ class BaseAgent:
             )
             db.commit()
             record(db, context.company_id, nullable_user_id(context.user_id), "agent_run", "agent_runs", run_id, {"agent": self.code, "status": status, "credits": actual})
+            emit_run(context, run_id, status, actual, result.cost_usd)
             return AgentResult(True, run_id, status, actual, result.cost_usd, result.data)
 
         except Exception as exc:
@@ -89,6 +109,7 @@ class BaseAgent:
             )
             db.commit()
             record(db, context.company_id, nullable_user_id(context.user_id), "agent_run", "agent_runs", run_id, {"agent": self.code, "status": "failed", "error": str(exc)})
+            emit_run(context, run_id, "failed")
             return AgentResult(False, run_id, "failed", error=str(exc))
         finally:
             db.close()

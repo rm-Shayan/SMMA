@@ -20,14 +20,16 @@ class RegisterBody(BaseModel):
     email: str
     name: str
     role: str
+    password: str | None = None
 
 
 @router.post("/login")
 def do_login(body: LoginBody):
     try:
-        return {"success": True, **login(body.email)}
+        res = login(body.email, body.password)
+        return {"success": True, **res}
     except ValueError as exc:
-        return {"success": False, "error": str(exc)}
+        raise HTTPException(status_code=401, detail=str(exc))
 
 
 @router.get("/me")
@@ -45,5 +47,5 @@ def me(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
 
 @router.post("/register")
 def do_register(body: RegisterBody):
-    return {"success": True, "user": register_user(body.companyId, body.email, body.name, body.role)}
-
+    user = register_user(body.companyId, body.email, body.name, body.role, body.password)
+    return {"success": True, "user": user}

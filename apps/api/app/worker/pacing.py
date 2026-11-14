@@ -3,6 +3,7 @@ from sqlalchemy import text
 
 from ..core.audit import record
 from ..core.db import SessionLocal
+from ..core.pubsub import publish_event_sync
 from .dispatcher import backoff_delay, dispatch, mark_rate_limited as _mark_rl, schedule_follow_up
 
 WARMUP_DAYS = 14
@@ -91,6 +92,7 @@ def process_outbox(limit: int = 10, account_id: str | None = None) -> int:
 
             db.execute(text('UPDATE "outbox_jobs" SET status = \'sending\' WHERE id = :id'), {"id": job["id"]})
             db.commit()
+            publish_event_sync(account["company_id"], "outbox.updated", {"jobId": job["id"], "status": "sending", "targetType": job["target_type"]}, "outbox")
 
             result = dispatch(job, account)
             if result["ok"]:
@@ -99,9 +101,11 @@ def process_outbox(limit: int = 10, account_id: str | None = None) -> int:
                 if job["target_type"] == "cold_email":
                     schedule_follow_up(db, job)
                 record(db, account["company_id"], None, "connector", "outbox_jobs", job["id"], {"targetType": job["target_type"], "externalId": result.get("externalId")})
+                publish_event_sync(account["company_id"], "outbox.updated", {"jobId": job["id"], "status": "sent", "targetType": job["target_type"], "externalId": result.get("externalId")}, "outbox")
                 dispatched += 1
             elif result.get("rateLimited"):
                 mark_rate_limited(db, account_id, job["id"])
+                publish_event_sync(account["company_id"], "outbox.updated", {"jobId": job["id"], "status": "rate_limited", "targetType": job["target_type"]}, "outbox")
             else:
                 db.execute(text('UPDATE "outbox_jobs" SET status = \'queued\', not_before = NOW() + INTERVAL \'5 minutes\' WHERE id = :id'), {"id": job["id"]})
                 db.commit()

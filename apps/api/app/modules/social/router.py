@@ -12,9 +12,11 @@ from ...core.db import get_db
 from ...core.deps import Tenant, get_tenant
 from ...core.runner import run_agent
 from .competitors_router import competitors_router
+from .regenerate_router import router as regenerate_router
 
 router = APIRouter()
 router.include_router(competitors_router)
+router.include_router(regenerate_router)
 
 class PostBody(BaseModel):
     connectedAccountId: str
@@ -103,6 +105,18 @@ def approve_comment(comment_id: str, tenant: Tenant = Depends(get_tenant), db: S
     db.execute(text('UPDATE "social_comments" SET status = \'approved\' WHERE id = :id'), {"id": comment_id})
     db.commit()
     return {"success": True, "commentId": comment_id, "status": "approved"}
+
+@router.get("/webhook")
+def meta_webhook_verify(request: Request):
+    mode = request.query_params.get("hub.mode")
+    token = request.query_params.get("hub.verify_token")
+    challenge = request.query_params.get("hub.challenge")
+    expected = os.getenv("META_VERIFY_TOKEN", "styre_bot_verify_token")
+    if mode == "subscribe" and token == expected and challenge:
+        from fastapi.responses import PlainTextResponse
+        return PlainTextResponse(content=challenge, status_code=200)
+    return {"status": "error", "message": "Verification failed"}
+
 
 @router.post("/webhook")
 async def webhook(request: Request, db: Session = Depends(get_db)):

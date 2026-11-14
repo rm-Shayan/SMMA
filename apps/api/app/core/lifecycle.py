@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from .db import engine
 from .config import settings
+from .pubsub import manager
 
 logger = logging.getLogger("lifecycle")
 
@@ -15,6 +16,10 @@ async def lifespan(app: FastAPI):
     """
     # 1. Startup phase
     logger.info("Initializing Styre-BOT Modular Monolith services...")
+    try:
+        manager.loop = asyncio.get_running_loop()
+    except Exception:
+        pass
     try:
         import redis.asyncio as aioredis
         redis_client = aioredis.from_url(settings["redis_url"], decode_responses=True)
@@ -31,6 +36,13 @@ async def lifespan(app: FastAPI):
     
     # Allow 2-3 seconds for active in-flight responses and SSE streams to flush
     await asyncio.sleep(2)
+
+    # Close WebSocket clients first so no event is lost mid-shutdown
+    try:
+        await manager.close_all(1001)
+        logger.info("All WebSocket clients closed gracefully.")
+    except Exception as exc:
+        logger.warning("WebSocket close_all failed: %s", exc)
 
     # Cleanly dispose PostgreSQL connection pool
     try:
