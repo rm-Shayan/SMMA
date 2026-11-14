@@ -11,11 +11,13 @@ from ..auth.service import create_token
 from .super_ops import router as super_ops_router
 from .super_ops2 import router as super_ops2_router
 from .super_ops3 import router as super_ops3_router
+from .super_ops4 import router as super_ops4_router
 
 router = APIRouter()
 router.include_router(super_ops_router)
 router.include_router(super_ops2_router)
 router.include_router(super_ops3_router)
+router.include_router(super_ops4_router)
 
 
 class ImpersonateBody(BaseModel):

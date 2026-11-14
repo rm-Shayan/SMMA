@@ -32,7 +32,6 @@ def create_checkout_session(company_id: str, user_id: str | None, amount: int, p
 
     stripe.api_key = settings["stripe_secret_key"]
     session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
         line_items=[{
             "price_data": {
                 "currency": "usd",

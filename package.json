@@ -12,6 +12,7 @@
     "migrate": "python apps/api/scripts/migrate.py",
     "verify": "python apps/api/scripts/verify_phases.py",
     "api": "python -m uvicorn --app-dir apps/api app.main:app --reload --port 5000",
+    "api:py": "python apps/api/run.py",
     "worker": "python -c \"import sys; sys.path.insert(0, 'apps/api'); from app.worker.main import main; main()\""
   },
   "keywords": [

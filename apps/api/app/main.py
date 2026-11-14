@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from .bootstrap import register_all
+from .core.lifecycle import lifespan
+from .core.observability import ObservabilityMiddleware
 from .modules.admin import (
     admin_router,
     billing_admin_router,
@@ -22,6 +24,7 @@ from .modules.contacts import router as contacts_router
 from .modules.credits import router as credits_router
 from .modules.employee import router as employee_router
 from .modules.events import router as events_router
+from .modules.health import router as health_router
 from .modules.inbox import router as inbox_router
 from .modules.knowledge import router as knowledge_router
 from .modules.manager import router as manager_router
@@ -38,7 +41,7 @@ from .modules.workflows import router as workflows_router
 
 register_all()
 
-app = FastAPI(title="Styre-BOT API", version="1.0.0")
+app = FastAPI(title="Styre-BOT API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,6 +49,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(ObservabilityMiddleware)
 
 
 @app.exception_handler(Exception)
@@ -53,9 +57,7 @@ async def unhandled(request: Request, exc: Exception):
     return JSONResponse(status_code=400, content={"success": False, "error": str(exc)})
 
 
-@app.get("/health")
-def health():
-    return {"success": True, "service": "styre-api", "language": "python", "architecture": "modular-monolith"}
+app.include_router(health_router)
 
 
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])

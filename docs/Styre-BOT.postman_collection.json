@@ -299,6 +299,42 @@
           }
         },
         {
+          "name": "POST /api/v1/admin/users",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyId\": \"string\",\n  \"email\": \"string\",\n  \"name\": \"string\",\n  \"role\": \"string\"\n}"
+            }
+          }
+        },
+        {
           "name": "PATCH /api/v1/admin/users/{user_id}/role",
           "request": {
             "method": "PATCH",
@@ -1097,6 +1133,39 @@
           }
         },
         {
+          "name": "GET /api/v1/admin/impersonate/{session_id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/impersonate/{session_id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "impersonate",
+                "{session_id}"
+              ]
+            }
+          }
+        },
+        {
           "name": "POST /api/v1/admin/maintenance/pause",
           "request": {
             "method": "POST",
@@ -1306,6 +1375,339 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/login-history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/login-history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "login-history"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/companies/{company_id}/invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/companies/{company_id}/invoices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "companies",
+                "{company_id}",
+                "invoices"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/notifications/templates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/notifications/templates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "notifications",
+                "templates"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/notifications/templates",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/notifications/templates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "notifications",
+                "templates"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"string\",\n  \"title\": \"string\",\n  \"body\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/notifications/test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/notifications/test",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "notifications",
+                "test"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyId\": \"string\",\n  \"key\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/billing/plans",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/billing/plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "billing",
+                "plans"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/billing/plans",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/billing/plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "billing",
+                "plans"
+              ],
+              "query": [
+                {
+                  "key": "planId",
+                  "value": "",
+                  "description": ""
+                },
+                {
+                  "key": "credits",
+                  "value": "",
+                  "description": ""
+                },
+                {
+                  "key": "priceUsd",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/billing/coupons",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/billing/coupons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "billing",
+                "coupons"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/billing/coupons",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/billing/coupons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "billing",
+                "coupons"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"string\",\n  \"percentOff\": 0\n}"
             }
           }
         },
@@ -3589,6 +3991,385 @@
               "raw": "{\n  \"requireApprovalAboveCredits\": 0,\n  \"socialPostAutoApprove\": false\n}"
             }
           }
+        },
+        {
+          "name": "POST /api/v1/company/users/{user_id}/reactivate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/company/users/{user_id}/reactivate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "company",
+                "users",
+                "{user_id}",
+                "reactivate"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/company/credits/spend-caps",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/company/credits/spend-caps",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "company",
+                "credits",
+                "spend-caps"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH /api/v1/company/credits/spend-caps",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/company/credits/spend-caps",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "company",
+                "credits",
+                "spend-caps"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"campaignCreditLimit\": 0\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/company/approvals/rules",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/company/approvals/rules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "company",
+                "approvals",
+                "rules"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH /api/v1/company/approvals/rules",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/company/approvals/rules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "company",
+                "approvals",
+                "rules"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requireApprovalAbove\": 0,\n  \"autoApproveAgents\": [\n    {}\n  ],\n  \"escalatePricing\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/company/analytics/scheduled-reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/company/analytics/scheduled-reports",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "company",
+                "analytics",
+                "scheduled-reports"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/company/billing/payment-methods",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/company/billing/payment-methods",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "company",
+                "billing",
+                "payment-methods"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/company/billing/payment-methods",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/company/billing/payment-methods",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "company",
+                "billing",
+                "payment-methods"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provider\": \"string\",\n  \"reference\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/company/integrations/oauth/{provider}/callback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/company/integrations/oauth/{provider}/callback",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "company",
+                "integrations",
+                "oauth",
+                "{provider}",
+                "callback"
+              ],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "",
+                  "description": ""
+                },
+                {
+                  "key": "state",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH /api/v1/company/campaigns/{campaign_id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/company/campaigns/{campaign_id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "company",
+                "campaigns",
+                "{campaign_id}"
+              ],
+              "query": [
+                {
+                  "key": "goal",
+                  "value": "",
+                  "description": ""
+                },
+                {
+                  "key": "tone",
+                  "value": "",
+                  "description": ""
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": ""
+                },
+                {
+                  "key": "creditLimit",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
         }
       ]
     },
@@ -4789,6 +5570,142 @@
           }
         },
         {
+          "name": "GET /api/v1/employee/notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "notifications"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/notifications/{notification_id}/read",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/notifications/{notification_id}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "notifications",
+                "{notification_id}",
+                "read"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/employee/notifications/preferences",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/notifications/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "notifications",
+                "preferences"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/employee/notifications/preferences",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/notifications/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "notifications",
+                "preferences"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lowBalance\": false,\n  \"pendingApprovals\": false,\n  \"failedRuns\": false,\n  \"dailyBrief\": false\n}"
+            }
+          }
+        },
+        {
           "name": "GET /api/v1/employee/profile",
           "request": {
             "method": "GET",
@@ -5308,6 +6225,42 @@
           }
         },
         {
+          "name": "POST /api/v1/employee/connections",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/connections",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "connections"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provider\": \"string\",\n  \"secret\": \"string\",\n  \"displayName\": \"\"\n}"
+            }
+          }
+        },
+        {
           "name": "DELETE /api/v1/employee/connections/{account_id}",
           "request": {
             "method": "DELETE",
@@ -5368,6 +6321,859 @@
                 "v1",
                 "employee",
                 "team"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/employee/profile/avatar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/profile/avatar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "profile",
+                "avatar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"imageBase64\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/employee/wallet/requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/wallet/requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "wallet",
+                "requests"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/employee/runs/{run_id}/logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/runs/{run_id}/logs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "runs",
+                "{run_id}",
+                "logs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/runs/{run_id}/cancel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/runs/{run_id}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "runs",
+                "{run_id}",
+                "cancel"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/employee/tasks/{task_id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/tasks/{task_id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "tasks",
+                "{task_id}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/tasks/{task_id}/cancel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/tasks/{task_id}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "tasks",
+                "{task_id}",
+                "cancel"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/approvals/{approval_id}/respond",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/approvals/{approval_id}/respond",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "approvals",
+                "{approval_id}",
+                "respond"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/outbox/{job_id}/retry",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/outbox/{job_id}/retry",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "outbox",
+                "{job_id}",
+                "retry"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/outbox/{job_id}/cancel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/outbox/{job_id}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "outbox",
+                "{job_id}",
+                "cancel"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/knowledge/search",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/knowledge/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "knowledge",
+                "search"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"string\",\n  \"limit\": 0\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/employee/usage/cost",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/usage/cost",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "usage",
+                "cost"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/connections/{account_id}/test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/connections/{account_id}/test",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "connections",
+                "{account_id}",
+                "test"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/reports/generate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/reports/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "reports",
+                "generate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fileName\": \"string\",\n  \"csv\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/brief/{brief_id}/done",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/brief/{brief_id}/done",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "brief",
+                "{brief_id}",
+                "done"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/employee/schedules",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/schedules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "schedules"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/schedules",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/schedules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "schedules"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agentId\": 0,\n  \"cron\": \"string\",\n  \"payload\": {}\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/employee/social/posts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/social/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "social",
+                "posts"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/social/posts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/social/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "social",
+                "posts"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"platform\": \"string\",\n  \"content\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/employee/social/comments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/social/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "social",
+                "comments"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/social/comments/{comment_id}/reply",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/social/comments/{comment_id}/reply",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "social",
+                "comments",
+                "{comment_id}",
+                "reply"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": \"string\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/employee/campaigns",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/campaigns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "campaigns"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/campaigns",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/campaigns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "campaigns"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"connectedAccountId\": \"string\",\n  \"goal\": \"string\",\n  \"tone\": \"string\",\n  \"prospects\": [\n    {}\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/employee/campaigns/{campaign_id}/pause",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/campaigns/{campaign_id}/pause",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "campaigns",
+                "{campaign_id}",
+                "pause"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/employee/campaigns/{campaign_id}/recipients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employee/campaigns/{campaign_id}/recipients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employee",
+                "campaigns",
+                "{campaign_id}",
+                "recipients"
               ]
             }
           }
@@ -6430,74 +8236,7 @@
           }
         },
         {
-          "name": "GET /api/v1/manager/team/usage/export",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "x-tenant-id",
-                "value": "{{x-tenant-id}}"
-              },
-              {
-                "key": "x-user-id",
-                "value": "{{x-user-id}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/manager/team/usage/export",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "manager",
-                "team",
-                "usage",
-                "export"
-              ]
-            }
-          }
-        },
-        {
-          "name": "GET /api/v1/manager/team/schedules",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "x-tenant-id",
-                "value": "{{x-tenant-id}}"
-              },
-              {
-                "key": "x-user-id",
-                "value": "{{x-user-id}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/manager/team/schedules",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "manager",
-                "team",
-                "schedules"
-              ]
-            }
-          }
-        },
-        {
-          "name": "POST /api/v1/manager/team/schedules",
+          "name": "POST /api/v1/manager/team/members/import",
           "request": {
             "method": "POST",
             "header": [
@@ -6515,7 +8254,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/manager/team/schedules",
+              "raw": "{{baseUrl}}/api/v1/manager/team/members/import",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -6524,17 +8263,21 @@
                 "v1",
                 "manager",
                 "team",
-                "schedules"
+                "members",
+                "import"
+              ],
+              "query": [
+                {
+                  "key": "csv",
+                  "value": "",
+                  "description": ""
+                }
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"agentId\": 0,\n  \"cron\": \"string\",\n  \"payload\": {}\n}"
             }
           }
         },
         {
-          "name": "GET /api/v1/manager/team/brief",
+          "name": "GET /api/v1/manager/team/members/{user_id}/access",
           "request": {
             "method": "GET",
             "header": [
@@ -6552,7 +8295,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/manager/team/brief",
+              "raw": "{{baseUrl}}/api/v1/manager/team/members/{user_id}/access",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -6561,8 +8304,698 @@
                 "v1",
                 "manager",
                 "team",
-                "brief"
+                "members",
+                "{user_id}",
+                "access"
               ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/manager/team/credits/ledger",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/credits/ledger",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "credits",
+                "ledger"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/manager/team/credits/caps",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/credits/caps",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "credits",
+                "caps"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/manager/team/credits/caps",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/credits/caps",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "credits",
+                "caps"
+              ],
+              "query": [
+                {
+                  "key": "cap",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/manager/team/approvals/{approval_id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/approvals/{approval_id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "approvals",
+                "{approval_id}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/manager/team/approvals/bulk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/approvals/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "approvals",
+                "bulk"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/manager/team/approvals/rules",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/approvals/rules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "approvals",
+                "rules"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/manager/team/approvals/rules",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/approvals/rules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "approvals",
+                "rules"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requireApprovalAbove\": 0,\n  \"autoApproveAgents\": [\n    {}\n  ],\n  \"escalatePricing\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/manager/team/oversight/campaigns/{campaign_id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/oversight/campaigns/{campaign_id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "oversight",
+                "campaigns",
+                "{campaign_id}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/manager/team/oversight/campaigns/{campaign_id}/assign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/oversight/campaigns/{campaign_id}/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "oversight",
+                "campaigns",
+                "{campaign_id}",
+                "assign"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/manager/team/settings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "settings"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/manager/team/settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "settings"
+              ],
+              "query": [
+                {
+                  "key": "notifyOnPending",
+                  "value": "",
+                  "description": ""
+                },
+                {
+                  "key": "notifyOnLowBalance",
+                  "value": "",
+                  "description": ""
+                },
+                {
+                  "key": "escalationHours",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH /api/v1/manager/team/schedules/{schedule_id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/schedules/{schedule_id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "schedules",
+                "{schedule_id}"
+              ],
+              "query": [
+                {
+                  "key": "cron",
+                  "value": "",
+                  "description": ""
+                },
+                {
+                  "key": "enabled",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/manager/team/schedules/{schedule_id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/schedules/{schedule_id}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "schedules",
+                "{schedule_id}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/manager/team/schedules/{schedule_id}/assign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/schedules/{schedule_id}/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "schedules",
+                "{schedule_id}",
+                "assign"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "",
+                  "description": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/manager/team/digest",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/digest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "digest"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/manager/team/export",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/export",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "export"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/manager/team/reports/scheduled",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/reports/scheduled",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "reports",
+                "scheduled"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/manager/team/reports/scheduled",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/manager/team/reports/scheduled",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "manager",
+                "team",
+                "reports",
+                "scheduled"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agentId\": 0,\n  \"cron\": \"string\",\n  \"payload\": {}\n}"
             }
           }
         },
