@@ -54,19 +54,21 @@ class OwnPostEngagerAgent(BaseAgent):
 
                 job_id = None
                 if context.mode == "auto" and account_id:
-                    job_id = str(uuid.uuid4())
-                    jitter = random.randint(45, 180)
-                    db.execute(
-                        text(
-                            """
-                            INSERT INTO "outbox_jobs"
-                            (id, connected_account_id, agent_run_id, thread_key, target_type, target_post_id, priority, reply_text, status, not_before, expires_at, idempotency_key)
-                            VALUES (:id, :account, :run, :thread, 'social_comment', :post, 3, :body, 'queued',
-                                    NOW() + make_interval(secs => :jitter), NOW() + INTERVAL '7 days', :key)
-                            """
-                        ),
-                        {"id": job_id, "account": account_id, "run": run_id, "thread": f"post_{post_id}", "post": post_id, "body": body, "jitter": jitter, "key": f"own_{comment_id}"},
-                    )
+                    acc_ok = db.execute(text('SELECT status FROM "connected_accounts" WHERE id = :id AND status NOT IN (\'disconnected\', \'error\')'), {"id": account_id}).scalar()
+                    if acc_ok:
+                        job_id = str(uuid.uuid4())
+                        jitter = random.randint(45, 180)
+                        db.execute(
+                            text(
+                                """
+                                INSERT INTO "outbox_jobs"
+                                (id, connected_account_id, agent_run_id, thread_key, target_type, target_post_id, priority, reply_text, status, not_before, expires_at, idempotency_key)
+                                VALUES (:id, :account, :run, :thread, 'social_comment', :post, 3, :body, 'queued',
+                                        NOW() + make_interval(secs => :jitter), NOW() + INTERVAL '7 days', :key)
+                                """
+                            ),
+                            {"id": job_id, "account": account_id, "run": run_id, "thread": f"post_{post_id}", "post": post_id, "body": body, "jitter": jitter, "key": f"own_{comment_id}"},
+                        )
                 db.commit()
                 comments.append({"commentId": comment_id, "postId": post_id, "body": body, "outboxJobId": job_id, "status": "queued" if job_id else "drafted"})
 

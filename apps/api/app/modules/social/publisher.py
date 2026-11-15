@@ -44,6 +44,16 @@ class PublisherAgent(BaseAgent):
                 audio_file = synthesize_human_voice(content[:300], lang=input_data.get("language", "en"))
                 video_file = render_social_video(image_file, audio_file, post_id)
 
+            account_id = input_data.get("connectedAccountId")
+            if not account_id:
+                acc_row = db.execute(text('SELECT id FROM "connected_accounts" WHERE provider = :p AND company_id = :c AND status NOT IN (\'disconnected\', \'error\') LIMIT 1'), {"p": platform, "c": context.company_id}).first()
+                account_id = acc_row[0] if acc_row else None
+
+            # Platform disconnect guard: if account is disconnected or missing, freeze to draft
+            if status in ("published", "scheduled") and not account_id:
+                status = "draft"
+                is_draft = True
+
             if is_draft:
                 approval_id = str(uuid.uuid4())
                 db.execute(text('INSERT INTO "approvals" (id, agent_run_id, status) VALUES (:id, :run, \'pending\')'), {"id": approval_id, "run": run_id})
@@ -56,7 +66,7 @@ class PublisherAgent(BaseAgent):
                     try:
                         engager.execute(
                             AgentContext(context.company_id, context.user_id, context.wallet_id, 1, "a0000000-0000-0000-0000-000000000001", "auto"),
-                            {"postId": post_id, "postContent": content, "platform": platform, "connectedAccountId": input_data.get("connectedAccountId")},
+                            {"postId": post_id, "postContent": content, "platform": platform, "connectedAccountId": account_id},
                         )
                     except Exception:
                         pass
@@ -70,7 +80,7 @@ class PublisherAgent(BaseAgent):
                     """
                 ),
                 {
-                    "id": post_id, "company": context.company_id, "account": input_data.get("connectedAccountId"),
+                    "id": post_id, "company": context.company_id, "account": account_id,
                     "run": run_id, "platform": platform, "external": external_id,
                     "content": content, "prompt": f"{prompt} | video:{video_file}" if video_file else prompt,
                     "status": status, "scheduled": input_data.get("scheduledAt"), "published": "NOW()" if status == "published" else None,
