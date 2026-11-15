@@ -135,7 +135,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             },
@@ -178,7 +178,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             }
@@ -217,7 +217,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             }
@@ -296,7 +296,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             }
@@ -366,7 +366,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyId\": \"87befaa9-7e27-4747-b45e-c56fbe217596\",\n  \"email\": \"test@example.com\",\n  \"name\": \"test value\",\n  \"role\": \"test value\"\n}"
+              "raw": "{\n  \"companyId\": \"test value\",\n  \"email\": \"test@example.com\",\n  \"name\": \"test value\",\n  \"role\": \"test value\"\n}"
             }
           }
         },
@@ -404,7 +404,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             },
@@ -447,7 +447,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             }
@@ -486,7 +486,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             }
@@ -558,7 +558,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyId\": \"87befaa9-7e27-4747-b45e-c56fbe217596\",\n  \"amount\": 1,\n  \"note\": \"test value\"\n}"
+              "raw": "{\n  \"companyId\": \"test value\",\n  \"amount\": 1,\n  \"note\": \"test value\"\n}"
             }
           }
         },
@@ -628,7 +628,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyId\": \"87befaa9-7e27-4747-b45e-c56fbe217596\",\n  \"amount\": 1,\n  \"note\": \"test value\"\n}"
+              "raw": "{\n  \"companyId\": \"test value\",\n  \"amount\": 1,\n  \"note\": \"test value\"\n}"
             }
           }
         },
@@ -797,7 +797,7 @@
               "variable": [
                 {
                   "key": "log_id",
-                  "value": "9c0547f1-93e3-4521-bf8b-82412cc128f3"
+                  "value": ""
                 }
               ]
             }
@@ -991,7 +991,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             },
@@ -1183,7 +1183,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             }
@@ -1222,7 +1222,7 @@
               "variable": [
                 {
                   "key": "session_id",
-                  "value": "9c0547f1-93e3-4521-bf8b-82412cc128f3"
+                  "value": ""
                 }
               ]
             }
@@ -1261,7 +1261,7 @@
               "variable": [
                 {
                   "key": "session_id",
-                  "value": "9c0547f1-93e3-4521-bf8b-82412cc128f3"
+                  "value": ""
                 }
               ]
             }
@@ -1367,7 +1367,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             }
@@ -1407,7 +1407,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             }
@@ -1447,7 +1447,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ],
               "query": [
@@ -1494,7 +1494,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             },
@@ -1577,7 +1577,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             }
@@ -1686,7 +1686,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyId\": \"87befaa9-7e27-4747-b45e-c56fbe217596\",\n  \"key\": \"test value\"\n}"
+              "raw": "{\n  \"companyId\": \"test value\",\n  \"key\": \"test value\"\n}"
             }
           }
         },
@@ -1907,7 +1907,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"ca3182af-5951-45a9-8a49-c4e5d980f654\",\n  \"reason\": \"test value\"\n}"
+              "raw": "{\n  \"userId\": \"test value\",\n  \"reason\": \"test value\"\n}"
             }
           }
         },
@@ -2120,7 +2120,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             },
@@ -2203,7 +2203,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             },
@@ -2363,7 +2363,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             }
@@ -2404,7 +2404,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             }
@@ -2445,7 +2445,7 @@
               "variable": [
                 {
                   "key": "company_id",
-                  "value": "87befaa9-7e27-4747-b45e-c56fbe217596"
+                  "value": ""
                 }
               ]
             },
@@ -2862,7 +2862,7 @@
               "variable": [
                 {
                   "key": "run_id",
-                  "value": "92a5c3aa-9be5-4190-8bad-10ba37a6d05a"
+                  "value": ""
                 }
               ]
             }
@@ -2902,7 +2902,7 @@
               "variable": [
                 {
                   "key": "run_id",
-                  "value": "92a5c3aa-9be5-4190-8bad-10ba37a6d05a"
+                  "value": ""
                 }
               ]
             }
@@ -3054,7 +3054,7 @@
               "variable": [
                 {
                   "key": "approval_id",
-                  "value": "a43cd001-fa90-4c34-bf25-34a347672a71"
+                  "value": ""
                 }
               ]
             },
@@ -3096,7 +3096,7 @@
               "variable": [
                 {
                   "key": "approval_id",
-                  "value": "a43cd001-fa90-4c34-bf25-34a347672a71"
+                  "value": ""
                 }
               ]
             }
@@ -3319,7 +3319,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyId\": \"87befaa9-7e27-4747-b45e-c56fbe217596\",\n  \"email\": \"test@example.com\",\n  \"name\": \"test value\",\n  \"role\": \"test value\",\n  \"password\": \"test value\"\n}"
+              "raw": "{\n  \"companyId\": \"test value\",\n  \"email\": \"test@example.com\",\n  \"name\": \"test value\",\n  \"role\": \"test value\",\n  \"password\": \"test value\"\n}"
             }
           }
         }
@@ -3396,7 +3396,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"connectedAccountId\": \"4a0f3fb6-d23f-4997-b9a8-d8b8727f5576\",\n  \"contactId\": \"test value\",\n  \"channel\": \"test value\",\n  \"threadKey\": \"test value\",\n  \"senderEmail\": \"test@example.com\",\n  \"messageText\": \"test value\"\n}"
+              "raw": "{\n  \"connectedAccountId\": \"test value\",\n  \"contactId\": \"test value\",\n  \"channel\": \"test value\",\n  \"threadKey\": \"test value\",\n  \"senderEmail\": \"test@example.com\",\n  \"messageText\": \"test value\"\n}"
             }
           }
         },
@@ -3470,7 +3470,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"connectedAccountId\": \"4a0f3fb6-d23f-4997-b9a8-d8b8727f5576\",\n  \"goal\": \"test value\",\n  \"tone\": \"test value\",\n  \"mode\": \"test value\",\n  \"prospects\": [\n    \"test value\"\n  ]\n}"
+              "raw": "{\n  \"connectedAccountId\": \"test value\",\n  \"goal\": \"test value\",\n  \"tone\": \"test value\",\n  \"mode\": \"test value\",\n  \"prospects\": [\n    \"test value\"\n  ]\n}"
             }
           }
         },
@@ -3544,7 +3544,7 @@
               "variable": [
                 {
                   "key": "campaign_id",
-                  "value": "64bf8773-68a6-4a6e-a509-f7ce2c5e47f5"
+                  "value": ""
                 }
               ]
             }
@@ -3582,7 +3582,7 @@
               "variable": [
                 {
                   "key": "campaign_id",
-                  "value": "64bf8773-68a6-4a6e-a509-f7ce2c5e47f5"
+                  "value": ""
                 }
               ],
               "query": [
@@ -3637,7 +3637,7 @@
               "variable": [
                 {
                   "key": "campaign_id",
-                  "value": "64bf8773-68a6-4a6e-a509-f7ce2c5e47f5"
+                  "value": ""
                 }
               ]
             }
@@ -3676,7 +3676,7 @@
               "variable": [
                 {
                   "key": "campaign_id",
-                  "value": "64bf8773-68a6-4a6e-a509-f7ce2c5e47f5"
+                  "value": ""
                 }
               ],
               "query": [
@@ -3722,7 +3722,7 @@
               "variable": [
                 {
                   "key": "campaign_id",
-                  "value": "64bf8773-68a6-4a6e-a509-f7ce2c5e47f5"
+                  "value": ""
                 }
               ]
             }
@@ -3972,7 +3972,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"ca3182af-5951-45a9-8a49-c4e5d980f654\",\n  \"teamId\": \"test value\"\n}"
+              "raw": "{\n  \"userId\": \"test value\",\n  \"teamId\": \"test value\"\n}"
             }
           }
         },
@@ -4040,7 +4040,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"ca3182af-5951-45a9-8a49-c4e5d980f654\",\n  \"monthlyAllowance\": 1\n}"
+              "raw": "{\n  \"userId\": \"test value\",\n  \"monthlyAllowance\": 1\n}"
             }
           }
         },
@@ -4145,7 +4145,7 @@
               "variable": [
                 {
                   "key": "account_id",
-                  "value": "4a0f3fb6-d23f-4997-b9a8-d8b8727f5576"
+                  "value": ""
                 }
               ]
             },
@@ -4266,7 +4266,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             }
@@ -4601,7 +4601,7 @@
               "variable": [
                 {
                   "key": "campaign_id",
-                  "value": "64bf8773-68a6-4a6e-a509-f7ce2c5e47f5"
+                  "value": ""
                 }
               ],
               "query": [
@@ -4885,8 +4885,235 @@
               "variable": [
                 {
                   "key": "account_id",
-                  "value": "4a0f3fb6-d23f-4997-b9a8-d8b8727f5576"
+                  "value": ""
                 }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/connectors/accounts/{account_id}/test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/connectors/accounts/:account_id/test",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "connectors",
+                "accounts",
+                ":account_id",
+                "test"
+              ],
+              "variable": [
+                {
+                  "key": "account_id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/connectors/accounts/{account_id}/disconnect",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/connectors/accounts/:account_id/disconnect",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "connectors",
+                "accounts",
+                ":account_id",
+                "disconnect"
+              ],
+              "variable": [
+                {
+                  "key": "account_id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/connectors/accounts/{account_id}/reconnect",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/connectors/accounts/:account_id/reconnect",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "connectors",
+                "accounts",
+                ":account_id",
+                "reconnect"
+              ],
+              "variable": [
+                {
+                  "key": "account_id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/connectors/external/dispatch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/connectors/external/dispatch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "connectors",
+                "external",
+                "dispatch"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"systemName\": \"test value\",\n  \"externalToken\": \"test value\",\n  \"externalUserId\": \"test value\",\n  \"agentCode\": \"test value\",\n  \"query\": \"test value\",\n  \"parameters\": {}\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/connectors/external/discover",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/connectors/external/discover",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "connectors",
+                "external",
+                "discover"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"baseUrl\": \"test value\",\n  \"openApiUrl\": \"test value\",\n  \"openApiSpec\": \"test value\",\n  \"token\": \"test value\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/connectors/external/spec",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/connectors/external/spec",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "connectors",
+                "external",
+                "spec"
               ]
             }
           }
@@ -5100,6 +5327,38 @@
       "name": "credits",
       "item": [
         {
+          "name": "GET /api/v1/credits/packs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/credits/packs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "credits",
+                "packs"
+              ]
+            }
+          }
+        },
+        {
           "name": "POST /api/v1/credits/checkout-session",
           "request": {
             "method": "POST",
@@ -5131,7 +5390,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"credits\": 1,\n  \"priceUsd\": 1\n}"
+              "raw": "{\n  \"packId\": \"test value\",\n  \"credits\": \"test value\"\n}"
             }
           }
         },
@@ -5451,7 +5710,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"ca3182af-5951-45a9-8a49-c4e5d980f654\",\n  \"amount\": 1\n}"
+              "raw": "{\n  \"userId\": \"test value\",\n  \"amount\": 1\n}"
             }
           }
         },
@@ -5487,7 +5746,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"ca3182af-5951-45a9-8a49-c4e5d980f654\",\n  \"amount\": 1,\n  \"note\": \"test value\"\n}"
+              "raw": "{\n  \"userId\": \"test value\",\n  \"amount\": 1,\n  \"note\": \"test value\"\n}"
             }
           }
         },
@@ -5842,7 +6101,7 @@
               "variable": [
                 {
                   "key": "quiz_id",
-                  "value": "d92a0c25-3731-479e-bc3b-f8ef4259fdda"
+                  "value": ""
                 }
               ]
             },
@@ -5958,7 +6217,7 @@
               "variable": [
                 {
                   "key": "notification_id",
-                  "value": "9c0547f1-93e3-4521-bf8b-82412cc128f3"
+                  "value": ""
                 }
               ]
             }
@@ -6174,7 +6433,7 @@
               "variable": [
                 {
                   "key": "run_id",
-                  "value": "92a5c3aa-9be5-4190-8bad-10ba37a6d05a"
+                  "value": ""
                 }
               ]
             }
@@ -6463,7 +6722,7 @@
               "variable": [
                 {
                   "key": "file_id",
-                  "value": "a207fb3c-4780-4299-a2b6-5fa485dfb1b4"
+                  "value": ""
                 }
               ]
             }
@@ -6634,7 +6893,7 @@
               "variable": [
                 {
                   "key": "account_id",
-                  "value": "4a0f3fb6-d23f-4997-b9a8-d8b8727f5576"
+                  "value": ""
                 }
               ]
             }
@@ -6776,7 +7035,7 @@
               "variable": [
                 {
                   "key": "run_id",
-                  "value": "92a5c3aa-9be5-4190-8bad-10ba37a6d05a"
+                  "value": ""
                 }
               ]
             }
@@ -6816,7 +7075,7 @@
               "variable": [
                 {
                   "key": "run_id",
-                  "value": "92a5c3aa-9be5-4190-8bad-10ba37a6d05a"
+                  "value": ""
                 }
               ]
             }
@@ -6855,7 +7114,7 @@
               "variable": [
                 {
                   "key": "task_id",
-                  "value": "8135083d-a18b-4f8d-a5ff-3848b7687ca5"
+                  "value": ""
                 }
               ]
             }
@@ -6895,7 +7154,7 @@
               "variable": [
                 {
                   "key": "task_id",
-                  "value": "8135083d-a18b-4f8d-a5ff-3848b7687ca5"
+                  "value": ""
                 }
               ]
             }
@@ -6935,7 +7194,7 @@
               "variable": [
                 {
                   "key": "approval_id",
-                  "value": "a43cd001-fa90-4c34-bf25-34a347672a71"
+                  "value": ""
                 }
               ]
             },
@@ -6979,7 +7238,7 @@
               "variable": [
                 {
                   "key": "job_id",
-                  "value": "0606ed9b-c2b4-4006-a11c-e30dffc06e63"
+                  "value": ""
                 }
               ]
             }
@@ -7019,7 +7278,7 @@
               "variable": [
                 {
                   "key": "job_id",
-                  "value": "0606ed9b-c2b4-4006-a11c-e30dffc06e63"
+                  "value": ""
                 }
               ]
             }
@@ -7129,7 +7388,7 @@
               "variable": [
                 {
                   "key": "account_id",
-                  "value": "4a0f3fb6-d23f-4997-b9a8-d8b8727f5576"
+                  "value": ""
                 }
               ]
             }
@@ -7206,7 +7465,7 @@
               "variable": [
                 {
                   "key": "brief_id",
-                  "value": "4bb26f33-d2fe-4d56-87f4-52b40db8cd69"
+                  "value": ""
                 }
               ]
             }
@@ -7432,7 +7691,7 @@
               "variable": [
                 {
                   "key": "comment_id",
-                  "value": "a4705cb7-fa46-4efd-a710-5f5849954c8f"
+                  "value": ""
                 }
               ]
             },
@@ -7513,7 +7772,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"connectedAccountId\": \"4a0f3fb6-d23f-4997-b9a8-d8b8727f5576\",\n  \"goal\": \"test value\",\n  \"tone\": \"test value\",\n  \"prospects\": [\n    {}\n  ]\n}"
+              "raw": "{\n  \"connectedAccountId\": \"test value\",\n  \"goal\": \"test value\",\n  \"tone\": \"test value\",\n  \"prospects\": [\n    {}\n  ]\n}"
             }
           }
         },
@@ -7551,7 +7810,7 @@
               "variable": [
                 {
                   "key": "campaign_id",
-                  "value": "64bf8773-68a6-4a6e-a509-f7ce2c5e47f5"
+                  "value": ""
                 }
               ]
             }
@@ -7591,7 +7850,7 @@
               "variable": [
                 {
                   "key": "campaign_id",
-                  "value": "64bf8773-68a6-4a6e-a509-f7ce2c5e47f5"
+                  "value": ""
                 }
               ]
             }
@@ -7771,7 +8030,7 @@
               "variable": [
                 {
                   "key": "thread_id",
-                  "value": "cc217a3f-5c2c-4fb0-934a-ef861db5f837"
+                  "value": ""
                 }
               ]
             }
@@ -7812,7 +8071,7 @@
               "variable": [
                 {
                   "key": "thread_id",
-                  "value": "cc217a3f-5c2c-4fb0-934a-ef861db5f837"
+                  "value": ""
                 }
               ]
             },
@@ -7857,7 +8116,7 @@
               "variable": [
                 {
                   "key": "thread_id",
-                  "value": "cc217a3f-5c2c-4fb0-934a-ef861db5f837"
+                  "value": ""
                 }
               ]
             },
@@ -8084,7 +8343,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"sopId\": \"d92a0c25-3731-479e-bc3b-f8ef4259fdda\",\n  \"moduleNo\": 1,\n  \"question\": \"test value\",\n  \"traineeAnswer\": \"test value\"\n}"
+              "raw": "{\n  \"sopId\": \"test value\",\n  \"moduleNo\": 1,\n  \"question\": \"test value\",\n  \"traineeAnswer\": \"test value\"\n}"
             }
           }
         },
@@ -8121,7 +8380,7 @@
               "variable": [
                 {
                   "key": "document_id",
-                  "value": "99477265-13ab-476a-bd7b-a506922212c0"
+                  "value": ""
                 }
               ]
             }
@@ -8160,7 +8419,7 @@
               "variable": [
                 {
                   "key": "document_id",
-                  "value": "99477265-13ab-476a-bd7b-a506922212c0"
+                  "value": ""
                 }
               ]
             }
@@ -8199,7 +8458,7 @@
               "variable": [
                 {
                   "key": "sop_id",
-                  "value": "d92a0c25-3731-479e-bc3b-f8ef4259fdda"
+                  "value": ""
                 }
               ]
             }
@@ -8388,7 +8647,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"ca3182af-5951-45a9-8a49-c4e5d980f654\",\n  \"amount\": 1,\n  \"note\": \"test value\"\n}"
+              "raw": "{\n  \"userId\": \"test value\",\n  \"amount\": 1,\n  \"note\": \"test value\"\n}"
             }
           }
         },
@@ -8426,7 +8685,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"ca3182af-5951-45a9-8a49-c4e5d980f654\",\n  \"amount\": 1,\n  \"note\": \"test value\"\n}"
+              "raw": "{\n  \"userId\": \"test value\",\n  \"amount\": 1,\n  \"note\": \"test value\"\n}"
             }
           }
         },
@@ -8464,7 +8723,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             }
@@ -8504,7 +8763,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             }
@@ -8545,7 +8804,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             },
@@ -8591,7 +8850,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 },
                 {
                   "key": "agent_id",
@@ -8636,7 +8895,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             }
@@ -8864,7 +9123,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             }
@@ -9020,7 +9279,7 @@
               "variable": [
                 {
                   "key": "approval_id",
-                  "value": "a43cd001-fa90-4c34-bf25-34a347672a71"
+                  "value": ""
                 }
               ]
             }
@@ -9178,7 +9437,7 @@
               "variable": [
                 {
                   "key": "campaign_id",
-                  "value": "64bf8773-68a6-4a6e-a509-f7ce2c5e47f5"
+                  "value": ""
                 }
               ]
             }
@@ -9220,7 +9479,7 @@
               "variable": [
                 {
                   "key": "campaign_id",
-                  "value": "64bf8773-68a6-4a6e-a509-f7ce2c5e47f5"
+                  "value": ""
                 }
               ],
               "query": [
@@ -9350,7 +9609,7 @@
               "variable": [
                 {
                   "key": "schedule_id",
-                  "value": "07d5eddf-1493-441a-a8c4-fdcb3bb2126a"
+                  "value": ""
                 }
               ],
               "query": [
@@ -9402,7 +9661,7 @@
               "variable": [
                 {
                   "key": "schedule_id",
-                  "value": "07d5eddf-1493-441a-a8c4-fdcb3bb2126a"
+                  "value": ""
                 }
               ]
             }
@@ -9443,7 +9702,7 @@
               "variable": [
                 {
                   "key": "schedule_id",
-                  "value": "07d5eddf-1493-441a-a8c4-fdcb3bb2126a"
+                  "value": ""
                 }
               ],
               "query": [
@@ -9661,7 +9920,7 @@
               "variable": [
                 {
                   "key": "approval_id",
-                  "value": "a43cd001-fa90-4c34-bf25-34a347672a71"
+                  "value": ""
                 }
               ]
             },
@@ -9739,7 +9998,7 @@
               "variable": [
                 {
                   "key": "campaign_id",
-                  "value": "64bf8773-68a6-4a6e-a509-f7ce2c5e47f5"
+                  "value": ""
                 }
               ]
             }
@@ -9812,7 +10071,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"ca3182af-5951-45a9-8a49-c4e5d980f654\",\n  \"agentId\": 1,\n  \"forceDraftMode\": true\n}"
+              "raw": "{\n  \"userId\": \"test value\",\n  \"agentId\": 1,\n  \"forceDraftMode\": true\n}"
             }
           }
         }
@@ -9891,7 +10150,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"text\": \"test value\",\n  \"lang\": \"en_US.UTF-8\"\n}"
+              "raw": "{\n  \"text\": \"test value\",\n  \"lang\": \"test value\"\n}"
             }
           }
         },
@@ -9928,7 +10187,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"prompt\": \"test value\",\n  \"script\": \"test value\",\n  \"lang\": \"en_US.UTF-8\"\n}"
+              "raw": "{\n  \"prompt\": \"test value\",\n  \"script\": \"test value\",\n  \"lang\": \"test value\"\n}"
             }
           }
         },
@@ -10475,6 +10734,38 @@
           }
         },
         {
+          "name": "POST /api/v1/outbox/purge-expired",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/outbox/purge-expired",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "outbox",
+                "purge-expired"
+              ]
+            }
+          }
+        },
+        {
           "name": "POST /api/v1/outbox/{job_id}/retry",
           "request": {
             "method": "POST",
@@ -10507,7 +10798,7 @@
               "variable": [
                 {
                   "key": "job_id",
-                  "value": "0606ed9b-c2b4-4006-a11c-e30dffc06e63"
+                  "value": ""
                 }
               ]
             }
@@ -10546,7 +10837,7 @@
               "variable": [
                 {
                   "key": "job_id",
-                  "value": "0606ed9b-c2b4-4006-a11c-e30dffc06e63"
+                  "value": ""
                 }
               ]
             }
@@ -10772,7 +11063,7 @@
               "variable": [
                 {
                   "key": "schedule_id",
-                  "value": "07d5eddf-1493-441a-a8c4-fdcb3bb2126a"
+                  "value": ""
                 }
               ]
             },
@@ -10814,7 +11105,7 @@
               "variable": [
                 {
                   "key": "schedule_id",
-                  "value": "07d5eddf-1493-441a-a8c4-fdcb3bb2126a"
+                  "value": ""
                 }
               ]
             }
@@ -10857,7 +11148,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"connectedAccountId\": \"4a0f3fb6-d23f-4997-b9a8-d8b8727f5576\",\n  \"competitorPostRef\": \"test value\",\n  \"competitorName\": \"test value\",\n  \"postContent\": \"test value\",\n  \"platform\": \"test value\"\n}"
+              "raw": "{\n  \"connectedAccountId\": \"test value\",\n  \"competitorPostRef\": \"test value\",\n  \"competitorName\": \"test value\",\n  \"postContent\": \"test value\",\n  \"platform\": \"test value\"\n}"
             }
           }
         },
@@ -10969,6 +11260,50 @@
           }
         },
         {
+          "name": "POST /api/v1/social/posts/{post_id}/regenerate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/posts/:post_id/regenerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "social",
+                "posts",
+                ":post_id",
+                "regenerate"
+              ],
+              "variable": [
+                {
+                  "key": "post_id",
+                  "value": ""
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"feedback\": \"test value\"\n}"
+            }
+          }
+        },
+        {
           "name": "POST /api/v1/social/posts",
           "request": {
             "method": "POST",
@@ -11000,7 +11335,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"connectedAccountId\": \"4a0f3fb6-d23f-4997-b9a8-d8b8727f5576\",\n  \"platform\": \"test value\",\n  \"topic\": \"test value\",\n  \"tone\": \"test value\",\n  \"scheduledAt\": \"test value\",\n  \"autoApprove\": true\n}"
+              "raw": "{\n  \"connectedAccountId\": \"test value\",\n  \"platform\": \"test value\",\n  \"topic\": \"test value\",\n  \"tone\": \"test value\",\n  \"scheduledAt\": \"test value\",\n  \"autoApprove\": true\n}"
             }
           }
         },
@@ -11076,7 +11411,7 @@
               "variable": [
                 {
                   "key": "post_id",
-                  "value": "81241c10-9237-40f9-b87c-76ff24a85980"
+                  "value": ""
                 }
               ]
             }
@@ -11115,7 +11450,7 @@
               "variable": [
                 {
                   "key": "post_id",
-                  "value": "81241c10-9237-40f9-b87c-76ff24a85980"
+                  "value": ""
                 }
               ],
               "query": [
@@ -11171,7 +11506,7 @@
               "variable": [
                 {
                   "key": "post_id",
-                  "value": "81241c10-9237-40f9-b87c-76ff24a85980"
+                  "value": ""
                 }
               ]
             }
@@ -11211,7 +11546,7 @@
               "variable": [
                 {
                   "key": "post_id",
-                  "value": "81241c10-9237-40f9-b87c-76ff24a85980"
+                  "value": ""
                 }
               ]
             }
@@ -11329,7 +11664,7 @@
               "variable": [
                 {
                   "key": "comment_id",
-                  "value": "a4705cb7-fa46-4efd-a710-5f5849954c8f"
+                  "value": ""
                 }
               ]
             },
@@ -11373,8 +11708,40 @@
               "variable": [
                 {
                   "key": "comment_id",
-                  "value": "a4705cb7-fa46-4efd-a710-5f5849954c8f"
+                  "value": ""
                 }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/social/webhook",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-tenant-id",
+                "value": "{{x-tenant-id}}"
+              },
+              {
+                "key": "x-user-id",
+                "value": "{{x-user-id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/webhook",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "social",
+                "webhook"
               ]
             }
           }
@@ -11632,7 +11999,7 @@
               "variable": [
                 {
                   "key": "file_id",
-                  "value": "a207fb3c-4780-4299-a2b6-5fa485dfb1b4"
+                  "value": ""
                 }
               ]
             }
@@ -11741,7 +12108,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             },
@@ -11783,7 +12150,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             }
@@ -11822,7 +12189,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 }
               ]
             },
@@ -11866,7 +12233,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "ca3182af-5951-45a9-8a49-c4e5d980f654"
+                  "value": ""
                 },
                 {
                   "key": "agent_id",

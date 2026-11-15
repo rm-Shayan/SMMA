@@ -137,16 +137,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -243,16 +233,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -307,16 +287,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -394,16 +364,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -478,16 +438,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -553,16 +503,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -649,16 +589,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -718,16 +648,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -784,16 +704,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -864,16 +774,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -930,16 +830,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -1010,16 +900,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -1076,16 +956,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -1156,16 +1026,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -1235,16 +1095,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -1301,16 +1151,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -1382,16 +1222,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -1450,16 +1280,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -1528,16 +1348,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -1618,16 +1428,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -1686,16 +1486,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -1775,16 +1565,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -1844,16 +1624,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -1910,16 +1680,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -1990,16 +1750,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -2056,16 +1806,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -2136,16 +1876,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -2205,16 +1935,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -2271,16 +1991,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -2379,16 +2089,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -2522,16 +2222,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -2590,16 +2280,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -2660,16 +2340,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -2728,16 +2398,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -2807,16 +2467,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -2896,16 +2546,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -2971,16 +2611,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -3049,16 +2679,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -3147,16 +2767,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -3225,16 +2835,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -3293,16 +2893,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -3373,16 +2963,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -3452,16 +3032,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -3520,16 +3090,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -3600,16 +3160,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -3677,16 +3227,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -3757,16 +3297,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -3825,16 +3355,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -3902,16 +3422,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -3981,16 +3491,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -4059,16 +3559,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -4143,16 +3633,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -4209,16 +3689,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -4298,16 +3768,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -4386,16 +3846,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -4454,16 +3904,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -4570,16 +4010,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -4680,16 +4110,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -4755,16 +4175,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -4844,16 +4254,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -4912,16 +4312,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -4982,16 +4372,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -5051,16 +4431,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -5117,16 +4487,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -5197,16 +4557,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -5274,16 +4624,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -5354,16 +4694,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -5432,16 +4762,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -5501,16 +4821,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -5569,16 +4879,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -5649,16 +4949,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -5718,16 +5008,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -5786,16 +5066,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -5866,16 +5136,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -5935,16 +5195,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -6003,16 +5253,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -6083,16 +5323,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -6160,16 +5390,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -6250,16 +5470,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -6318,16 +5528,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -6397,16 +5597,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -6466,16 +5656,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -6532,16 +5712,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -6612,16 +5782,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -6678,16 +5838,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -6768,16 +5918,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -6845,16 +5985,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -6925,16 +6055,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -7004,16 +6124,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -7072,16 +6182,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -7142,16 +6242,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -7211,16 +6301,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -7277,16 +6357,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -7367,16 +6437,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -7445,16 +6505,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -7513,16 +6563,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -7583,16 +6623,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -7652,16 +6682,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -7718,16 +6738,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -7807,16 +6817,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -7876,16 +6876,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -7944,16 +6934,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -8024,16 +7004,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -8101,16 +7071,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -8180,16 +7140,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -8257,16 +7207,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -8336,16 +7276,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -8413,16 +7343,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -8502,16 +7422,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -8580,16 +7490,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -8648,16 +7548,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -8728,16 +7618,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -8806,16 +7686,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -8874,16 +7744,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -8963,16 +7823,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -9032,16 +7882,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -9098,16 +7938,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -9188,16 +8018,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -9254,16 +8074,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -9344,16 +8154,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -9421,16 +8221,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -9511,16 +8301,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -9577,16 +8357,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -9666,16 +8436,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -9744,16 +8504,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -9811,16 +8561,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -9875,16 +8615,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -9962,16 +8692,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -10046,16 +8766,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -10119,16 +8829,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -10197,16 +8897,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -10273,16 +8963,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -10340,16 +9020,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -10405,16 +9075,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -10492,16 +9152,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -10578,16 +9228,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -10652,16 +9292,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -10719,16 +9349,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -10785,16 +9405,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -10863,16 +9473,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -10929,16 +9529,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -11007,16 +9597,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -11073,16 +9653,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -11141,16 +9711,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -11207,16 +9767,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -11284,16 +9834,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -11350,16 +9890,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -11459,16 +9989,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -11535,16 +10055,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -11601,16 +10111,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -11677,16 +10177,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -11755,16 +10245,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -11832,16 +10312,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -11898,16 +10368,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -11974,16 +10434,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -12061,16 +10511,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -12137,16 +10577,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -12212,16 +10642,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -12279,16 +10699,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -12345,16 +10755,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -12422,16 +10822,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -12497,16 +10887,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -12584,16 +10964,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -12659,16 +11029,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -12748,16 +11108,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -12825,16 +11175,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -12893,16 +11233,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -12958,16 +11288,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -13037,16 +11357,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -13114,16 +11424,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -13211,16 +11511,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -13279,16 +11569,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -13344,16 +11624,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -13422,16 +11692,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -13488,16 +11748,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -13576,16 +11826,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -13643,16 +11883,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -13707,16 +11937,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -13775,16 +11995,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -13852,16 +12062,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -13931,16 +12131,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -13996,16 +12186,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -14085,16 +12265,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -14152,16 +12322,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -14221,16 +12381,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -14289,16 +12439,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -14356,16 +12496,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -14435,16 +12565,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -14502,16 +12622,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -14579,16 +12689,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -14667,16 +12767,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -14744,16 +12834,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -14820,16 +12900,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -14899,16 +12969,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -14977,16 +13037,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -15044,16 +13094,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -15108,16 +13148,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -15195,16 +13225,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -15279,16 +13299,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -15346,16 +13356,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -15410,16 +13410,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -15497,16 +13487,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -15581,16 +13561,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -15647,16 +13617,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -15734,16 +13694,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -15811,16 +13761,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -15877,16 +13817,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -15954,16 +13884,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -16020,16 +13940,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -16096,16 +14006,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -16182,16 +14082,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -16270,16 +14160,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -16345,16 +14225,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -16422,16 +14292,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -16498,16 +14358,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -16564,16 +14414,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -16654,16 +14494,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -16721,15 +14551,62 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/outbox/purge-expired": {
+      "post": {
+        "tags": [
+          "outbox"
+        ],
+        "summary": "Purge Expired",
+        "operationId": "purge_expired_api_v1_outbox_purge_expired_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
           },
           {
-            "name": "x-user-id",
+            "name": "x-tenant-id",
             "in": "header",
             "required": false,
             "schema": {
               "type": "string",
               "default": "",
-              "title": "X-User-Id"
+              "title": "X-Tenant-Id"
             }
           }
         ],
@@ -16797,16 +14674,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -16873,16 +14740,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -16940,16 +14797,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -17004,16 +14851,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -17082,16 +14919,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -17157,16 +14984,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -17234,16 +15051,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -17309,16 +15116,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -17396,16 +15193,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -17472,15 +15259,137 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/connectors/accounts/{account_id}/disconnect": {
+      "post": {
+        "tags": [
+          "connectors"
+        ],
+        "summary": "Disconnect Account",
+        "operationId": "disconnect_account_api_v1_connectors_accounts__account_id__disconnect_post",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Account Id"
+            }
           },
           {
-            "name": "x-user-id",
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-tenant-id",
             "in": "header",
             "required": false,
             "schema": {
               "type": "string",
               "default": "",
-              "title": "X-User-Id"
+              "title": "X-Tenant-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/connectors/accounts/{account_id}/reconnect": {
+      "post": {
+        "tags": [
+          "connectors"
+        ],
+        "summary": "Reconnect Account",
+        "operationId": "reconnect_account_api_v1_connectors_accounts__account_id__reconnect_post",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Account Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-tenant-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "X-Tenant-Id"
             }
           }
         ],
@@ -17540,16 +15449,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -17620,16 +15519,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -17685,6 +15574,25 @@
         }
       }
     },
+    "/api/v1/credits/packs": {
+      "get": {
+        "tags": [
+          "credits"
+        ],
+        "summary": "Get Credit Packs",
+        "operationId": "get_credit_packs_api_v1_credits_packs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/credits/checkout-session": {
       "post": {
         "tags": [
@@ -17717,16 +15625,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -17836,16 +15734,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -17912,16 +15800,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -17987,16 +15865,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -18065,16 +15933,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -18132,16 +15990,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -18198,16 +16046,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -18276,16 +16114,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -18352,16 +16180,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -18430,16 +16248,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -18506,16 +16314,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -18584,16 +16382,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -18650,16 +16438,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -18727,16 +16505,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -18845,16 +16613,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -18930,16 +16688,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -19005,16 +16753,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -19128,16 +16866,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -19201,16 +16929,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -19288,16 +17006,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -19363,16 +17071,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -19452,16 +17150,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -19519,16 +17207,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -19597,16 +17275,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -19671,16 +17339,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -19757,16 +17415,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -19824,16 +17472,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -19903,16 +17541,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -19980,16 +17608,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -20059,16 +17677,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -20126,16 +17734,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -20195,16 +17793,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -20263,16 +17851,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -20328,16 +17906,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -20406,16 +17974,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -20483,16 +18041,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -20547,16 +18095,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -20635,16 +18173,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -20710,16 +18238,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -20787,16 +18305,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -20873,16 +18381,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -20948,16 +18446,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -21071,16 +18559,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -21144,16 +18622,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -21220,16 +18688,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -21298,16 +18756,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -21375,16 +18823,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -21450,16 +18888,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -21536,16 +18964,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -21650,16 +19068,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -21714,16 +19122,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -21792,16 +19190,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -21858,16 +19246,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -21936,16 +19314,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -22012,16 +19380,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -22099,16 +19457,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -22172,16 +19520,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -22248,16 +19586,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -22326,16 +19654,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -22403,16 +19721,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -22469,16 +19777,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -22545,16 +19843,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -22632,16 +19920,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -22699,16 +19977,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -22752,14 +20020,42 @@
           "approvals-bot"
         ],
         "summary": "Telegram Webhook",
-        "description": "Receives inline button callbacks from Telegram approval notifications.",
+        "description": "Receives verified inline button callbacks from Telegram approval notifications.",
         "operationId": "telegram_webhook_api_v1_approvals_bot_telegram_webhook_post",
+        "parameters": [
+          {
+            "name": "X-Telegram-Bot-Api-Secret-Token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Telegram-Bot-Api-Secret-Token"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -22809,16 +20105,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -22888,16 +20174,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -22965,16 +20241,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -23041,16 +20307,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -23129,16 +20385,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -23206,16 +20452,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -23286,16 +20522,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -23363,16 +20589,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -23439,16 +20655,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -23527,16 +20733,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -23604,16 +20800,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -23670,16 +20856,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -23748,16 +20924,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "requestBody": {
@@ -23825,16 +20991,6 @@
               "default": "",
               "title": "X-Tenant-Id"
             }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
-            }
           }
         ],
         "responses": {
@@ -23891,16 +21047,6 @@
               "type": "string",
               "default": "",
               "title": "X-Tenant-Id"
-            }
-          },
-          {
-            "name": "x-user-id",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "",
-              "title": "X-User-Id"
             }
           }
         ],
@@ -24135,22 +21281,30 @@
       },
       "CheckoutBody": {
         "properties": {
-          "credits": {
-            "type": "integer",
-            "exclusiveMinimum": 0.0,
-            "title": "Credits"
+          "packId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Packid"
           },
-          "priceUsd": {
-            "type": "number",
-            "exclusiveMinimum": 0.0,
-            "title": "Priceusd"
+          "credits": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credits"
           }
         },
         "type": "object",
-        "required": [
-          "credits",
-          "priceUsd"
-        ],
         "title": "CheckoutBody"
       },
       "CompanyBody": {
@@ -24788,20 +21942,15 @@
             "title": "Email"
           },
           "password": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "type": "string",
+            "minLength": 1,
             "title": "Password"
           }
         },
         "type": "object",
         "required": [
-          "email"
+          "email",
+          "password"
         ],
         "title": "LoginBody"
       },
@@ -25120,17 +22269,12 @@
           },
           "role": {
             "type": "string",
-            "title": "Role"
+            "title": "Role",
+            "default": "employee"
           },
           "password": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "type": "string",
+            "minLength": 8,
             "title": "Password"
           }
         },
@@ -25139,7 +22283,7 @@
           "companyId",
           "email",
           "name",
-          "role"
+          "password"
         ],
         "title": "RegisterBody"
       },
