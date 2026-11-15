@@ -1,34 +1,27 @@
 import stripe
 from sqlalchemy.orm import Session
-
 from ...core.audit import record
 from ...core.config import settings
 from . import service as ledger
 
 
-def create_checkout_session(company_id: str, user_id: str | None, amount: int, price_usd: float, db: Session | None = None) -> dict:
-    # If ENABLE_STRIPE is false, bypass Stripe completely and credit company wallet immediately
+def create_checkout_session(company_id: str, user_id: str | None, amount: int, price_usd: float, db: Session | None = None, role: str | None = None) -> dict:
     if not settings.get("enable_stripe", False):
+        if role not in ("super_admin", "company_admin"):
+            raise ValueError("Direct credit purchase requires admin authorization while Stripe is disabled")
         if db:
-            wallet = ledger.purchase(db, company_id, amount, user_id, note="Direct Purchase (Stripe Bypassed via ENABLE_STRIPE=false)")
+            wallet = ledger.purchase(db, company_id, amount, user_id, note="Direct Admin Purchase (ENABLE_STRIPE=false)")
             record(db, company_id, user_id, "bypassed_payment", "credit_wallets", None, {"creditsMinted": amount, "bypassed": True})
             return {
                 "enabled": False,
                 "bypassed": True,
-                "message": "Stripe bypassed (ENABLE_STRIPE=false). Credits added directly to company wallet.",
+                "message": "Direct credit grant processed (ENABLE_STRIPE=false).",
                 "checkoutUrl": None,
                 "credits": amount,
                 "priceUsd": price_usd,
                 "wallet": wallet,
             }
-        return {
-            "enabled": False,
-            "bypassed": True,
-            "message": "Stripe bypassed (ENABLE_STRIPE=false).",
-            "checkoutUrl": None,
-            "credits": amount,
-            "priceUsd": price_usd,
-        }
+        return {"enabled": False, "bypassed": True, "message": "Stripe disabled.", "checkoutUrl": None, "credits": amount, "priceUsd": price_usd}
 
     stripe.api_key = settings["stripe_secret_key"]
     session = stripe.checkout.Session.create(

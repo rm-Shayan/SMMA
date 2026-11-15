@@ -26,17 +26,16 @@ def get_db() -> Generator[Session, None, None]:
 def get_tenant(
     authorization: str | None = Header(default=None),
     x_tenant_id: str = Header(default="", alias="x-tenant-id"),
-    x_user_id: str = Header(default="", alias="x-user-id"),
 ) -> Tenant:
-    user_id = x_user_id or None
-    token_role = None
+    user_id = None
+    role = None
 
     if authorization and authorization.lower().startswith("bearer "):
         raw_token = authorization.split(" ", 1)[1].strip()
         payload = decode_access_token(raw_token)
         if payload:
-            user_id = payload.get("userId") or user_id
-            token_role = payload.get("role")
+            user_id = payload.get("userId")
+            role = payload.get("role")
             if not x_tenant_id and payload.get("companyId"):
                 x_tenant_id = payload["companyId"]
 
@@ -51,15 +50,15 @@ def get_tenant(
         if row[1] and row[1] != "active":
             raise HTTPException(status_code=400, detail=f"Tenant is {row[1]}")
 
-        role = token_role
         if user_id:
-            user = db.execute(text('SELECT role, company_id FROM "users" WHERE id = :id'), {"id": user_id}).first()
-            if user:
-                role = user[0]
-                user_company = str(user[1]) if user[1] else None
-                # Cross-tenant containment: only super_admin can cross tenant boundaries
-                if role != "super_admin" and user_company and user_company != str(x_tenant_id):
-                    raise HTTPException(status_code=403, detail="Forbidden: user does not belong to this tenant")
+            user = db.execute(text('SELECT role, company_id, status FROM "users" WHERE id = :id'), {"id": user_id}).first()
+            if not user or (user[2] and user[2] != "active"):
+                raise HTTPException(status_code=401, detail="User account is deactivated or not found")
+            role = user[0]
+            user_company = str(user[1]) if user[1] else None
+            # Cross-tenant containment: only super_admin can cross tenant boundaries
+            if role != "super_admin" and user_company and user_company != str(x_tenant_id):
+                raise HTTPException(status_code=403, detail="Forbidden: user does not belong to this tenant")
 
         return Tenant(x_tenant_id, user_id, role)
     finally:

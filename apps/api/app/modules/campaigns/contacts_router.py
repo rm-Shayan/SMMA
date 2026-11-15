@@ -2,7 +2,7 @@ import base64
 import csv as csv_parser
 import io
 import uuid
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from ...core.db import SessionLocal, get_db
 from ...core.deps import Tenant, get_tenant
 from ...core.runner import run_agent
+from ...core.security import verify_signed_token
 from .inbox_ops import conversation_for_thread
 
 contacts_router = APIRouter()
@@ -52,8 +53,10 @@ def inbound(body: InboundBody, tenant: Tenant = Depends(get_tenant), db: Session
 
 @contacts_router.get("/unsubscribe")
 def unsubscribe(token: str):
-    decoded = base64.urlsafe_b64decode(token + "=" * (-len(token) % 4)).decode()
-    company_id, email = decoded.split(":", 1)
+    data = verify_signed_token(token)
+    if not data or ":" not in data:
+        raise HTTPException(status_code=400, detail="Invalid or tampered unsubscribe token")
+    company_id, email = data.split(":", 1)
     db = SessionLocal()
     try:
         db.execute(text('INSERT INTO "email_suppressions" (id, company_id, email, reason, created_at) VALUES (:id, :c, :e, \'unsubscribe\', NOW())'), {"id": str(uuid.uuid4()), "c": company_id, "e": email})

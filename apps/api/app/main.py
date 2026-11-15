@@ -56,6 +56,16 @@ app.add_middleware(
 app.add_middleware(ObservabilityMiddleware)
 
 
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    resp = await call_next(request)
+    resp.headers["X-Content-Type-Options"] = "nosniff"
+    resp.headers["X-Frame-Options"] = "DENY"
+    resp.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    resp.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return resp
+
+
 @app.exception_handler(Exception)
 async def unhandled(request: Request, exc: Exception):
     logger.exception("Unhandled error on %s %s: %s", request.method, request.url.path, exc)

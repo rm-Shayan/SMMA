@@ -5,6 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 from ...core.db import get_db
 from ...core.deps import Tenant, get_tenant
+from ...core.security import decrypt_token
 
 router = APIRouter()
 
@@ -18,7 +19,7 @@ def test_social_account(account_id: str, tenant: Tenant = Depends(get_tenant), d
     if not row:
         raise HTTPException(status_code=404, detail="Connected account not found")
 
-    provider, token = row[1], row[3] or ""
+    provider, token = row[1], decrypt_token(row[3] or "")
 
     if provider in ("meta", "facebook", "instagram"):
         try:

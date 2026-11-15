@@ -9,6 +9,7 @@ from ...core.db import get_db
 from ...core.deps import Tenant, get_tenant
 from ...core.guardrails import check_prompt_injection, wrap_safe_prompt
 from ...core.llm import generate_text_stream
+from ...core.rate_limiter import rate_limit
 from ...core.runner import run_agent
 from ..campaigns.audio_engine import detect_language
 
@@ -31,7 +32,7 @@ class CopilotBody(BaseModel):
     wantVoice: bool = False
 
 
-@router.post("/copilot/chat")
+@router.post("/copilot/chat", dependencies=[Depends(rate_limit(requests_per_minute=30, by="tenant"))])
 def copilot_chat(body: CopilotBody, tenant: Tenant = Depends(get_tenant)):
     result = run_agent(
         tenant, "copilot", 0, "a0000000-0000-0000-0000-000000000000", "auto",
@@ -40,7 +41,7 @@ def copilot_chat(body: CopilotBody, tenant: Tenant = Depends(get_tenant)):
     return {"success": result.success, "data": result.data, "runId": result.run_id}
 
 
-@router.post("/copilot/chat/stream")
+@router.post("/copilot/chat/stream", dependencies=[Depends(rate_limit(requests_per_minute=30, by="tenant"))])
 def copilot_chat_stream(body: CopilotBody, tenant: Tenant = Depends(get_tenant)):
     is_injected, err = check_prompt_injection(body.query)
     if is_injected:

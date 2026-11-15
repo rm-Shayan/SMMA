@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from ...core.db import get_db
 from ...core.deps import Tenant, get_tenant, require_roles
+from ...core.security import encrypt_token
 from ..credits import service as ledger
 
 router = APIRouter(tags=["company-admin-ops"])
@@ -93,7 +94,7 @@ def oauth_callback(provider: str, tenant: Tenant = Depends(require_roles("compan
             'INSERT INTO "connected_accounts" (id, company_id, user_id, provider, display_name, token_enc, status, created_at) '
             "VALUES (:id, :c, :u, :p, :name, :token, 'active', NOW())"
         ),
-        {"id": account_id, "c": tenant.company_id, "u": tenant.user_id, "p": provider, "name": f"{provider} account", "token": code},
+        {"id": account_id, "c": tenant.company_id, "u": tenant.user_id, "p": provider, "name": f"{provider} account", "token": encrypt_token(code)},
     )
     db.execute(
         text('INSERT INTO "account_limits" (connected_account_id, min_gap_sec, max_gap_sec, per_hour, per_day, work_hours) VALUES (:id, 45, 180, 20, 50, \'09:00-22:00\') ON CONFLICT DO NOTHING'),

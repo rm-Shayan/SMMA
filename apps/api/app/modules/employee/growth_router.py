@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from ...core.db import get_db
 from ...core.deps import Tenant, get_tenant
 from ...core.audit import record
+from ...core.security import encrypt_token
 from ..knowledge.trainee import summarize_csv
 
 router = APIRouter(tags=["employee-growth"])
@@ -39,7 +40,7 @@ def create_connection(body: ConnectionBody, tenant: Tenant = Depends(get_tenant)
             'INSERT INTO "connected_accounts" (id, company_id, user_id, provider, display_name, token_enc, status, created_at) '
             "VALUES (:id, :c, :u, :p, :n, :t, 'active', NOW())"
         ),
-        {"id": account_id, "c": tenant.company_id, "u": tenant.user_id, "p": body.provider, "n": body.displayName or body.provider, "t": body.secret},
+        {"id": account_id, "c": tenant.company_id, "u": tenant.user_id, "p": body.provider, "n": body.displayName or body.provider, "t": encrypt_token(body.secret)},
     )
     db.commit()
     return {"success": True, "accountId": account_id, "provider": body.provider}

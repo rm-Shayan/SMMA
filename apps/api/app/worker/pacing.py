@@ -4,6 +4,7 @@ from sqlalchemy import text
 from ..core.audit import record
 from ..core.db import SessionLocal
 from ..core.pubsub import publish_event_sync
+from ..core.security import decrypt_token
 from .dispatcher import backoff_delay, dispatch, mark_rate_limited as _mark_rl, schedule_follow_up
 
 WARMUP_DAYS = 14
@@ -89,6 +90,7 @@ def process_outbox(limit: int = 10, account_id: str | None = None) -> int:
                 db.commit()
                 continue
             account = dict(account_row._mapping)
+            account["token_enc"] = decrypt_token(account.get("token_enc"))
 
             db.execute(text('UPDATE "outbox_jobs" SET status = \'sending\' WHERE id = :id'), {"id": job["id"]})
             db.commit()

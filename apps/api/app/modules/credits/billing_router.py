@@ -14,17 +14,45 @@ from .stripe_service import create_checkout_session, handle_stripe_webhook
 
 billing_router = APIRouter()
 
+CREDIT_PACKS: dict[str, dict] = {
+    "starter": {"name": "Starter Boost", "credits": 5_000, "priceUsd": 25.0},
+    "growth": {"name": "Growth Pack", "credits": 20_000, "priceUsd": 80.0},
+    "scale": {"name": "Scale Bundle", "credits": 50_000, "priceUsd": 175.0},
+    "enterprise": {"name": "Enterprise High-Volume", "credits": 100_000, "priceUsd": 300.0},
+}
+
+
 class AmountBody(BaseModel):
     amount: int = Field(gt=0)
 
+
 class CheckoutBody(BaseModel):
-    credits: int = Field(gt=0)
-    priceUsd: float = Field(gt=0.0)
+    packId: str | None = None
+    credits: int | None = None
+
+
+@billing_router.get("/packs")
+def get_credit_packs():
+    return {"success": True, "packs": CREDIT_PACKS}
+
 
 @billing_router.post("/checkout-session")
 def checkout(body: CheckoutBody, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
-    result = create_checkout_session(tenant.company_id, tenant.user_id, body.credits, body.priceUsd, db=db)
-    return {"success": True, **result}
+    if body.packId and body.packId in CREDIT_PACKS:
+        credits_amt = CREDIT_PACKS[body.packId]["credits"]
+        price_usd = CREDIT_PACKS[body.packId]["priceUsd"]
+    elif body.credits and body.credits >= 1000:
+        credits_amt = body.credits
+        price_usd = round(credits_amt * 0.005, 2)  # Strictly calculated server-side ($5 per 1,000 credits)
+    else:
+        raise HTTPException(status_code=400, detail="Invalid packId or credits amount (minimum 1,000 credits required)")
+
+    try:
+        result = create_checkout_session(tenant.company_id, tenant.user_id, credits_amt, price_usd, db=db, role=tenant.role)
+        return {"success": True, **result}
+    except ValueError as exc:
+        raise HTTPException(status_code=403, detail=str(exc))
+
 
 @billing_router.post("/stripe-webhook")
 async def stripe_webhook(request: Request, db: Session = Depends(get_db), stripe_signature: str = Header(default="")):
@@ -35,6 +63,7 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db), stripe
     except Exception as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 
+
 @billing_router.get("/wallets")
 def wallets(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
     rows = db.execute(
@@ -42,6 +71,7 @@ def wallets(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db))
         {"c": tenant.company_id},
     ).all()
     return {"success": True, "wallets": [dict(row._mapping) for row in rows]}
+
 
 @billing_router.get("/wallets/{wallet_id}")
 def wallet_detail(wallet_id: str, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
@@ -52,6 +82,7 @@ def wallet_detail(wallet_id: str, tenant: Tenant = Depends(get_tenant), db: Sess
     if not row:
         return {"success": False, "error": "Wallet not found"}
     return {"success": True, "wallet": dict(row._mapping)}
+
 
 @billing_router.post("/wallets/{wallet_id}/adjust")
 def adjust_wallet(wallet_id: str, body: AmountBody, tenant: Tenant = Depends(require_roles("super_admin", "company_admin")), db: Session = Depends(get_db)):
@@ -72,6 +103,7 @@ def adjust_wallet(wallet_id: str, body: AmountBody, tenant: Tenant = Depends(req
     db.commit()
     return {"success": True, "wallet": ledger.get_wallet(db, wallet_id)}
 
+
 @billing_router.get("/ledger/export")
 def ledger_export(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
     rows = db.execute(
@@ -90,4 +122,3 @@ def ledger_export(tenant: Tenant = Depends(get_tenant), db: Session = Depends(ge
     for row in rows:
         writer.writerow([row[0], row[1], row[2], row[3], row[4]])
     return Response(content=buffer.getvalue(), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=ledger.csv"})
-
