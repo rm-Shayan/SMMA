@@ -1,6 +1,7 @@
 from ...core.base_agent import BaseAgent
 from ...core.config import settings
 from ...core.db import SessionLocal
+from ...core.llm import generate_text
 from ...core.types import AgentContext, RunResult
 from .embedding import embed_text
 from .service import search_similar
@@ -19,6 +20,17 @@ def build_answer(query: str, chunks: list[dict]) -> dict:
     ]
     if not sources:
         return {"answer": f"Information not found in company docs for \"{query}\". Escalate to your team manager.", "sources": [], "grounded": False}
+
+    doc_context = "\n\n".join(f"[{s['documentTitle']}]:\n{c['content']}" for s, c in zip(sources, relevant))
+    prompt = (
+        f"You are the internal company operations assistant. Answer the question based strictly on the company excerpts:\n"
+        f"Question: '{query}'\n\nExcerpts:\n{doc_context}\n\n"
+        "Direct, authoritative, concise. Do not hallucinate policies. Cite the source document."
+    )
+    res = generate_text(prompt, system_prompt="Strict internal operations assistant.", max_tokens=250)
+    if res and len(res.strip()) > 20:
+        return {"answer": res.strip(), "sources": sources, "grounded": True}
+
     body = "\n".join(f"[{i + 1}] {s['documentTitle']}: {s['excerpt']}" for i, s in enumerate(sources))
     return {"answer": f"Based on internal company documentation:\n{body}", "sources": sources, "grounded": True}
 
@@ -30,7 +42,7 @@ class CompanyOpsAgent(BaseAgent):
     default_mode = "auto"
 
     def plan(self, context: AgentContext, input_data: dict) -> list[str]:
-        return ["Embed query and run pgvector search", "Filter by confidence threshold", "Refuse when not grounded"]
+        return ["Embed query and run pgvector search", "Filter by confidence threshold", "Synthesize grounded answer"]
 
     def _execute(self, context: AgentContext, input_data: dict, run_id: str) -> RunResult:
         db = SessionLocal()
@@ -41,4 +53,3 @@ class CompanyOpsAgent(BaseAgent):
             return RunResult({"query": input_data["query"], **answer}, 1, 0.001)
         finally:
             db.close()
-

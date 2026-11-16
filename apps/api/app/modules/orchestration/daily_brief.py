@@ -5,6 +5,7 @@ from sqlalchemy import text
 from ...core.base_agent import BaseAgent
 from ...core.db import SessionLocal
 from ...core.types import AgentContext, RunResult
+from ..campaigns.audio_engine import synthesize_human_voice
 
 
 def build_brief(db, company_id: str) -> list[dict]:
@@ -35,18 +36,15 @@ def build_brief(db, company_id: str) -> list[dict]:
         items.append({"priority": "low", "title": f"{int(insights[0])} competitor insight(s)", "description": "Review positioning gaps before the next content sprint.", "suggestedAgentId": 2})
 
     if not items:
-        items.append({"priority": "low", "title": "No blocking work", "description": "Pipeline is clear; consider proactive research.", "suggestedAgentId": 12})
+        items.append({"priority": "low", "title": "Pipeline is clear", "description": "No blocking bottlenecks; ready for autonomous research and campaigns.", "suggestedAgentId": 12})
     return items
 
 
 class DailyBriefAgent(BaseAgent):
-    id = 5
-    code = "daily-brief"
-    name = "Daily Brief"
-    default_mode = "auto"
+    id, code, name, default_mode = 5, "daily-brief", "Daily Brief", "auto"
 
     def plan(self, context: AgentContext, input_data: dict) -> list[str]:
-        return ["Scan approvals, deals, outbox and insights", "Rank executive agenda", "Persist daily_briefs"]
+        return ["Scan approvals, deals, outbox and insights", "Rank executive agenda", "Synthesize audio briefing (Edge-TTS)", "Persist daily_briefs"]
 
     def _execute(self, context: AgentContext, input_data: dict, run_id: str) -> RunResult:
         db = SessionLocal()
@@ -55,12 +53,16 @@ class DailyBriefAgent(BaseAgent):
             for item in items:
                 item["id"] = str(uuid.uuid4())
             brief_id = str(uuid.uuid4())
+
+            summary_speech = f"Good morning! Here is your executive daily brief. There are {len(items)} primary action items. " + ". ".join(it["title"] for it in items[:3]) + "."
+            voice_url = synthesize_human_voice(summary_speech, lang=input_data.get("language", "en"))
+
+            payload = {"items": items, "voiceUrl": voice_url, "speechSummary": summary_speech}
             db.execute(
                 text('INSERT INTO "daily_briefs" (id, company_id, user_id, agent_run_id, brief_date, items) VALUES (:id, :c, :u, :run, CURRENT_DATE, :items)'),
-                {"id": brief_id, "c": context.company_id, "u": context.user_id, "run": run_id, "items": json.dumps(items)},
+                {"id": brief_id, "c": context.company_id, "u": context.user_id, "run": run_id, "items": json.dumps(payload)},
             )
             db.commit()
-            return RunResult({"briefId": brief_id, "items": items}, 1, 0.001)
+            return RunResult({"briefId": brief_id, "items": items, "voiceUrl": voice_url, "summary": summary_speech}, 1, 0.001)
         finally:
             db.close()
-

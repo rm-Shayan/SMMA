@@ -3,6 +3,7 @@ from sqlalchemy import text
 
 from ...core.base_agent import BaseAgent
 from ...core.db import SessionLocal
+from ...core.llm import generate_text
 from ...core.types import AgentContext, RunResult
 from .audio_engine import detect_language, humanize_text, should_reply_with_voice, synthesize_human_voice
 from .inbox_ops import insert_message, queue_reply, suppress_email, upsert_deal
@@ -32,7 +33,7 @@ REPLIES = {
 }
 
 
-def classify(text_value: str, history: list = None, lang: str = "en") -> dict:
+def classify(text_value: str, lang: str = "en") -> dict:
     lower = (text_value or "").lower()
     pack = REPLIES.get(lang, REPLIES["en"])
     for intent, keywords, sentiment, unsubscribe, escalation in RULES:
@@ -42,11 +43,16 @@ def classify(text_value: str, history: list = None, lang: str = "en") -> dict:
     return {"intent": "support_question", "sentiment": "neutral", "unsubscribe": False, "escalation": False, "reply": pack["fallback"], "deal": None}
 
 
+def dynamic_inbox_reply(msg: str, intent: str, lang: str, fallback: str) -> str:
+    if intent not in ("interested", "support_question"):
+        return fallback
+    prompt = f"You are a helpful customer concierge. Reply to this {lang} message: '{msg[:200]}'. Intent: {intent}. Write a warm, 1-2 sentence response. If interested, suggest booking a demo or leaving requirements."
+    res = generate_text(prompt, max_tokens=70)
+    return res.strip().strip('"') if res and len(res.strip()) > 8 else fallback
+
+
 class InboxResponderAgent(BaseAgent):
-    id = 9
-    code = "inbox_responder"
-    name = "Inbox Responder"
-    default_mode = "draft"
+    id, code, name, default_mode = 9, "inbox_responder", "Inbox Responder", "draft"
 
     def plan(self, context: AgentContext, input_data: dict) -> list[str]:
         return ["Detect language and fetch history", "Classify intent and sentiment", "Update deal pipeline or escalate", "Queue humanized reply through outbox"]
@@ -61,8 +67,10 @@ class InboxResponderAgent(BaseAgent):
 
             lang = input_data.get("language") or detect_language(msg)
             history = db.execute(text('SELECT direction, body FROM "messages" WHERE conversation_id = :c ORDER BY sent_at ASC LIMIT 10'), {"c": cid}).fetchall()
-            result = classify(msg, history, lang=lang)
-            reply_text = humanize_text(result["reply"])
+            result = classify(msg, lang=lang)
+
+            raw_reply = dynamic_inbox_reply(msg, result["intent"], lang, result["reply"])
+            reply_text = humanize_text(raw_reply)
 
             voice_file = None
             if reply_text and should_reply_with_voice(input_data.get("inboundType", "text"), msg):

@@ -4,6 +4,7 @@ from sqlalchemy import text
 
 from ...core.base_agent import BaseAgent
 from ...core.db import SessionLocal
+from ...core.llm import generate_text
 from ...core.types import AgentContext, RunResult
 
 CTA = {
@@ -13,6 +14,20 @@ CTA = {
 }
 
 
+def _craft_starter_comment(content: str, platform: str, cta_type: str) -> str:
+    guidance = CTA.get(cta_type, CTA["question"])
+    prompt = (
+        f"You are a social engagement strategist. Write a high-engagement first comment for this {platform} post:\n"
+        f"'{content[:400]}'\n"
+        f"Goal: Spark discussion. Style: Insightful, authentic, no AI buzzwords. "
+        f"Incorporate intent: '{guidance}'. Maximum 2 sentences."
+    )
+    res = generate_text(prompt, system_prompt="Return only comment text, no quotes.", max_tokens=100)
+    if res and len(res.strip()) > 10:
+        return res.strip()
+    return f"Strong point. {guidance}"
+
+
 class OwnPostEngagerAgent(BaseAgent):
     id = 1
     code = "own-post-engager"
@@ -20,7 +35,7 @@ class OwnPostEngagerAgent(BaseAgent):
     default_mode = "auto"
 
     def plan(self, context: AgentContext, input_data: dict) -> list[str]:
-        return ["Generate 1-3 starter comments", "Queue through anti-detection pacing"]
+        return ["Synthesize strategic starter comments", "Queue through anti-detection pacing"]
 
     def _execute(self, context: AgentContext, input_data: dict, run_id: str) -> RunResult:
         db = SessionLocal()
@@ -40,7 +55,7 @@ class OwnPostEngagerAgent(BaseAgent):
             comments = []
             for _ in range(input_data.get("commentCount", 1)):
                 comment_id = str(uuid.uuid4())
-                body = f"Strong point. {CTA[input_data.get('ctaType', 'question')]}"
+                body = _craft_starter_comment(content, platform, input_data.get("ctaType", "question"))
                 db.execute(
                     text(
                         """
@@ -75,4 +90,3 @@ class OwnPostEngagerAgent(BaseAgent):
             return RunResult({"postId": post_id, "comments": comments}, len(comments), 0.001 * len(comments))
         finally:
             db.close()
-

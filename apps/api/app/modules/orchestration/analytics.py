@@ -4,6 +4,7 @@ from sqlalchemy import text
 
 from ...core.base_agent import BaseAgent
 from ...core.db import SessionLocal
+from ...core.llm import generate_text
 from ...core.types import AgentContext, RunResult
 
 
@@ -59,6 +60,16 @@ def collect_metrics(db, company_id: str) -> dict:
     }
 
 
+def _generate_insights(metrics: dict, fallback: str) -> str:
+    prompt = (
+        f"You are an executive operations AI analyzing multi-agent metrics: {json.dumps(metrics)}. "
+        "Provide a 2-paragraph executive assessment: 1) Efficiency summary (success rate, unit cost/run). "
+        "2) Key operational action (e.g. unblocking approvals, scaling outbox, or credit conservation). Direct and actionable."
+    )
+    res = generate_text(prompt, system_prompt="Data-driven Chief of Staff AI.", max_tokens=220)
+    return res.strip() if res and len(res.strip()) > 30 else fallback
+
+
 class AnalyticsAgent(BaseAgent):
     id = 4
     code = "analytics"
@@ -69,18 +80,19 @@ class AnalyticsAgent(BaseAgent):
         return 2
 
     def plan(self, context: AgentContext, input_data: dict) -> list[str]:
-        return ["Aggregate runs, credits and outbox", "Compute cost per completed run", "Persist analytics snapshot"]
+        return ["Aggregate runs, credits and outbox", "Synthesize executive insights", "Persist analytics snapshot"]
 
     def _execute(self, context: AgentContext, input_data: dict, run_id: str) -> RunResult:
         db = SessionLocal()
         try:
             metrics = collect_metrics(db, context.company_id)
             avg = metrics["estimatedCostUsd"] / metrics["completedRuns"] if metrics["completedRuns"] else 0
-            summary = (
+            fallback = (
                 f"{metrics['totalRuns']} runs ({metrics['completedRuns']} completed, {metrics['failedRuns']} failed). "
                 f"{metrics['totalCreditsBurned']} credits at ${metrics['estimatedCostUsd']:.4f} (${avg:.5f}/completed run). "
                 f"{metrics['outreachSent']} dispatched, {metrics['queuedOutbox']} queued, {metrics['pendingApprovals']} approvals pending."
             )
+            summary = _generate_insights(metrics, fallback)
             snapshot_id = str(uuid.uuid4())
             db.execute(
                 text(
@@ -99,4 +111,3 @@ class AnalyticsAgent(BaseAgent):
             return RunResult({"snapshotId": snapshot_id, "metrics": metrics, "aiSummary": summary}, 2, 0.002)
         finally:
             db.close()
-
