@@ -35,6 +35,18 @@ def handle_copilot_request(db: Session, context: AgentContext, query: str, role:
             reply = (f"Platform '{acc[1]}' ({acc[2]}) disconnect kardia gaya. {purged} pending outbox jobs expire kardi gayi hain taake agle 30-50 din ya saal baad purani posts na dispatch hon." if is_disc else f"Platform '{acc[1]}' ({acc[2]}) reconnect kardia gaya hai aur active hai.") if lang == "roman_urdu" else (f"Platform '{acc[1]}' ({acc[2]}) disconnected. {purged} pending outbox jobs expired to prevent stale execution." if is_disc else f"Platform '{acc[1]}' ({acc[2]}) reconnected and active.")
             return {"action": f"platform_{new_status}", "accountId": str(acc[0]), "provider": acc[1], "purgedJobs": purged, "reply": reply}
 
+    if any(k in q_lower for k in ["connector", "social account", "connected account", "companies ka data", "company ka data"]):
+        wants_all = any(k in q_lower for k in ["companies", "all company", "tamam", "sab company", "system"])
+        if wants_all and not is_admin:
+            return {"action": "unauthorized", "reply": "Ijazat nahi hai: Multi-tenant security policy ke tehat aap sirf apni company ka data dekh sakte hain." if lang == "roman_urdu" else "Access Denied: Multi-tenant policy strictly forbids viewing other companies' data."}
+        if wants_all and is_admin:
+            rows = db.execute(text('SELECT c.name, ca.provider, ca.display_name, ca.status FROM "connected_accounts" ca JOIN "companies" c ON ca.company_id = c.id LIMIT 25')).all()
+            lines = [f"• {r[0]}: {r[1].title()} ({r[2]}) [{r[3]}]" for r in rows] if rows else ["No connectors found."]
+            return {"action": "system_connectors", "reply": "Super Admin System Overview (Tokens Redacted):\n" + "\n".join(lines)}
+        rows = db.execute(text('SELECT provider, display_name, status FROM "connected_accounts" WHERE company_id = :c'), {"c": context.company_id}).all()
+        lines = [f"• {r[0].title()} ({r[1]}): Status {r[2]}" for r in rows] if rows else ["Koi connector connect nahi hai." if lang == "roman_urdu" else "No connectors connected."]
+        return {"action": "company_connectors", "reply": "Aapke Connected Social Channels (Tokens Redacted):\n" + "\n".join(lines)}
+
     if any(k in q_lower for k in ["create company", "company bana", "register company", "new company"]):
         if not is_admin:
             return {"action": "unauthorized", "reply": "Ijazat nahi hai: Sirf Super Admin nayi company create kar sakta hai." if lang == "roman_urdu" else "Permission Denied: Only Super Admin can create companies."}
