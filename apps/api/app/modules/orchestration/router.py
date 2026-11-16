@@ -70,13 +70,13 @@ def list_tasks(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_d
     return {"success": True, "tasks": [dict(r._mapping) for r in rows]}
 
 
-@router.post("/supervisor")
+@router.post("/supervisor", dependencies=[Depends(rate_limit(requests_per_minute=10, by="tenant"))])
 def supervisor(body: SupervisorBody, tenant: Tenant = Depends(get_tenant)):
     result = run_agent(tenant, "supervisor", 12, "a0000000-0000-0000-0000-000000000012", "auto", {"request": body.request, "maxCreditBudget": body.maxCreditBudget, "autoExecute": True})
     return {"success": result.success, "data": result.data, "runId": result.run_id}
 
 
-@router.post("/research")
+@router.post("/research", dependencies=[Depends(rate_limit(requests_per_minute=15, by="tenant"))])
 def research(body: ResearchBody, tenant: Tenant = Depends(get_tenant)):
     result = run_agent(tenant, "competitor-researcher", 2, "a0000000-0000-0000-0000-000000000002", "auto", body.model_dump())
     return {"success": result.success, "data": result.data, "runId": result.run_id}

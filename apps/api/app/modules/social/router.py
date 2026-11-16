@@ -1,22 +1,23 @@
-import hashlib
-import hmac
 import json
-import os
 import uuid
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from ...core.db import get_db
 from ...core.deps import Tenant, get_tenant
+from ...core.rate_limiter import rate_limit
 from ...core.runner import run_agent
 from .competitors_router import competitors_router
 from .regenerate_router import router as regenerate_router
+from .webhook_router import router as webhook_router
 
 router = APIRouter()
 router.include_router(competitors_router)
 router.include_router(regenerate_router)
+router.include_router(webhook_router)
+
 
 class PostBody(BaseModel):
     connectedAccountId: str
@@ -26,25 +27,28 @@ class PostBody(BaseModel):
     scheduledAt: str | None = None
     autoApprove: bool = False
 
+
 class ReplyBody(BaseModel):
     body: str
 
-@router.post("/posts")
+
+@router.post("/posts", dependencies=[Depends(rate_limit(requests_per_minute=20, by="tenant"))])
 def publish(body: PostBody, tenant: Tenant = Depends(get_tenant)):
     result = run_agent(tenant, "publisher", 8, "a0000000-0000-0000-0000-000000000008", "auto", body.model_dump())
     return {"success": result.success, "data": result.data, "runId": result.run_id}
+
 
 @router.get("/posts")
 def list_posts(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db), limit: int = 50):
     rows = db.execute(text('SELECT * FROM "social_posts" WHERE company_id = :c ORDER BY COALESCE(scheduled_at, published_at) DESC NULLS LAST LIMIT :limit'), {"c": tenant.company_id, "limit": limit}).all()
     return {"success": True, "posts": [dict(r._mapping) for r in rows]}
 
+
 @router.get("/posts/{post_id}")
 def get_post(post_id: str, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
     row = db.execute(text('SELECT * FROM "social_posts" WHERE id = :id AND company_id = :c'), {"id": post_id, "c": tenant.company_id}).first()
-    if not row:
-        return {"success": False, "error": "Post not found"}
-    return {"success": True, "post": dict(row._mapping)}
+    return {"success": True, "post": dict(row._mapping)} if row else {"success": False, "error": "Post not found"}
+
 
 @router.patch("/posts/{post_id}")
 def update_post(post_id: str, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db), content: str | None = None, status: str | None = None, scheduledAt: str | None = None):
@@ -57,11 +61,13 @@ def update_post(post_id: str, tenant: Tenant = Depends(get_tenant), db: Session 
     db.commit()
     return {"success": True, "postId": post_id}
 
+
 @router.delete("/posts/{post_id}")
 def delete_post(post_id: str, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
     db.execute(text('DELETE FROM "social_posts" WHERE id = :id AND company_id = :c'), {"id": post_id, "c": tenant.company_id})
     db.commit()
     return {"success": True, "postId": post_id}
+
 
 @router.post("/posts/{post_id}/publish")
 def publish_post(post_id: str, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
@@ -74,15 +80,18 @@ def publish_post(post_id: str, tenant: Tenant = Depends(get_tenant), db: Session
     db.commit()
     return {"success": True, "postId": post_id, "status": "published"}
 
+
 @router.get("/calendar")
 def calendar(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db), limit: int = 50):
     rows = db.execute(text('SELECT id, platform, status, content, scheduled_at, published_at FROM "social_posts" WHERE company_id = :c ORDER BY COALESCE(scheduled_at, published_at) DESC NULLS LAST LIMIT :limit'), {"c": tenant.company_id, "limit": limit}).all()
     return {"success": True, "items": [dict(r._mapping) for r in rows]}
 
+
 @router.get("/comments")
 def list_comments(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db), limit: int = 50):
     rows = db.execute(text('SELECT * FROM "social_comments" WHERE company_id = :c ORDER BY created_at DESC LIMIT :limit'), {"c": tenant.company_id, "limit": limit}).all()
     return {"success": True, "comments": [dict(r._mapping) for r in rows]}
+
 
 @router.post("/comments/{comment_id}/reply")
 def reply_comment(comment_id: str, body: ReplyBody, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
@@ -97,6 +106,7 @@ def reply_comment(comment_id: str, body: ReplyBody, tenant: Tenant = Depends(get
     db.commit()
     return {"success": True, "commentId": comment_id, "outboxJobId": job_id}
 
+
 @router.post("/comments/{comment_id}/approve")
 def approve_comment(comment_id: str, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
     row = db.execute(text('SELECT id, status FROM "social_comments" WHERE id = :id AND company_id = :c'), {"id": comment_id, "c": tenant.company_id}).first()
@@ -105,34 +115,3 @@ def approve_comment(comment_id: str, tenant: Tenant = Depends(get_tenant), db: S
     db.execute(text('UPDATE "social_comments" SET status = \'approved\' WHERE id = :id'), {"id": comment_id})
     db.commit()
     return {"success": True, "commentId": comment_id, "status": "approved"}
-
-@router.get("/webhook")
-def meta_webhook_verify(request: Request):
-    mode = request.query_params.get("hub.mode")
-    token = request.query_params.get("hub.verify_token")
-    challenge = request.query_params.get("hub.challenge")
-    expected = os.getenv("META_VERIFY_TOKEN", "styre_bot_verify_token")
-    if mode == "subscribe" and token == expected and challenge:
-        from fastapi.responses import PlainTextResponse
-        return PlainTextResponse(content=challenge, status_code=200)
-    return {"status": "error", "message": "Verification failed"}
-
-
-@router.post("/webhook")
-async def webhook(request: Request, db: Session = Depends(get_db)):
-    raw = await request.body()
-    secret = os.getenv("META_APP_SECRET")
-    signature = request.headers.get("x-hub-signature-256", "")
-    # If app secret is configured, verify HMAC signature; otherwise proceed in multi-tenant mode
-    if secret and signature.startswith("sha256="):
-        digest = hmac.new(secret.encode(), raw, hashlib.sha256).hexdigest()
-        if not hmac.compare_digest(digest, signature.split("=", 1)[1]):
-            return {"success": False, "error": "Invalid signature"}
-    payload = json.loads(raw or b"{}")
-    tenant_id = request.headers.get("x-tenant-id")
-    for item in payload.get("entry", []):
-        for ch in item.get("changes", []):
-            if ch.get("field") == "feed" and ch.get("value", {}).get("item") == "comment" and tenant_id:
-                val = ch["value"]
-                run_agent(Tenant(tenant_id, None, None), "comment-responder", 3, "a0000000-0000-0000-0000-000000000003", "auto", {"commentExternalId": str(val.get("comment_id") or val.get("id")), "platform": "facebook", "commentText": val.get("message", ""), "authorName": (val.get("from") or {}).get("name")})
-    return {"success": True}

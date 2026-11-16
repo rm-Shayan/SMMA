@@ -75,6 +75,17 @@ def process_outbox(limit: int = 10, account_id: str | None = None) -> int:
                 db.commit()
                 continue
 
+            # 1-Hour Moving Sliding Window Check (Platform anti-ban protection)
+            hourly_limit = (limits or {}).get("per_hour") or 20
+            sent_last_hour = db.execute(
+                text('SELECT count(*)::int FROM "outbox_jobs" WHERE connected_account_id = :id AND status = \'sent\' AND not_before >= NOW() - INTERVAL \'1 hour\''),
+                {"id": account_id},
+            ).scalar()
+            if sent_last_hour >= hourly_limit:
+                db.execute(text('UPDATE "outbox_jobs" SET not_before = NOW() + INTERVAL \'10 minutes\' WHERE id = :id'), {"id": job["id"]})
+                db.commit()
+                continue
+
             sent_today = db.execute(
                 text('SELECT count(*)::int FROM "outbox_jobs" WHERE connected_account_id = :id AND status = \'sent\' AND not_before >= CURRENT_DATE'),
                 {"id": account_id},

@@ -1,10 +1,33 @@
-import time
 import logging
+import time
 from typing import Callable
 from fastapi import HTTPException, Request, Response
+import redis
 from .config import settings
 
 logger = logging.getLogger("rate_limiter")
+
+
+def check_sliding_window_sync(identifier: str, limit: int = 30, window_secs: int = 60) -> tuple[bool, int]:
+    """Synchronous Redis ZSET sliding window checker for background agent actions."""
+    try:
+        r = redis.from_url(settings["redis_url"], decode_responses=True)
+        now = time.time()
+        window_start = now - window_secs
+        key = f"ratelimit:agent:{identifier}"
+        p = r.pipeline()
+        p.zremrangebyscore(key, 0, window_start)
+        p.zadd(key, {str(now): now})
+        p.zcard(key)
+        p.expire(key, window_secs + 5)
+        _, _, count, _ = p.execute()
+        r.close()
+        remaining = max(0, limit - count)
+        return (count <= limit), remaining
+    except Exception as exc:
+        logger.debug("Sync sliding window check bypassed: %s", exc)
+        return True, limit
+
 
 def rate_limit(requests_per_minute: int = 60, by: str = "tenant") -> Callable:
     """
@@ -39,7 +62,6 @@ def rate_limit(requests_per_minute: int = 60, by: str = "tenant") -> Callable:
             remaining = max(0, requests_per_minute - request_count)
             reset_epoch = int(now + 60)
 
-            # Standard RFC Rate Limiting Headers
             response.headers["X-RateLimit-Limit"] = str(requests_per_minute)
             response.headers["X-RateLimit-Remaining"] = str(remaining)
             response.headers["X-RateLimit-Reset"] = str(reset_epoch)

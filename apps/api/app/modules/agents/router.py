@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from ...core.db import SessionLocal, get_db
 from ...core.deps import Tenant, get_tenant, require_roles
+from ...core.rate_limiter import rate_limit
 from ...core.runner import run_agent, stream_agent
 
 router = APIRouter()
@@ -32,7 +33,7 @@ def list_agents(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_
     return {"success": True, "agents": [dict(r._mapping) for r in rows]}
 
 
-@router.post("/{agent_id}/run")
+@router.post("/{agent_id}/run", dependencies=[Depends(rate_limit(requests_per_minute=30, by="tenant"))])
 def run(agent_id: int, body: RunBody, tenant: Tenant = Depends(require_roles("super_admin", "company_admin", "manager", "employee"))):
     db = SessionLocal()
     try:
@@ -43,7 +44,7 @@ def run(agent_id: int, body: RunBody, tenant: Tenant = Depends(require_roles("su
         db.close()
 
 
-@router.post("/{agent_id}/stream")
+@router.post("/{agent_id}/stream", dependencies=[Depends(rate_limit(requests_per_minute=30, by="tenant"))])
 def stream(agent_id: int, body: RunBody, tenant: Tenant = Depends(require_roles("super_admin", "company_admin", "manager", "employee"))):
     db = SessionLocal()
     try:
