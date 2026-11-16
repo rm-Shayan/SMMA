@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from ...core.db import get_db
@@ -7,6 +8,7 @@ from ...core.deps import Tenant, get_tenant
 from ...core.runner import run_agent
 from .embedding import embed_text
 from .service import create_sop, ingest_text, search_similar
+from .sliding_engine import analyze_with_sliding_window
 
 router = APIRouter()
 
@@ -35,22 +37,24 @@ class SopBody(BaseModel):
     traineeAnswer: str
 
 
+class SlidingAnalyzeBody(BaseModel):
+    text: str | None = None
+    documentId: str | None = None
+    goal: str = "Extract key operational rules and executive summary"
+    windowSize: int = 400
+    overlap: int = 60
+
+
 @router.get("/documents")
 def list_documents(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db), limit: int = 50):
-    rows = db.execute(
-        text('SELECT id, title, source, storage_path FROM "knowledge_documents" WHERE company_id = :c ORDER BY title LIMIT :limit'),
-        {"c": tenant.company_id, "limit": limit},
-    ).all()
-    return {"success": True, "documents": [dict(row._mapping) for row in rows]}
+    rows = db.execute(text('SELECT id, title, source, storage_path FROM "knowledge_documents" WHERE company_id = :c ORDER BY title LIMIT :limit'), {"c": tenant.company_id, "limit": limit}).all()
+    return {"success": True, "documents": [dict(r._mapping) for r in rows]}
 
 
 @router.get("/sops")
 def list_sops(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
-    rows = db.execute(
-        text('SELECT id, title, modules FROM "sops" WHERE company_id = :c ORDER BY title'),
-        {"c": tenant.company_id},
-    ).all()
-    return {"success": True, "sops": [dict(row._mapping) for row in rows]}
+    rows = db.execute(text('SELECT id, title, modules FROM "sops" WHERE company_id = :c ORDER BY title'), {"c": tenant.company_id}).all()
+    return {"success": True, "sops": [dict(r._mapping) for r in rows]}
 
 
 @router.post("/rag")
@@ -73,22 +77,27 @@ def search(body: SearchBody, tenant: Tenant = Depends(get_tenant), db: Session =
     return {"success": True, "chunks": chunks}
 
 
+@router.post("/analyze-sliding")
+def analyze_sliding(body: SlidingAnalyzeBody, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
+    doc_text = body.text
+    if not doc_text and body.documentId:
+        chunks = db.execute(text('SELECT content FROM "document_chunks" WHERE document_id = :id AND company_id = :c ORDER BY id'), {"id": body.documentId, "c": tenant.company_id}).all()
+        doc_text = "\n\n".join(r[0] for r in chunks)
+    if not doc_text:
+        return {"success": False, "error": "Either text or valid documentId is required"}
+    result = analyze_with_sliding_window(doc_text, body.goal, body.windowSize, body.overlap)
+    return {"success": True, **result}
+
+
 @router.post("/sop/evaluate")
 def evaluate(body: SopBody, tenant: Tenant = Depends(get_tenant)):
-    result = run_agent(
-        tenant, "trainee-sop", 10, "a0000000-0000-0000-0000-000000000010", "auto",
-        {**body.model_dump(), "traineeUserId": tenant.user_id},
-    )
+    result = run_agent(tenant, "trainee-sop", 10, "a0000000-0000-0000-0000-000000000010", "auto", {**body.model_dump(), "traineeUserId": tenant.user_id})
     return {"success": result.success, "data": result.data, "runId": result.run_id}
-
 
 
 @router.get("/documents/{document_id}")
 def get_document(document_id: str, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
-    row = db.execute(
-        text('SELECT id, title, source, storage_path FROM "knowledge_documents" WHERE id = :id AND company_id = :c'),
-        {"id": document_id, "c": tenant.company_id},
-    ).first()
+    row = db.execute(text('SELECT id, title, source, storage_path FROM "knowledge_documents" WHERE id = :id AND company_id = :c'), {"id": document_id, "c": tenant.company_id}).first()
     if not row:
         return {"success": False, "error": "Document not found"}
     chunks = db.execute(text('SELECT count(*)::int FROM "document_chunks" WHERE document_id = :id'), {"id": document_id}).scalar()
@@ -106,24 +115,16 @@ def delete_document(document_id: str, tenant: Tenant = Depends(get_tenant), db: 
 @router.get("/sops/{sop_id}")
 def get_sop_detail(sop_id: str, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
     row = db.execute(text('SELECT id, title, modules FROM "sops" WHERE id = :id AND company_id = :c'), {"id": sop_id, "c": tenant.company_id}).first()
-    if not row:
-        return {"success": False, "error": "SOP not found"}
-    return {"success": True, "sop": dict(row._mapping)}
+    return {"success": True, "sop": dict(row._mapping)} if row else {"success": False, "error": "SOP not found"}
 
 
 @router.get("/training-progress")
 def training_progress(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db), limit: int = 100):
-    rows = db.execute(
-        text('SELECT tp.*, u.name AS trainee FROM "training_progress" tp JOIN "sops" s ON tp.sop_id = s.id LEFT JOIN "users" u ON tp.user_id = u.id WHERE s.company_id = :c ORDER BY tp.updated_at DESC LIMIT :limit'),
-        {"c": tenant.company_id, "limit": limit},
-    ).all()
-    return {"success": True, "progress": [dict(row._mapping) for row in rows]}
+    rows = db.execute(text('SELECT tp.*, u.name AS trainee FROM "training_progress" tp JOIN "sops" s ON tp.sop_id = s.id LEFT JOIN "users" u ON tp.user_id = u.id WHERE s.company_id = :c ORDER BY tp.updated_at DESC LIMIT :limit'), {"c": tenant.company_id, "limit": limit}).all()
+    return {"success": True, "progress": [dict(r._mapping) for r in rows]}
 
 
 @router.get("/generated-files")
 def generated_files(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db), limit: int = 50):
-    rows = db.execute(
-        text('SELECT id, file_name, storage_path, created_at FROM "generated_files" WHERE company_id = :c ORDER BY created_at DESC LIMIT :limit'),
-        {"c": tenant.company_id, "limit": limit},
-    ).all()
-    return {"success": True, "files": [dict(row._mapping) for row in rows]}
+    rows = db.execute(text('SELECT id, file_name, storage_path, created_at FROM "generated_files" WHERE company_id = :c ORDER BY created_at DESC LIMIT :limit'), {"c": tenant.company_id, "limit": limit}).all()
+    return {"success": True, "files": [dict(r._mapping) for r in rows]}
