@@ -3,29 +3,50 @@
   "private": true,
   "version": "1.0.0",
   "description": "Styre-BOT Multi-Tenant SaaS Control Plane",
-  "main": "index.js",
   "scripts": {
+    "dev": "node scripts/serve.mjs dev",
+    "dev:api": "node scripts/serve.mjs dev api",
+    "dev:web": "node scripts/serve.mjs dev web",
+    "dev:worker": "node scripts/serve.mjs dev worker",
+    "dev:all": "node scripts/serve.mjs dev full",
+
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "start": "node scripts/serve.mjs start",
+    "start:api": "node scripts/serve.mjs start api",
+    "start:web": "node scripts/serve.mjs start web",
+    "start:worker": "node scripts/serve.mjs start worker",
+    "start:all": "node scripts/serve.mjs start full",
+    "preview": "pnpm run build && pnpm run start",
+
     "lint": "turbo run lint",
-    "test": "turbo run test",
+    "lint:fix": "turbo run lint -- --fix",
+    "typecheck": "turbo run typecheck",
+    "test": "pnpm --filter @styre/web test:e2e",
+    "check": "pnpm run lint && pnpm run typecheck",
+
     "migrate": "python apps/api/scripts/migrate.py",
     "verify": "python apps/api/scripts/verify_phases.py",
-    "api": "python -m uvicorn --app-dir apps/api app.main:app --reload --port 5000",
+
+    "clean": "node scripts/clean.mjs",
+    "setup": "pnpm install && pnpm run migrate",
+
+    "api": "pnpm run dev:api",
     "api:py": "python apps/api/run.py",
-    "worker": "python -c \"import sys; sys.path.insert(0, 'apps/api'); from app.worker.main import main; main()\""
+    "worker": "pnpm run dev:worker"
   },
   "keywords": [
     "saas",
     "multi-tenant",
     "nextjs",
     "fastapi",
-    "express",
-    "bullmq",
+    "postgres",
     "pgvector"
   ],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "dotenv": "^16.4.7",
     "ws": "^8.18.0"

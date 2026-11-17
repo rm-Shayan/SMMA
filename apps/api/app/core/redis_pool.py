@@ -46,3 +46,5 @@ async def verify_redis_health() -> dict:
     except Exception as exc:
         return {"status": "degraded", "error": str(exc)}
 
+get_redis = get_redis_client
+

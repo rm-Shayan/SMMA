@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -21,16 +17,26 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/shared/ui/*", "./src/components/*"],
+      "@/hooks/*": ["./src/shared/hooks/*", "./src/hooks/*"],
+      "@/redux/*": ["./src/shared/store/redux/*", "./src/shared/store/*", "./src/redux/*"],
+      "@/store/*": ["./src/shared/store/*", "./src/store/*"],
+      "@/services/*": ["./src/shared/http/services/*", "./src/shared/http/*", "./src/services/*"],
+      "@/types/*": ["./src/shared/types/*", "./src/types/*"],
+      "@/mocks/*": ["./src/shared/mocks/*", "./src/mocks/*"],
+      "@/lib/*": ["./src/shared/utils/*", "./src/lib/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

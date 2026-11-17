@@ -12,7 +12,7 @@ load_dotenv()
 @lru_cache
 def get_settings() -> dict:
     return {
-        "database_url": os.getenv("DATABASE_URL", "postgresql+psycopg://postgres:postgres@localhost:5432/styre_db"),
+        "database_url": os.getenv("DATABASE_URL", "postgresql+psycopg://postgres:postgres@127.0.0.1:5432/styre_db"),
         "jwt_secret": os.getenv("JWT_SECRET", "styre_secret_key_2026"),
         "groq_api_key": os.getenv("GROQ_API_KEY"),
         "groq_model": os.getenv("GROQ_MODEL", "qwen-2.5-32b"),

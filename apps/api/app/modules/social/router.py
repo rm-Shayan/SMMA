@@ -29,7 +29,11 @@ class PostBody(BaseModel):
 
 
 class ReplyBody(BaseModel):
-    body: str
+    body: str | None = None
+    content: str | None = None
+
+    def get_text(self) -> str:
+        return self.body or self.content or ""
 
 
 @router.post("/posts", dependencies=[Depends(rate_limit(requests_per_minute=20, by="tenant"))])
@@ -69,6 +73,13 @@ def delete_post(post_id: str, tenant: Tenant = Depends(get_tenant), db: Session 
     return {"success": True, "postId": post_id}
 
 
+@router.post("/posts/{post_id}/approve")
+def approve_post(post_id: str, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
+    db.execute(text('UPDATE "social_posts" SET status = \'approved\' WHERE id = :id AND company_id = :c'), {"id": post_id, "c": tenant.company_id})
+    db.commit()
+    return {"success": True, "postId": post_id, "status": "approved"}
+
+
 @router.post("/posts/{post_id}/publish")
 def publish_post(post_id: str, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
     row = db.execute(text('SELECT id, status FROM "social_posts" WHERE id = :id AND company_id = :c'), {"id": post_id, "c": tenant.company_id}).first()
@@ -101,7 +112,7 @@ def reply_comment(comment_id: str, body: ReplyBody, tenant: Tenant = Depends(get
     job_id = str(uuid.uuid4())
     db.execute(
         text('INSERT INTO "outbox_jobs" (id, connected_account_id, thread_key, target_type, target_post_id, priority, reply_text, status, not_before, expires_at, idempotency_key) VALUES (:id, :account, :thread, \'comment_reply\', :post, 1, :payload, \'queued\', NOW() + INTERVAL \'1 minute\', NOW() + INTERVAL \'3 days\', :key)'),
-        {"id": job_id, "account": row[2], "thread": f"comment_{comment_id}", "post": comment_id, "payload": json.dumps({"body": body.body}), "key": f"reply_{comment_id}"},
+        {"id": job_id, "account": row[2], "thread": f"comment_{comment_id}", "post": comment_id, "payload": json.dumps({"body": body.get_text()}), "key": f"reply_{comment_id}"},
     )
     db.commit()
     return {"success": True, "commentId": comment_id, "outboxJobId": job_id}

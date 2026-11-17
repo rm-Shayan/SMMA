@@ -23,10 +23,24 @@ class WorkflowRequest(BaseModel):
 class TriggerWorkflow(BaseModel):
     initial_input: Dict[str, Any] = {}
 
+@router.get("")
+def list_workflows(tenant: Tenant = Depends(get_tenant)):
+    standard = [
+        {"id": "wf-growth-autopilot", "name": "Growth Autopilot (Research -> Publish -> Distribute)", "status": "active", "steps": 3},
+        {"id": "wf-inbox-triage", "name": "Inbound Comment & Lead Triage", "status": "active", "steps": 2},
+        {"id": "wf-sop-compliance", "name": "SOP Compliance & Team Certification", "status": "active", "steps": 2},
+    ]
+    return {"success": True, "workflows": standard}
+
 @router.post("")
 def create_workflow(body: WorkflowRequest, tenant: Tenant = Depends(get_tenant)):
     wf_id = str(uuid.uuid4())
     return {"success": True, "workflowId": wf_id, "name": body.name, "stepCount": len(body.steps)}
+
+@router.post("/{workflow_id}/execute")
+@router.post("/{workflow_id}/trigger")
+def execute_workflow(workflow_id: str, body: TriggerWorkflow = TriggerWorkflow(), tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
+    return run_pipeline(body, tenant, db)
 
 @router.post("/run-pipeline")
 def run_pipeline(body: TriggerWorkflow, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):

@@ -115,6 +115,7 @@ def process_outbox(limit: int = 10, account_id: str | None = None) -> int:
                     schedule_follow_up(db, job)
                 record(db, account["company_id"], None, "connector", "outbox_jobs", job["id"], {"targetType": job["target_type"], "externalId": result.get("externalId")})
                 publish_event_sync(account["company_id"], "outbox.updated", {"jobId": job["id"], "status": "sent", "targetType": job["target_type"], "externalId": result.get("externalId")}, "outbox")
+                publish_event_sync(account["company_id"], "campaign.delivery", {"jobId": job["id"], "targetType": job["target_type"], "status": "sent"}, "campaigns")
                 dispatched += 1
             elif result.get("rateLimited"):
                 mark_rate_limited(db, account_id, job["id"])

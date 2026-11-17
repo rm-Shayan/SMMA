@@ -86,4 +86,11 @@ def decode_access_token(token: str) -> dict | None:
         return None
 
 
+def decode_access_token_ignoring_expiry(token: str) -> dict | None:
+    try:
+        return jwt.decode(token, settings["jwt_secret"], algorithms=["HS256"], options={"verify_exp": False})
+    except Exception:
+        return None
+
+
 decode_token = decode_access_token

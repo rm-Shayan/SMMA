@@ -11,11 +11,27 @@ from ...core.deps import Tenant, get_tenant
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
 
+class ContactCreate(BaseModel):
+    name: str = Field(min_length=1)
+    email: str = Field(min_length=3)
+    company_name: str | None = None
+    topic: str | None = None
+
 class ContactUpdate(BaseModel):
     name: str | None = None
     company_name: str | None = None
     topic: str | None = None
     status: str | None = None
+
+@router.post("")
+def create_contact(body: ContactCreate, tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db)):
+    cid = str(uuid.uuid4())
+    db.execute(
+        text('INSERT INTO "contacts" (id, company_id, name, email, company_name, topic, created_at) VALUES (:id, :c, :n, :e, :comp, :t, NOW())'),
+        {"id": cid, "c": tenant.company_id, "n": body.name, "e": body.email.strip().lower(), "comp": body.company_name, "t": body.topic},
+    )
+    db.commit()
+    return {"success": True, "contact": {"id": cid, "name": body.name, "email": body.email, "company_name": body.company_name, "topic": body.topic}}
 
 @router.get("")
 def list_contacts(tenant: Tenant = Depends(get_tenant), db: Session = Depends(get_db), limit: int = 50, offset: int = 0):

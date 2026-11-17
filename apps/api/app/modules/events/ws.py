@@ -1,84 +1,49 @@
-import asyncio
 import json
-import jwt
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
-from app.core.config import settings
-from app.core.pubsub import manager, listen_redis_channel
+import logging
+from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
+from ...core.pubsub import manager
+from ...core.security import decode_token
 
-router = APIRouter(tags=["WebSockets"])
-
-PING_INTERVAL = 30
-IDLE_LIMIT = 90
+logger = logging.getLogger("ws")
+router = APIRouter()
 
 
-def authenticate_ws(token: str | None) -> dict:
-    if not token:
-        return {}
-    try:
-        return jwt.decode(token, settings["jwt_secret"], algorithms=["HS256"])
-    except Exception:
-        return {}
-
-
-async def _handle_ws(ws: WebSocket, company_id: str, topic: str, token: str | None):
+async def _handle_ws(ws: WebSocket, company_id: str, topic: str, token: str | None = None) -> None:
     if token:
-        user = authenticate_ws(token)
-        if not user or user.get("company_id") != company_id:
-            await ws.close(code=1008)
+        payload = decode_token(token)
+        if not payload or payload.get("companyId") != company_id:
+            await ws.close(code=4003)
             return
 
     conn = await manager.connect(company_id, ws, topic)
-    listener = asyncio.create_task(listen_redis_channel(company_id, topic))
-    last_seen = asyncio.get_running_loop().time()
-
-    async def heartbeat() -> None:
-        nonlocal last_seen
-        try:
-            while True:
-                await asyncio.sleep(PING_INTERVAL)
-                if asyncio.get_running_loop().time() - last_seen > IDLE_LIMIT:
-                    await conn.close(1001)
-                    return
-                await conn.ws.send_text("ping")
-        except asyncio.CancelledError:
-            return
-        except Exception:
-            await conn.close(1001)
-
-    pinger = asyncio.create_task(heartbeat())
-
     try:
         while True:
-            text = await ws.receive_text()
-            last_seen = asyncio.get_running_loop().time()
-            conn.touch()
-            if text == "ping":
+            msg = await ws.receive_text()
+            if msg == "ping":
                 await ws.send_text("pong")
                 continue
             try:
-                cmd = json.loads(text)
-                if cmd.get("action") == "subscribe" and cmd.get("topic"):
-                    manager.subscribe(conn, cmd["topic"])
-                    await ws.send_json({"subscribed": cmd["topic"]})
-                elif cmd.get("action") == "unsubscribe" and cmd.get("topic"):
-                    manager.unsubscribe(conn, cmd["topic"])
-                    await ws.send_json({"unsubscribed": cmd["topic"]})
+                data = json.loads(msg)
+                if data.get("type") == "ping":
+                    await ws.send_text(json.dumps({"type": "pong"}))
             except Exception:
                 pass
-    except WebSocketDisconnect:
-        pass
-    except Exception:
+    except (WebSocketDisconnect, Exception):
         pass
     finally:
-        pinger.cancel()
-        listener.cancel()
         await manager.disconnect(company_id, conn)
 
 
 @router.websocket("/ws/{company_id}")
-async def ws_all(ws: WebSocket, company_id: str, token: str = Query(None)):
-    """Tenant master WebSocket stream."""
-    await _handle_ws(ws, company_id, "all", token)
+async def ws_tenant(ws: WebSocket, company_id: str, topic: str = Query("all"), token: str = Query(None)):
+    """Tenant-isolated WebSocket. Client may filter by topic via query param."""
+    await _handle_ws(ws, company_id, topic, token)
+
+
+@router.websocket("/ws/outbox/{company_id}")
+async def ws_outbox(ws: WebSocket, company_id: str, token: str = Query(None)):
+    """Dedicated outbox job state change stream."""
+    await _handle_ws(ws, company_id, "outbox", token)
 
 
 @router.websocket("/ws/agents/{company_id}")
@@ -97,3 +62,15 @@ async def ws_copilot(ws: WebSocket, company_id: str, token: str = Query(None)):
 async def ws_notifications(ws: WebSocket, company_id: str, token: str = Query(None)):
     """Dedicated high-priority alerts and approval requests socket."""
     await _handle_ws(ws, company_id, "notifications", token)
+
+
+@router.websocket("/ws/campaigns/{company_id}")
+async def ws_campaigns(ws: WebSocket, company_id: str, token: str = Query(None)):
+    """Live campaign lifecycle + delivery counter stream."""
+    await _handle_ws(ws, company_id, "campaigns", token)
+
+
+@router.websocket("/ws/{topic}/{company_id}")
+async def ws_topic(ws: WebSocket, topic: str, company_id: str, token: str = Query(None)):
+    """Generic topic stream: leads, inbox, approvals, knowledge, media, etc."""
+    await _handle_ws(ws, company_id, topic, token)

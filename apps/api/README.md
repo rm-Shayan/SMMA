@@ -23,7 +23,7 @@ Configuration is read from the repository root `.env` (falls back to `apps/api/.
 
 ```powershell
 # API
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 5000
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
 
 # Background worker (outbox pacing + 09:00 daily brief)
 .\.venv\Scripts\python.exe -m app.worker.main

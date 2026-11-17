@@ -157,7 +157,7 @@ cp .env.example .env
 `.env` file mein required credentials fill karein:
 
 ```env
-PORT=5000
+PORT=8000
 NODE_ENV=development
 
 # Database Configuration
@@ -206,21 +206,41 @@ npm run seed
 
 ### 6. Run the Application
 
-#### Development Mode (with hot-reload):
+Ek hi command se **backend (FastAPI) + frontend (Next.js)** dono start hote hain:
+
 ```bash
-npm run dev
+# Development (hot-reload dono services par)
+pnpm run dev
+
+# Production (pehle build, phir dono services)
+pnpm run build
+pnpm start
+
+# Ya dono ek step me
+pnpm run preview
 ```
 
-#### Production Build & Run:
-```bash
-# Compile TypeScript to /dist
-npm run build
+API: `http://localhost:8000` · Web: `http://localhost:3000`
 
-# Start production server
-npm start
-```
+#### Available scripts
 
-API server standard port par live hoga: `http://localhost:5000`
+| Command | Kya karta hai |
+|---|---|
+| `pnpm run dev` | Backend + frontend dono dev mode me (default) |
+| `pnpm run dev:api` / `dev:web` / `dev:worker` | Sirf ek service dev mode me |
+| `pnpm run dev:all` | Backend + worker + frontend, sab dev mode me |
+| `pnpm run build` | Frontend ka production build |
+| `pnpm start` | Production me backend + frontend serve karta hai (build pehle se hona chahiye) |
+| `pnpm run start:all` | Production me worker bhi shamil |
+| `pnpm run preview` | Build + start ek saath |
+| `pnpm run lint` / `lint:fix` | ESLint check / auto-fix |
+| `pnpm run typecheck` | TypeScript check |
+| `pnpm run check` | Lint + typecheck |
+| `pnpm run test` | Playwright e2e tests |
+| `pnpm run migrate` / `verify` | DB migration / phase verification |
+| `pnpm run clean` | Build aur test artifacts hatata hai |
+
+Environment overrides: `PORT` (backend, default `8000`), `WEB_PORT` (frontend, default `3000`), `PYTHON` (custom Python executable).
 
 ---
 
