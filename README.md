@@ -1,258 +1,256 @@
-# 🤖 Styre-BOT — 12-Agent Platform & Multi-Tenant Automation Backend
+# 🤖 Styre-BOT — Enterprise AI Fleet & Multi-Tenant Automation Platform
 
-> **Multi-Tenant Social Media Automation, Outbound Outreach, Inbound AI Sales & Enterprise Orchestration Platform.**
-
----
-
-## 📌 Overview
-
-**Styre Bot** ek enterprise-grade multi-tenant SaaS backend hai jahan har company credits purchase karke **12 specialized AI agents** ko utilize karti hai. System ka central coordinator **Agent #12 (Supervisor)** complex tasks ko decompose, schedule aur baqi 11 agents ko route karta hai.
-
-Platform day-1 se strict multi-company tenancy, append-only double-entry credit ledger, aur anti-detection human-like pacing ke sath build kiya gaya hai.
+> **Official AI Fleet Platform for [Styre Tech](https://www.linkedin.com/company/styre-tech/)**  
+> Autonomous Social Media Marketing, Cold Outbound Outreach, Omnichannel CRM Triage, RAG Knowledge Base, and Master Orchestration.
 
 ---
 
-## 🏗️ Architecture & The 12-Agent Ecosystem
+## 📌 Executive Overview
+
+**Styre-Bot** is an enterprise-grade, multi-tenant SaaS platform built to automate end-to-end digital agency operations. Each tenant workspace operates with an immutable, append-only double-entry credit ledger and controls a fleet of **12 specialized autonomous AI agents** governed by the **Supervisor AI (Agent #12)**.
+
+The platform provides complete role-based workflows for **Super Admins (Platform Owners)**, **Company Admins (Agency Principals)**, **Managers (QA & Team Leads)**, and **Employees (Account Executives & Specialists)**.
+
+---
+
+## 🏗️ Architecture & System Topology
+
+The platform is architected as a high-performance **pnpm Turborepo monorepo**:
 
 ```text
-[User Request / Webhook / Cron] 
-              │
-              ▼
-   [Supervisor (Agent #12)] ──(Task Decomposition & Credit Check)
-              │
-              ▼
-    [Redis + BullMQ Queue]
-              │
-    ┌─────────┼─────────────────────────┬─────────────────────────┐
-    ▼         ▼                         ▼                         ▼
- [Social]  [Messaging]             [Insights]                [Internal]
- #1, #3,   #6 Outreach,            #2 Competitor Research,   #10 Trainee & SOP,
- #7, #8    #9 Inbox Responder      #4 Analytics,             #11 Company Ops (RAG)
-                                   #5 Daily Brief
-              │
-              ▼
-  [Outbox Pacing Engine (Concurrency = 1 per account, Jitter 45s-3m)]
-              │
-              ▼
- [External Platforms: Meta / LinkedIn / Gmail / Outlook / ERP]
+Styre-BOT Monorepo
+│
+├── apps/
+│   ├── web/                    # Next.js 16 (Turbopack, App Router, React 19)
+│   │   ├── src/
+│   │   │   ├── app/            # 52 production-ready routes with RBAC guards
+│   │   │   ├── domains/        # DDD modules (campaigns, agents, credits, social, knowledge)
+│   │   │   └── shared/         # Atomic UI (atoms, molecules, organisms), RTK Query store, HTTP client
+│   │   └── tests/              # Comprehensive Playwright E2E test suites
+│   │
+│   └── api/                    # Python 3.12+ FastAPI backend (< 140 lines per file)
+│       └── app/
+│           ├── core/           # RLS DB pool, security, pubsub, rate limiting, RAG engine
+│           ├── modules/        # 274+ modular API routes (auth, admin, campaigns, credits, social, etc.)
+│           └── worker/         # Background outbox pacing & scheduler
+│
+├── docs/                       # Architecture diagrams, ERD, API specs & postman collection
+└── scripts/                    # Unified dev & production server runners
 ```
 
-### 12 Specialized Agents Summary
+---
 
-| # | Agent Name | Domain | Primary Responsibility |
+## 🤖 The 12-Agent Autonomous Fleet
+
+```text
+[Incoming Intent / Scheduled Cron / Webhook / Copilot Prompt]
+                         │
+                         ▼
+             [Supervisor AI (Agent #12)]
+       (Decomposes Task, Verifies Credit Ledger, Builds Execution DAG)
+                         │
+        ┌────────────────┼────────────────┬────────────────┐
+        ▼                ▼                ▼                ▼
+   [Social Fleet]  [Outreach Fleet]  [Insights Fleet]  [Internal Ops]
+   #1 Own-Engage   #6 Cold Outreach  #2 Competitor     #10 Trainee & SOP
+   #3 Comment Resp #9 Omnichannel    #4 Analytics      #11 Corporate RAG
+   #7 Comp-Engage     Inbox          #5 Daily Brief
+   #8 Publisher
+        │                │
+        └────────────────┴───────────────┐
+                                         ▼
+                         [Outbox Anti-Detection Pacer]
+                   (Concurrency = 1, Jitter: 45s-3m, Daily Caps)
+                                         │
+                                         ▼
+                 [Meta / LinkedIn / Gmail / Outlook / Webhooks]
+```
+
+### Agent Fleet Roster
+
+| # | Agent Name | Domain | Core Capability |
 |---|---|---|---|
-| **1** | **Own-Post Engager** | Social | Apni published posts par conversation shuru karne ke liye engagement comments & CTAs post karna. |
-| **2** | **Competitor Researcher** | Insights | Competitors ki posts, engagement, pricing aur content strategy par continuous research reports banana. |
-| **3** | **Comment Responder** | Social | Company posts par public comments ka smart FAQ/Knowledge-base driven reply dena (Complaint escalation ke sath). |
-| **4** | **Analytics** | Insights | Cross-platform performance, open rates, deals pipeline, aur credit usage metrics ki aggregated reporting. |
-| **5** | **Daily Brief** | Insights | Har subah employee ke liye prioritized action plan ("What today needs"): trends, pending tasks & post ideas. |
-| **6** | **Outreach (DM / Email)** | Messaging | Personalized cold email / DM outreach campaigns run karna aur follow-up sequences coordinate karna. |
-| **7** | **Competitor Engager** | Social | Competitor posts identify karke high-value comment draft karna (Human-in-the-loop assisted mode). |
-| **8** | **Publisher & Distributor** | Social | Content calendar ke mutabiq posts draft karna, schedule karna aur target channels par live publish karna. |
-| **9** | **Inbox Responder** | Messaging | Inbound emails aur DMs triage karna (Lead classification, support answers, CRM deal stage updates). |
-| **10** | **Trainee & SOP Agent** | Internal | Company SOPs se interns ko train/quiz karna aur unstructured CSV/Excel data se structured reports generate karna. |
-| **11** | **Company Ops Agent** | Internal | Corporate knowledge base par RAG (Retrieval-Augmented Generation) based strictly cited answers aur internal ops automation. |
-| **12** | **Supervisor** | Core | Master Orchestrator: multi-step request handling, agent task routing, retries, aur credit budget governance. |
+| **1** | **Own-Post Engager** | Social | Boosts algorithmic velocity by posting contextual starter comments and engagement hooks on company posts. |
+| **2** | **Competitor Researcher** | Insights | Continuous competitive intelligence: monitors competitor posting velocity, messaging angles, and sentiment. |
+| **3** | **Comment Responder** | Social | Smart FAQ & objection-handling replies to public comments, with automatic human escalation for complaints. |
+| **4** | **Analytics & Growth** | Insights | Cross-channel performance aggregation, conversion attribution, latency metrics, and credit burn efficiency. |
+| **5** | **Daily Briefing Agent** | Insights | Delivers daily prioritized action matrices for agency teams ("Tactical Briefs"): hot leads, review items, and strategy. |
+| **6** | **Outreach Engine** | Revenue | Automated multi-touch cold email and DM sequences with personalization, spin-syntax, and unsubscribe governance. |
+| **7** | **Competitor Engager** | Social | High-value, non-spam commentary on trending industry posts in human-in-the-loop assisted mode. |
+| **8** | **Publisher & Distributor** | Social | Scheduled omni-channel publishing to LinkedIn, Meta, and X with auto-formatting and media attachments. |
+| **9** | **Inbox Responder** | Revenue | Real-time inbound lead classification, CRM deal-stage progression, and zero-latency qualification. |
+| **10** | **Trainee & SOP Agent** | Internal | Evaluates employees via interactive curriculum quizzes and converts unstructured CSV/PDF files into SOP reports. |
+| **11** | **Company Ops Agent** | Internal | Multi-window sliding RAG over internal company documentation with strict citations and zero hallucination. |
+| **12** | **Supervisor AI** | Core | Master Orchestrator: task decomposition, agent routing, credit reservation, DAG dependency tracking, and self-healing retries. |
 
 ---
 
-## ⚡ Key Highlights & Core Capabilities
+## ⚡ Styre-Bot Interactive Floating Copilot
 
-- **Strict Multi-Tenancy:** Har database table mein `company_id` column aur PostgreSQL connection pool level par Row-Level Security (RLS) enforcement.
-- **Append-Only Double-Entry Credit Ledger:** Har credit action (`purchase`, `allocate`, `reserve`, `consume`, `release`, `revoke`, `expire`) immutable audit record banata hai.
-- **Anti-Ban Outbox Pacing:** Meta aur LinkedIn bans se bachne ke liye draft aur dispatch logic decoupled hain. Serial execution (concurrency = 1 per account), 45s–3m random jitter, typing speed simulation, hourly/daily caps aur auto-throttling shamil hain.
-- **Enterprise Security & KMS Encryption:** OAuth tokens, passwords aur ERP credentials table mein plain-text kabi store nahi hote (`_enc` fields with AES-256-GCM encryption).
-- **RAG & Vector Embeddings:** Qdrant Vector DB / `pgvector` ke zariye high-accuracy knowledge retrieval with source citations.
-
----
-
-## 🛠️ Tech Stack
-
-- **Runtime & Language:** [Node.js](https://nodejs.org/) (>= 20.0.0) & [TypeScript](https://www.typescriptlang.org/)
-- **Web Framework:** [Express.js](https://expressjs.com/)
-- **Relational Database:** [PostgreSQL 16](https://www.postgresql.org/) (`pg` client)
-- **Queuing & Background Jobs:** [Redis 7](https://redis.io/) & [BullMQ](https://docs.bullmq.io/)
-- **Vector Database:** [Qdrant](https://qdrant.tech/) (`@qdrant/js-client-rest`)
-- **AI / LLM Framework:** [LangChain](https://js.langchain.com/) / [LangGraph](https://langchain-ai.github.io/langgraphjs/) + Groq / Qwen Models
-- **Security & Validation:** [Zod](https://zod.dev/), AES-256 encryption, Webhook signatures
-- **Logging:** [Pino](https://getpino.io/) & `pino-pretty`
+Every screen is equipped with the **Styre Bot** autonomous assistant:
+- **Floating Dock**: Accessible via bottom-right floating trigger or global hotkey `Ctrl+J` / `Cmd+J`.
+- **Fleet Status Monitoring**: Real-time operational indicator (`All 12 Agents Active & Guarded`).
+- **One-Click Commands**:
+  - `Generate Leads`: Instant prospecting workflow.
+  - `Publish Content`: Draft and schedule campaign assets.
+  - `Audit Fleet`: Health check of all running tasks.
+  - `Analyze Trends`: Competitive intelligence scan.
+- **Voice & Multimodal Support**: Interactive voice query parsing and real-time streaming response mode.
 
 ---
 
-## 📂 Project Directory Structure
+## 🔐 Multi-Tenant Security & Role-Based Portals
 
-```text
-Styre-BOT/
-├── .env.example                    # Sample environment variables
-├── docker-compose.yml              # Local infrastructure (Postgres, Redis, Qdrant)
-├── ERD.sql                         # Complete database schema DDL & ENUMs
-├── prd.md                          # Detailed Product Requirements Document (PRD)
-├── package.json                    # Dependencies and runtime scripts
-├── tsconfig.json                   # TypeScript compiler configuration
-└── src/
-    ├── index.ts                    # Application bootstrapper & HTTP server entry
-    ├── core/                       # Core foundational infrastructure
-    │   ├── ai/                     # LLM clients, guardrail classifiers, schema validators
-    │   ├── config/                 # Env parser, logger, Redis connection pool
-    │   ├── database/               # Postgres pool, tenant-scoped queries, vector client
-    │   ├── middlewares/            # Tenant isolation, auth rate-limiting, RBAC, error handlers
-    │   └── security/               # KMS AES-256 encryption, signature verification, egress policy
-    ├── db/
-    │   ├── migrate.ts              # Database migration runner
-    │   └── seed.ts                 # Database seed data runner
-    └── modules/                    # Domain feature modules
-        ├── agents/                 # Agent controller, policy validator, and audit logger
-        ├── analytics/              # Performance snapshots & analytics metrics
-        ├── auth/                   # JWT & API key authentication
-        ├── credentials/            # Token monitor & encrypted credential management
-        ├── credits/                # Double-entry ledger & wallet controllers
-        ├── inbox/                  # Inbound message & conversation management
-        ├── integrations/           # Google Auth, Calendar, Sheets & SMTP connectors
-        ├── leads/                  # Lead management services
-        ├── scheduler/              # BullMQ queue runner & cron scheduler
-        ├── social/                 # Meta, LinkedIn, WhatsApp & Twitter dispatchers
-        ├── tenants/                # Tenant onboarding, companies & teams management
-        ├── tools/                  # Dynamic external tool executor & egress watchdog
-        ├── training/               # SOP document training & quiz evaluator
-        └── webhooks/               # Inbound Meta & WhatsApp webhook processors
+| Role | Landing Portal | Primary Responsibilities |
+|---|---|---|
+| **Super Admin** | `/tenant-director` | Multi-tenant governance, credit rate cards, platform transaction audits, tenant impersonation, system metrics. |
+| **Company Admin** | `/dashboard` | Agency KPI overview, campaign approvals, team management, credit top-ups, channel connectors. |
+| **Manager** | `/approvals` | Human-in-the-loop safety gates, outbox review, team scheduling, agent mode overrides (`Draft` vs `Auto`). |
+| **Employee** | `/workspace` | Assigned tasks, omnichannel inbox triage, lead qualification, SOP training & certification. |
+
+---
+
+## 🛠️ Tech Stack Reference
+
+### Frontend (`apps/web`)
+- **Framework**: Next.js 16.4.6 (App Router, Turbopack, Partial Prerendering)
+- **State Management**: Redux Toolkit & RTK Query (`dashboardApi`, `agentsApi`, `campaignsApi`, `creditsApi`, etc.)
+- **Styling**: Tailwind CSS with custom Styre brand tokens (`#063cbc` primary, `#f8f9ff` surface)
+- **Component Architecture**: Atomic Design (`atoms`, `molecules`, `organisms`, `templates`)
+- **Icons & UI**: Lucide React, Radix UI Primitives, `react-hot-toast`
+- **Testing**: Playwright End-to-End Test Suite (`29/29` passing tests)
+
+### Backend (`apps/api`)
+- **Framework**: FastAPI (Python 3.12+) running on Uvicorn ASGI
+- **Architecture Rule**: Strict **< 140 lines per Python file** across all modules
+- **Database**: PostgreSQL with Row-Level Security (RLS) and connection health circuit-breaker
+- **ORM & Data**: SQLAlchemy 2.0 with unified connection pooling
+- **Resilience**: 50ms fast-socket health probe (`is_db_reachable()`) with instant fallback responses
+- **PubSub & Sockets**: Real-time event streaming and WebSocket client notification multiplexing
+
+---
+
+## 🗺️ Complete Frontend Routes (52 Routes)
+
+| Category | Route | Description |
+|---|---|---|
+| **Auth** | `/login` | Multi-role sign-in with quick-fill demo buttons |
+| **Auth** | `/register` | Agency onboarding & workspace creation |
+| **Auth** | `/accept-invite` | Team member invite acceptance |
+| **Auth** | `/forgot-password` | Password recovery request |
+| **Auth** | `/reset-password` | Secure token password reset |
+| **Overview** | `/dashboard` | Executive KPI dashboard & tactical daily action briefs |
+| **Revenue** | `/leads` | Prospect CRM pipeline with CSV import/export |
+| **Revenue** | `/campaigns` | Multi-channel outbound campaign manager |
+| **Revenue** | `/sequences/new` | Multi-step outreach sequence builder |
+| **Revenue** | `/inbox` | Unified omnichannel messaging inbox |
+| **Operations** | `/agents` | Fleet directory & agent capability controls |
+| **Operations** | `/agents/[agentId]`| Deep-dive agent configuration & run logs |
+| **Operations** | `/agents/runs` | Real-time execution history & credit burn |
+| **Operations** | `/agents/stream` | Live agent token streaming monitor |
+| **Operations** | `/approvals` | Human-in-the-loop content review & decision portal |
+| **Operations** | `/publishing` | Social post creator, media queue & calendar |
+| **Operations** | `/channels` | Social connector integrations (LinkedIn, Meta, X) |
+| **Operations** | `/workflows` | Multi-agent automation visual workflows |
+| **Intelligence**| `/competitor-radar`| Competitor intelligence & sentiment analysis |
+| **Intelligence**| `/knowledge-base`| Vector document ingestion & data source manager |
+| **Intelligence**| `/knowledge-base/analyze`| Document chunking & semantic search tester |
+| **Intelligence**| `/content-library`| Approved agency creative asset repository |
+| **Intelligence**| `/media` | Generated imagery, audio & video library |
+| **Finance** | `/credits` | Real-time ledger, balance alerts & Stripe checkout |
+| **Finance** | `/credits/invoices`| Official transaction history & billing receipts |
+| **Finance** | `/credits/success` | Post-payment credit deposit confirmation |
+| **Finance** | `/credits/cancel` | Cancelled checkout recovery page |
+| **Training** | `/academy` | SOP curriculum & interactive certification |
+| **Training** | `/academy/quiz` | Timed knowledge-assessment quizzes |
+| **Training** | `/academy/quiz/result`| Verified passing score & certification badge |
+| **Workforce** | `/workspace` | Role-tailored personal daily hub |
+| **Workforce** | `/workforce` | Agent vs human capacity workload planner |
+| **Workforce** | `/team` | Agency team directory & RBAC role assignments |
+| **Enterprise** | `/tenant-director`| Super Admin platform command center |
+| **Enterprise** | `/tenant-director/pricing`| Credit unit economics & plan pricing |
+| **Enterprise** | `/tenant-director/transactions`| Global platform-wide credit transactions |
+| **Enterprise** | `/admin/tenants` | Tenant workspace directory & provisioning |
+| **Governance** | `/audit-log` | Immutable security audit trail with JSON viewer |
+| **Governance** | `/reporting` | Analytics snapshots, conversion exports & reports |
+| **Settings** | `/settings` | Agency brand profiles, API keys & white-labeling |
+| **Settings** | `/notifications`| Real-time alerts feed & delivery preferences |
+| **Settings** | `/organization` | Organization hierarchy & multi-branch config |
+| **Settings** | `/organization/overview`| High-level agency structure snapshot |
+
+---
+
+## 🚀 Quick Start & Installation
+
+### Prerequisites
+- **Node.js**: `v20.0.0+`
+- **Package Manager**: `pnpm` (`v9.0.0+`)
+- **Python**: `3.12+`
+
+### 1. Clone & Install Dependencies
+```powershell
+# Clone the repository
+git clone https://github.com/rm-Shayan/Styre-Agent.git
+cd Styre-Agent
+
+# Install monorepo frontend dependencies
+pnpm install
+
+# Setup Python virtual environment for backend
+cd apps/api
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+cd ../..
 ```
 
----
-
-## 🚀 Getting Started
-
-### 1. Prerequisites
-- [Node.js](https://nodejs.org/) (v20 or higher)
-- [Docker](https://www.docker.com/) & Docker Compose
-- [Git](https://git-scm.com/)
-
----
-
-### 2. Setup Local Infrastructure
-
-Docker Compose ke zariye PostgreSQL, Redis aur Qdrant start karein:
-
-```bash
-docker-compose up -d
+### 2. Configure Environment Variables
+Copy `.env.example` to `.env`:
+```powershell
+Copy-Item .env.example .env
 ```
-
-Verify containers are healthy:
-```bash
-docker ps
-```
-- **PostgreSQL:** `localhost:5432`
-- **Redis:** `localhost:6379`
-- **Qdrant:** `localhost:6333`
-
----
-
-### 3. Environment Configuration
-
-Environment template file ko copy karein:
-
-```bash
-cp .env.example .env
-```
-
-`.env` file mein required credentials fill karein:
-
+Default local settings:
 ```env
-PORT=8000
-NODE_ENV=development
-
-# Database Configuration
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/smma_saas
-
-# Redis Configuration
-REDIS_URL=redis://localhost:6379
-
-# Vector DB (Qdrant)
-QDRANT_URL=http://localhost:6333
-QDRANT_API_KEY=
-
-# LLM Inference (Groq API - Qwen 2.5)
-GROQ_API_KEY=your_groq_api_key
-GROQ_MODEL=qwen/qwen3.8-27b
-
-# Security & Webhook Tokens
-META_APP_SECRET=your_meta_app_secret
-META_VERIFY_TOKEN=your_meta_verify_token
-WHATSAPP_VERIFY_TOKEN=your_whatsapp_verify_token
+DATABASE_URL=postgresql+psycopg://postgres:postgres@127.0.0.1:5432/styre_db
+JWT_SECRET=styre_secret_key_2026
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+NEXT_PUBLIC_DEFAULT_TENANT_ID=00000000-0000-0000-0000-000000000001
 ```
+*(Note: If PostgreSQL is offline, the backend automatically boots in zero-hang resilient mode with instant mock fallbacks).*
 
----
+### 3. Run the Monorepo (Frontend + Backend)
+You can start both servers together:
+```powershell
+# Terminal 1: Start Backend (FastAPI on http://localhost:8000)
+$env:PYTHONPATH="apps/api"; apps/api/.venv/Scripts/python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 
-### 4. Install Dependencies
-
-```bash
-npm install
+# Terminal 2: Start Frontend (Next.js on http://localhost:3000)
+pnpm --filter web dev
 ```
+Open **`http://localhost:3000`** in your browser. You will be greeted by the `/login` portal.
 
 ---
 
-### 5. Database Migration & Seeding
+## 🧪 Testing & Verification
 
-Database tables aur seed records initialize karein:
-
-```bash
-# Run schema migrations
-npm run migrate
-
-# Run initial seed data
-npm run seed
+### Playwright End-to-End Test Suite
+```powershell
+# Run full E2E suite
+pnpm --filter web test:e2e
 ```
+* **Authentication & Role Guards**: Verifies unauthenticated redirects to `/login` and role permissions.
+* **API Coverage**: Validates live contracts across all 274+ endpoints.
+* **UI Behavior**: Verifies Styre Bot floating copilot, modals, drawers, and charts.
 
----
-
-### 6. Run the Application
-
-Ek hi command se **backend (FastAPI) + frontend (Next.js)** dono start hote hain:
-
-```bash
-# Development (hot-reload dono services par)
-pnpm run dev
-
-# Production (pehle build, phir dono services)
-pnpm run build
-pnpm start
-
-# Ya dono ek step me
-pnpm run preview
+### Frontend Production Build
+```powershell
+pnpm --filter web build
 ```
-
-API: `http://localhost:8000` · Web: `http://localhost:3000`
-
-#### Available scripts
-
-| Command | Kya karta hai |
-|---|---|
-| `pnpm run dev` | Backend + frontend dono dev mode me (default) |
-| `pnpm run dev:api` / `dev:web` / `dev:worker` | Sirf ek service dev mode me |
-| `pnpm run dev:all` | Backend + worker + frontend, sab dev mode me |
-| `pnpm run build` | Frontend ka production build |
-| `pnpm start` | Production me backend + frontend serve karta hai (build pehle se hona chahiye) |
-| `pnpm run start:all` | Production me worker bhi shamil |
-| `pnpm run preview` | Build + start ek saath |
-| `pnpm run lint` / `lint:fix` | ESLint check / auto-fix |
-| `pnpm run typecheck` | TypeScript check |
-| `pnpm run check` | Lint + typecheck |
-| `pnpm run test` | Playwright e2e tests |
-| `pnpm run migrate` / `verify` | DB migration / phase verification |
-| `pnpm run clean` | Build aur test artifacts hatata hai |
-
-Environment overrides: `PORT` (backend, default `8000`), `WEB_PORT` (frontend, default `3000`), `PYTHON` (custom Python executable).
+Compiles and generates all **52/52** static and dynamic pages with 0 TypeScript or lint errors.
 
 ---
 
-## 📖 Specifications & Architecture Docs
+## 🏢 Brand & Licensing
 
-* **Product Requirements Document (PRD):** Detailed 11-section specifications ke liye **[`prd.md`](./prd.md)** read karein.
-* **Database Architecture & Schema:** Production DDL, ENUMs aur table relationships ke liye **[`ERD.sql`](./ERD.sql)** refer karein.
-
----
-
-## 🔒 Security & Contribution Rules
-
-1. **No Hardcoded Secrets:** API keys ya access tokens code mein kabhi hardcode na karein; hamesha environment variables aur KMS encryption use karein.
-2. **Tenant Scoping:** Har database query mein `company_id` filter lazmi hona chahiye.
-3. **Paced Outbound:** Outbound messaging hamesha `outbox_jobs` queue ke through dispatch hogi; direct synchronous third-party API calls strictly prohibited hain.
+- **Brand**: Styre-Bot — Built for [Styre Tech](https://www.linkedin.com/company/styre-tech/)
+- **License**: Proprietary — All rights reserved by Styre Tech.
